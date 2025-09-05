@@ -1,0 +1,107 @@
+PRIMARY:
+
+select status,instance_name,database_role from v$database,v$instance;
+
+select group#,sum(bytes/1024/1024)"Size in MB" from v$log group by group#;
+ 
+select group#,sum(bytes/1024/1024)"Size in MB" from v$standby_log group by group#;
+
+STANDBY:
+
+select status,instance_name,database_role from v$database,v$Instance;
+
+select group#, sum(bytes/1024/1024)"Size in MB" from v$log group by group#;
+
+select group#,sum(bytes/1024/1024)"Size in MB" from v$standby_log group by group#;
+
+alter system set standby_file_management=manual sid='*';
+
+PRIMARY:
+
+Check the status of the Online Redo Logs and resize them by dropping the INACTIVE redo logs and re-creating them with the new size.
+
+select group#,status from gv$log;
+
+Drop and recreate. Redo group Numbers can be vary, please perform accordingly
+
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP X ('+REDO1','+REDO2') size 8G;
+
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP X ('+REDO1','+REDO2') size 8G;
+
+ALTER DATABASE ADD LOGFILE THREAD 3 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 3 GROUP X ('+REDO1','+REDO2') size 8G;
+
+drop old inactive groups
+
+alter database drop logfile group X;
+
+Moving on to the Standby Redo Logs on the Primary Database:
+
+select group#,sum(bytes/1024/1024)"size in MB" from v$standby_log group by group#;
+ 
+select group#,status from v$standby_log;
+
+All file status should be unassignd, add and drop the files 
+
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+
+drop old inactive groups
+
+alter database drop standby logfile group X;
+
+STANDBY:
+
+alter database recover managed standby database cancel;
+
+select group#,status,thread# from v$log;
+
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP X ('+REDO1','+REDO2') size 8G;
+
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 2 GROUP X ('+REDO1','+REDO2') size 8G;
+
+ALTER DATABASE ADD LOGFILE THREAD 3 GROUP X ('+REDO1','+REDO2') size 8G;
+ALTER DATABASE ADD LOGFILE THREAD 3 GROUP X ('+REDO1','+REDO2') size 8G;
+
+drop old inactive groups
+
+alter database drop logfile group X;
+
+Moving on to the Standby Redo Logs on the standby Database:
+
+select group#,sum(bytes/1024/1024)"size in MB" from v$standby_log group by group#;
+
+select * from v$standby_log;
+
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 1 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 2 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+alter database add standby logfile thread 3 group xx ('+REDO1') SIZE 8G;
+
+Clear the SRL group whose status is ACTIVE as done earlier, drop the group and re-create them with the size same as that of the Online Redo Logs.
+
+alter database clear logfile group XX;
+
+alter database drop logfile group Xx;
+
+alter system set standby_file_management=auto sid='*';
+
+alter database recover managed standby database disconnect from session using current logfile;
+
+Finally check the DR sync check

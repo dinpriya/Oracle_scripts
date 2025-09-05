@@ -1,0 +1,55 @@
+15:06:36 SYS @ POHK3CCD1:CDB$ROOT:>select group_number, disk_number, name, total_mb, free_mb, path from v$asm_disk where name like '%FRA_CCD03%';
+
+GROUP_NUMBER DISK_NUMBER NAME                             TOTAL_MB    FREE_MB PATH
+------------ ----------- ------------------------------ ---------- ---------- ----------------------------------------------------------------------------------------------------
+           8           2 FRA_CCD03_0002                     512060     389716 /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_066
+           8           3 FRA_CCD03_0003                     512060     389848 /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_067
+
+
+15:10:25 SYS @ POHK3CCD1:CDB$ROOT:>select NAME,path,header_status from v$asm_disk where name like '%FRA_IMP%';
+
+NAME                           PATH                                                                                                 HEADER_STATU
+------------------------------ ---------------------------------------------------------------------------------------------------- ------------
+FRA_IMP_0011                   /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_089                                                   MEMBER
+FRA_IMP_0010                   /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_088                                                   MEMBER
+
+
+AS +ASM instance 
+
+ALTER DISKGROUP FRA_IMP DROP DISK FRA_IMP_0010 rebalance power 100;
+
+
+ALTER DISKGROUP FRA_CCD03 ADD  DISK '/dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_088' NAME FRA_CCD03_0004 rebalance power 100;
+
+DR:
+===
+
+15:09:18 SYS @ POHK1RCT_DG1:CDB$ROOT:>select group_number, disk_number, name, total_mb, free_mb, path from v$asm_disk where name like '%IMP%';
+
+GROUP_NUMBER DISK_NUMBER NAME                             TOTAL_MB    FREE_MB PATH
+------------ ----------- ------------------------------ ---------- ---------- ----------------------------------------------------------------------------------------------------
+          19          11 FRA_IMP_0011                       512062     511974 /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_089
+          19          10 FRA_IMP_0010                       512062     511972 /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_088
+
+
+
+15:09:18 SYS @ POHK1RCT_DG1:CDB$ROOT:>select group_number, disk_number, name, total_mb, free_mb, path from v$asm_disk where name like '%FRA_CCD03%';
+
+GROUP_NUMBER DISK_NUMBER NAME                             TOTAL_MB    FREE_MB PATH
+------------ ----------- ------------------------------ ---------- ---------- ----------------------------------------------------------------------------------------------------
+           8           2 FRA_CCD03_0002                     512060     399736 /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_066
+           8           3 FRA_CCD03_0003                     512060     399824 /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_067
+
+15:09:27 SYS @ POHK1RCT_DG1:CDB$ROOT:>select NAME,path,header_status from v$asm_disk where name like '%FRA_IMP%'
+15:12:09   2  ;
+
+NAME                           PATH                                                                                                 HEADER_STATU
+------------------------------ ---------------------------------------------------------------------------------------------------- ------------
+FRA_IMP_0011                   /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_089                                                   MEMBER
+FRA_IMP_0010                   /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_088                                                   MEMBER
+
+ALTER DISKGROUP FRA_IMP DROP DISK FRA_IMP_0010 rebalance power 100;
+
+ALTER DISKGROUP FRA_CCD03 ADD  DISK '/dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_088' NAME FRA_CCD03_0004 rebalance power 100;
+
+

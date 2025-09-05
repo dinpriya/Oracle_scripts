@@ -1,0 +1,57 @@
+To add Disk to REDo group in DR and PROD
+
+STEP 1:
+=======
+to get current redo disk details,
+
+SELECT name, header_status, path FROM V$ASM_DISK WHERE name like '%REDO%';
+
+STEP 2:
+=======
+to get new added disk for REDO
+
+SELECT name, header_status, path FROM V$ASM_DISK WHERE header_status <> 'MEMBER'; 
+
+STEP 3:
+=======
+Implementation steps
+
+DR:
+
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0004 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0005 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0006 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0007 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0008 rebalance power 10;                     
+
+
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0004 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0005 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0006 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0007 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0008 rebalance power 10;                     
+
+PROD:
+
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0008 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0009 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0010 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0011 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0012 rebalance power 10;                     
+
+
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0008 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0009 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0010 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0011 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO2_0012 rebalance power 10;                     
+
+** get the disk from step 2 and pass it on step 3
+
+STEP 4: 
+
+Verification
+=======
+to get current redo disk details,
+
+SELECT name, header_status, path FROM V$ASM_DISK WHERE name like '%REDO%';

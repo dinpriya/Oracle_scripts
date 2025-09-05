@@ -1,0 +1,53 @@
+PROD
+
+NAME            PATH                                                         HEADER_STATU   TOTAL_MB    FREE_MB
+--------------- ------------------------------------------------------------ ------------ ---------- ----------
+REDO2_0007      /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_007           MEMBER           102412      68124
+REDO2_0006      /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_006           MEMBER           102412      68088
+REDO1_0005      /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_005           MEMBER           102412      17136
+REDO1_0004      /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_004           MEMBER           102412      17124
+
+DR
+
+NAME                           HEADER_STATU PATH
+------------------------------ ------------ ----------------------------------------------------------------------------------------------------
+REDO2_0002                     MEMBER       /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_006
+REDO1_0002                     MEMBER       /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_004
+REDO1_0003                     MEMBER       /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_005
+REDO2_0003                     MEMBER       /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_007
+
+
+SELECT name, header_status, path FROM V$ASM_DISK WHERE name like '%REDO%';
+
+SELECT name, header_status, path FROM V$ASM_DISK WHERE header_status <> 'MEMBER'; 
+
+DR:
+
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0004 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0005 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0006 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0007 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0008 rebalance power 10;                     
+
+
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0004 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0005 rebalance power 10;
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0006 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0007 rebalance power 10;
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0008 rebalance power 10;                     
+
+PROD:
+
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0008 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0009 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0010 rebalance power 10;                     
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0011 rebalance power 10;
+alter diskgroup REDO1 ADD DISK '' NAME REDO1_0012 rebalance power 10;                     
+
+
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0008 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0009 rebalance power 10;
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0010 rebalance power 10;                     
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0011 rebalance power 10;
+alter diskgroup REDO2 ADD DISK '' NAME REDO2_0012 rebalance power 10;                     
+
