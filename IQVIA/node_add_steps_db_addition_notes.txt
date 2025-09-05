@@ -1,0 +1,190 @@
+
+RAC Node Details :
+=======================
+
+usadc-sdbxt75a (1st node name) 
+usadc-sdbxt75b (2nd node name) 
+usadc-sdbxt75c (3rd node name) is the new node which will be added into already running 12c RAC 
+
+Update /etc/hosts file on each node adding entries for new node "usadc-sdbxt75c", so that it would look like –
+
+127.0.0.1               localhost.localdomain localhost
+::1             localhost6.localdomain6 localhost6
+10.3.94.140       usadc-sdbxt75a.quintiles.net  usadc-sdbxt75a
+#
+#### RAC Info  --> Public N/W
+# RAC nodes - public bond0.3064
+#10.3.94.140     usadc-sdbxt75a.quintiles.net    usadc-sdbxt75a
+10.3.94.141     usadc-sdbxt75b.quintiles.net    usadc-sdbxt75b
+10.3.94.148     usadc-sdbxt75c.quintiles.net    usadc-sdbxt75c  --> NEW NODE 
+10.3.94.149     usadc-sdbxt75d.quintiles.net    usadc-sdbxt75d
+
+# NAS - bond0.1064  --> NAS
+10.18.94.140     usadc-sdbxt75a-san.quintiles.net    usadc-sdbxt75a-san
+10.18.94.141     usadc-sdbxt75b-san.quintiles.net    usadc-sdbxt75b-san
+10.18.94.148     usadc-sdbxt75c-san.quintiles.net    usadc-sdbxt75c-san --> NEW NODE 
+10.18.94.149     usadc-sdbxt75d-san.quintiles.net    usadc-sdbxt75d-san
+
+#Private network - bond1  --> Private Interconnect
+172.16.5.2      usadc-sdbxt75a-priv
+172.16.5.4      usadc-sdbxt75b-priv
+172.16.5.6      usadc-sdbxt75c-priv --> NEW NODE 
+172.16.5.8      usadc-sdbxt75d-priv
+
+# VIPs   --> VIP's
+10.3.94.142     usadc-sdbxt75a-vip
+10.3.94.143     usadc-sdbxt75b-vip
+10.3.94.150     usadc-sdbxt75c-vip --> NEW NODE 
+10.3.94.151     usadc-sdbxt75d-vip
+
+# lsdev1-scan --> SCAN IP's
+#10.3.94.144
+#10.3.94.145
+#10.3.94.146
+
+configure ssh  : under grid_home/oui/bin
+
+./runSSHSetup.sh -user oracle -hosts "usadc-sdbxt75b usadc-sdbxt75c usadc-sdbxt75d" -advanced -exverify
+
+runSSHSetup.sh -user oracle -hosts "racnode2 racnode3" -advanced -exverify
+
+./runSSHSetup.sh -user oracle -hosts "usadc-sdbxt75a usadc-sdbxt75b usadc-sdbxt75c usadc-sdbxt75d" -noPromptPassphrase
+
+
+Verify SSH
+
+ssh usadc-sdbxt75a date
+
+
+Verify New Node (HWOS)
+
+From grid_home on usadc-sdbxt75a
+$GRID_HOME/bin/cluvfy stage -post hwos -n usadc-sdbxt75c > /tmp/hwos3.log
+
+775 permissions should be there for /grid_configXXXX
+
+Verify Peer (REFNODE)
+
+From grid_home on usadc-sdbxt75a
+$GRID_HOME/bin/cluvfy comp peer -refnode usadc-sdbxt75a -n usadc-sdbxt75c -orainv dba -osdba dba -verbose > /tmp/comppeer.log
+
+Verify New Node (NEW NODE PRE)
+
+From grid_home on usadc-sdbxt75a
+$GRID_HOME/bin/cluvfy stage -pre nodeadd -n usadc-sdbxt75c -fixup -verbose > /tmp/fixup.log
+
+Run "addnode.sh"  --> /u02/app/12.1.0.2/grid/addnode
+
+[oracle@usadc-sdbxt75a bin]$ ./addnode.sh -silent "CLUSTER_NEW_NODES={usadc-sdbxt75c}" "CLUSTER_NEW_VIRTUAL_HOSTNAMES={usadc-sdbxt75c-vip}"
+
+
+[oracle@usadc-sdbxt75c ~]$ crsctl check crs
+[oracle@usadc-sdbxt75c ~]$ crs_stat -t -v
+[oracle@usadc-sdbxt75c ~]$ olsnodes -n
+[oracle@usadc-sdbxt75c ~]$ srvctl status asm -a
+[oracle@usadc-sdbxt75c ~]$ ocrcheck
+[oracle@usadc-sdbxt75c ~]$ crsctl query css votedisk
+
+
+Verify New Node (NEW NODE POST)
+
+[oracle@usadc-sdbxt75a ]$ $GRID_HOME/bin/cluvfy stage -post nodeadd -n usadc-sdbxt75c -verbose > /tmp/clusterpost.log
+
+
+PART 2 : Extend Oracle Database Software --> /u01/app/oracle/product/12.1.0.2.180116/dbhome_1/addnode
+
+oracle@usadc-sdbxt75a ~]$ . ./db.env
+[oracle@usadc-sdbxt75a ~]$ cd $ORACLE_HOME
+[oracle@usadc-sdbxt75a db_1]$ cd addnode
+[oracle@usadc-sdbxt75a bin]$ ./addNode.sh -silent "CLUSTER_NEW_NODES={usadc-sdbxt75c}"
+
+2) Run root.sh
+
+3) Verify Administrative Privileges (ADMPRV)
+
+[oracle@usadc-sdbxt75c bin]$ ./cluvfy comp admprv -o db_config -d $ORACLE_HOME -n usadc-sdbxt75a,usadc-sdbxt75b,usadc-sdbxt75c -verbose > $ORACLE_HOME/admprv.log
+
+PART 3 : Add New Instance to Clustered Database
+
+Database Configuration Assistant — Use either the Oracle Database Configuration Assistant (DBCA) GUI or the SRVCTL command-line interface to add a new instance to the existing cluster database
+
+1) GUI Method : Invoke DBCA :
+
+-- If your database is administrator-managed, select Instance Management.
+-- Select Add an Instance.
+-- From the List of Cluster Databases page, select the active Oracle RAC database to which you want to add an instance. Enter user name and password for the database user that has SYSDBA privileges.
+--  Review the existing instances for the cluster database and click Next to add a new instance.
+-- On the Adding an Instance page, enter the instance name in the field at the top of this page if the instance name that DBCA provides does not match your existing instance naming scheme. Then select the target node name from the list and click Next.
+-- Expand the Tablespaces, Datafiles, and Redo Log Groups nodes to verify a new UNDO tablespace and Redo Log Groups of a new thread are being created for the purpose of the new instance then click Finish.
+-- follow screens
+
+2) Using srvctl command line :
+
+-- On new node : create directories, pfile, pwd file etc.
+
+echo $ORACLE_HOME
+cd $ORACLE_HOME/dbs
+mv initlsug3b11.ora initlsug3b13.ora
+vi initrlsug3b13.ora
+mv orapwlsug3b1 orapwlsug3b1
+add entry to /etc/oratab
+mkdir -p $ORACLE_BASE/diag
+
+-- From one of the active nodes in the existing Oracle RAC, log in as the Oracle owner (oracle) and issue the following commands to create the needed public log thread, undo tablespace, and instance parameter entries for the new instance.
+
+sqlplus / as sysdba
+
+SQL> column REDOLOG_FILE_NAME format a50;
+
+set lines 1000
+ col REDOLOG_FILE_NAME format a85
+col status format a12 
+
+SELECT a.GROUP#, a.THREAD#, a.SEQUENCE#,
+ a.ARCHIVED, a.STATUS, b.MEMBER AS REDOLOG_FILE_NAME,
+ (a.BYTES/1024/1024) AS SIZE_MB FROM v$log a
+JOIN v$logfile b ON a.Group#=b.Group#
+ORDER BY a.GROUP#;
+
+
+SQL> alter database add logfile thread 3 group 7 '/mounts/lsug3b1_data/oradata/lsug3b1/dbfiles/redo07.log' size 500M, group 8 '/mounts/lsug3b1_data/oradata/lsug3b1/dbfiles/redo08.log' size 500M, group 9 '/mounts/lsug3b1_data/oradata/lsug3b1/dbfiles/redo09.log' size 500M;
+Database altered.
+
+SQL> alter database enable public thread 3;
+Database altered.
+
+SQL>  create undo tablespace undotbs3 datafile '/mounts/lsug3b1_data/oradata/lsug3b1/dbfiles/undotbs03.dbf' size 20G; autoextend on next 100m maxsize 8g;
+Tablespace created.
+
+SQL> alter system set undo_tablespace=undotbs3 scope=spfile sid='lsug3b13';
+System altered.
+
+SQL> alter system set instance_number=3 scope=spfile sid='lsug3b13';
+System altered.
+
+SQL> alter system set cluster_database_instances=3 scope=spfile sid='*';
+System altered.
+
+-- update the Oracle Cluster Registry (OCR) with the new instance being added to the cluster database
+
+srvctl add instance -d lsug3b1 -i racdb3 -n lsug3b13
+srvctl status database -d lsug3b1 -v
+srvctl config database -d lsug3b1
+
+
+-- With all of the prerequisites satisfied and OCR updated, start the racdb3 instance on the new Oracle RAC node.
+
+srvctl start instance -d lsug3b1 -i lsug3b13
+
+-- Add New Instance to any Services - (Optional)
+
+srvctl add service -d racdb -s racdbsvc.idevelopment.info -r racdb3 -u
+srvctl start service -d racdb
+srvctl config service -d racdb -s racdbsvc.idevelopment.info
+
+
+3) Verify New Instances :
+
+ srvctl status database -d rac -v
+
+SQL> select inst_id, instance_name, status,to_char(startup_time, 'DD-MON-YYYY HH24:MI:SS') as "START_TIME" from gv$instance order by inst_id;
