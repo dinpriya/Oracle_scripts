@@ -1,0 +1,1339 @@
+For Restoration to Pre Prod
+RFS: TS-48118
+
+CRQ000001542142	TAS000003584412	4/28/2022 13:45	4/30/2022 0:30	hklvdpapp050	000000006988047
+CRQ000001542142	TAS000003584412	4/28/2022 13:45	4/30/2022 0:30	hklvddapp068	000000006988047
+
+---------------
+For Restoration to Pre Prod
+Instance	Data cut	Source Server	IP address	Src CDB		Src PDB		Target Server	Target Server IP	Tgt CDB		Tgt PDB		Oracle Version
+PSFSPRD7	31-Mar-22	HKLPDPPSG002	10.21.199.14	POHK10PS	PSFPRD10	HKLVDPAPP050	10.23.98.45		AFASPE10	AFASPR10	19C
+PSFSPRD7	4/31/2022	HKLPDPPSG001	10.21.199.11	POHK7PSF	PSFSPRD7	HKLVDPAPP050	10.23.98.45		INASPE07 	INASPR07 	19C
+
+Control file:
+RMAN:control_POHK7PSF_0k0psch9_203796_1_1
+Client		Name						save time 			nsave time	Clone Retention Time			volume 			group 				level
+HKLPDPPSG001	RMAN:control_POHK7PSF_oj0pp8hv_203539_1_1	03/31/2022	1:23:12	PM	1648704192	06/30/2022	126	MB	DC1DBBackupDD12.005	MEG_CTRL_BKP_DLY_01M_G82	full
+HKLPDPPSG001	RMAN:control_POHK7PSF_oj0pp8hv_203539_1_1	03/31/2022	1:23:12	PM	1648704192	06/30/2022	126	MB	DC2DBCloneDD12.003	MEG_CTRL_BKP_DLY_01M_G82	full
+
+NSR Parameter for POHK2PSF:
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT= HKLPDPPSG002,NSR_RECOVER_POOL="DC1 DB Backup DD12")';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT= HKLPDPPSG002,NSR_RECOVER_POOL="DC2 DB Clone DD12")';
+
+Restored target DB in Pre Prod to FS /oradata
+
+Source Server	IP address
+HKLVDPAPP050	10.23.98.45
+
+Withdraw session.
+
+stty erase ^? ; set -o vi ;
+. 19.sh
+export ORACLE_SID=INASPE07
+cd /home/oracle/CR1115173
+oracle@HKLVDPAPP050:/home/oracle/CR1115173
+
+oracle@HKLVDPAPP050:/home/oracle [INASPE07]
+> df -h /oradata
+Filesystem                       Size  Used Avail Use% Mounted on
+/dev/mapper/oradatavg-oradatalv  4.0T  2.3T  1.7T  58% /oradata
+
+find . -type f -name "*.log" -mtime +1 | wc -l
+find . -type f -name "*.log" -mtime +210 -exec ls -ald {} \;
+find . -type f -name "*.log" -mtime +210 -exec rm {} \;
+find . -type f -name "*.log" -mtime +180 -exec rm {} \;
+
+export ORACLE_SID=FRTBPSG4
+shutdown immediate ;
+startup mount pfile=/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initFRTBPSG4.ora exclusive restrict
+drop database ;
+
+export ORACLE_SID=INASPE07
+shutdown immediate ;
+startup mount pfile=/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initINASPE07.ora exclusive restrict
+drop database ;
+
+oracle@HKLVDPAPP050:/home/oracle [FRTBPSG4]
+> df -h /oradata
+Filesystem                       Size  Used Avail Use% Mounted on
+/dev/mapper/oradatavg-oradatalv    4.0T  857G  3.1T  22% /oradata
+
+oracle@HKLVDPAPP050:/home/oracle [FRTBPSG4]
+> date
+Wed Apr 27 12:45:31 HKT 2022
+
+PFA the backup details for the activity and PFB the parameters shared by NBU team:
+NSR Parameter for INASPE07:
+SEND 'NSR_ENV=(NSR_SERVER=hklvipapp021,NSR_CLIENT=HKLPDPPSG002,NSR_RECOVER_POOL="DC1 DB Backup DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)’;
+SEND 'NSR_ENV=(NSR_SERVER=hklvipapp021,NSR_CLIENT=HKLPDPPSG002,NSR_RECOVER_POOL="DC2 DB Clone DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)’;
+
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDPPSG001,NSR_RECOVER_POOL="DC1 DB Backup DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDPPSG001,NSR_RECOVER_POOL="DC2 DB Clone DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)';
+
+NSR_SERVER=HKLVIPAPP021
+NSR_CLIENT=HKLPDPPSG001 / HKLPDPPSG002
+NSR_RECOVER_POOL="DC1 DB Backup DD12" or "DC2 DB Clone DD12"
+NSR_DEBUG_LEVEL=1-9 
+NSR_DPRINTF=TRUE
+
+Note: Please share the NSR command before going to start restoration in Pre-prod server.
+
+Also use only /oradata filesystem for the restore (Pre Prod) 
+
+****************************************************************************************************************************************
+Below steps from Production to Pre-Pro Server using 
+
+03. Startup nomount with new pfile on HKLVDPAPP050.
+. 19.sh
+> export ORACLE_SID=INASPE07
+
+> cd $ORACLE_HOME/dbs
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+devtmpfs                            32G     0   32G   0% /dev
+tmpfs                               32G  8.0K   32G   1% /dev/shm
+tmpfs                               32G   66M   32G   1% /run
+tmpfs                               32G     0   32G   0% /sys/fs/cgroup
+/dev/mapper/rootvg-rootvol         7.9G  2.7G  5.2G  34% /
+/dev/mapper/rootvg-tmpvol          5.9G   33M  5.9G   1% /tmp
+/dev/mapper/oraredo1vg-oraredo1lv  300G   22G  279G   8% /oraredo1
+/dev/mapper/oraclevg-oralocalvol    80G   27G   54G  33% /u01/app/oracle/local
+/dev/mapper/oraredo2vg-oraredo2lv  300G   22G  279G   8% /oraredo2
+/dev/mapper/rootvg-varvol          3.9G  1.2G  2.8G  31% /var
+/dev/mapper/rootvg-auditlv        1014M  413M  602M  41% /var/log/audit
+/dev/mapper/oradatavg-oradatalv    4.0T  859G  3.1T  22% /oradata
+/dev/mapper/oraclevg-oraagentvol    10G   33M   10G   1% /u01/app/oracle/product/agent
+/dev/mapper/oraclevg-oradbvol       90G   35G   56G  39% /u01/app/oracle/product/db
+/dev/sda1                          509M  234M  276M  46% /boot
+/dev/mapper/oradata1vg-oradata1lv 1000G  114G  887G  12% /oradata1
+/dev/mapper/rootvg-homevol         7.9G 1001M  6.9G  13% /home
+/dev/mapper/orafravg-oradumplv     200G   33M  200G   1% /oradump
+/dev/mapper/rootvg-corevol         3.9G   80M  3.9G   2% /var/crash
+/dev/mapper/orafravg-orafralv      250G   22G  229G   9% /orafra
+/dev/mapper/rootvg-usrctmvol       3.0G   33M  2.9G   2% /usr/controlm
+/dev/mapper/rootvg-optvol          5.9G  1.7G  4.2G  29% /opt
+/dev/mapper/rootvg-oprvol          297M   24M  273M   8% /u/operator
+/dev/mapper/rootvg-taniumlv        3.0G  626M  2.4G  21% /opt/Tanium/TaniumClient
+/dev/mapper/rootvg-bmcvol          2.0G  606M  1.4G  31% /opt/bmc
+/dev/mapper/rootvg-semavol         997M  218M  780M  22% /usr/semasupp
+/dev/mapper/rootvg-scbmonlv        997M  175M  823M  18% /opt/SCBmon
+/dev/mapper/rootvg-usrgemsvvol     997M   33M  965M   4% /usr/gems
+tmpfs                              6.3G     0  6.3G   0% /run/user/555
+
+df -h /nsr/apps/logs
+cd /nsr/apps/logs
+rm libnsrora_Oracle_2022_*.log
+
+> df -h /nsr/apps/logs
+Filesystem                  Size  Used Avail Use% Mounted on
+/dev/mapper/rootvg-rootvol  7.9G  4.7G  3.2G  60% /
+
+oracle@HKLVDPAPP050:/nsr/apps/logs [INASPE07]
+> rm libnsrora_Oracle_2022_*.log
+
+oracle@HKLVDPAPP050:/nsr/apps/logs [INASPE07]
+> df -h /nsr/apps/logs
+Filesystem                  Size  Used Avail Use% Mounted on
+/dev/mapper/rootvg-rootvol  7.9G  2.7G  5.2G  35% /
+
+> cd $ORACLE_HOME/dbs
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ps -ef | grep pmon
+oracle    9642     1  0 Apr22 ?        00:00:24 ora_pmon_POHK1P2P
+oracle   22415  8636  0 12:48 pts/0    00:00:00 grep --color=auto pmon
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> free -m
+              total        used        free      shared  buff/cache   available
+Mem:          64265       41272       16528          65        6464       21595
+Swap:         16383           0       16383
+
+HKLVDPAPP050> export ORACLE_SID=INASPE07
+HKLVDPAPP050> cd $ORACLE_HOME/dbs
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> pwd
+/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> cp initAFASPE10.ora initINASPE07.ora
+
+vi initINASPE07.ora
+:%s/AFASPE10/INASPE07/g
+
+First time use old db name.
+> grep db_name initINASPE07.ora
+*.db_name='POHK7PSF'
+#*.db_name='INASPE07'
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> grep / initINASPE07.ora
+*.audit_file_dest='/oradata/INASPE07/audit'
+*.control_files='/oradata/INASPE07/control/control01.ctl','/oradata/INASPE07/control/control02.ctl'#Restore Controlfile
+*.db_create_file_dest='/oradata/INASPE07'
+*.db_create_online_log_dest_1='/oraredo1/INASPE07'
+*.db_create_online_log_dest_2='/oraredo2/INASPE07'
+*.db_recovery_file_dest='/oradata/INASPE07/arch'
+#*.dg_broker_config_file1='/u01/app/oracle/product/db/19.7.0.0.Apr2020/dr1INASPE07_DG.dat'
+#*.dg_broker_config_file2='/u01/app/oracle/product/db/19.7.0.0.Apr2020/dr2INASPE07_DG.dat'
+*.diagnostic_dest='/oradata/INASPE07/diagnostic'
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oradata/INASPE07/audit
+ls: cannot access /oradata/INASPE07/audit: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oradata/INASPE07/audit
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oradata/INASPE07/control
+ls: cannot access /oradata/INASPE07/control: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oradata/INASPE07/control
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oradata/INASPE07
+drwxr-xr-x 4 oracle oinstall 46 Apr 27 12:54 /oradata/INASPE07
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oraredo1/INASPE07
+ls: cannot access /oraredo1/INASPE07: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oraredo1/INASPE07
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oraredo2/INASPE07
+ls: cannot access /oraredo2/INASPE07: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oraredo2/INASPE07
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oradata/INASPE07/arch
+ls: cannot access /oradata/INASPE07/arch: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oradata/INASPE07/arch
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> ls -ld /oradata/INASPE07/diagnostic
+ls: cannot access /oradata/INASPE07/diagnostic: No such file or directory
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> mkdir -p /oradata/INASPE07/diagnostic
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+> cat initINASPE07.ora
+*._db_fast_obj_truncate=FALSE
+*._gby_hash_aggregation_enabled=false
+*._index_join_enabled=false
+*._kgl_large_heap_warning_threshold=8388608
+*._serial_direct_read='FALSE'
+*._unnest_subquery=TRUE
+*.audit_file_dest='/oradata/INASPE07/audit'
+*.audit_sys_operations=TRUE
+*.audit_trail='DB'
+*.cell_offload_processing=FALSE
+*.common_user_prefix=''
+*.compatible='19.0.0'
+*.control_files='/oradata/INASPE07/control/control01.ctl','/oradata/INASPE07/control/control02.ctl'#Restore Controlfile
+*.db_16k_cache_size=268435456
+*.db_block_checking='TRUE'
+*.db_block_checksum='TRUE'
+*.db_block_size=8192
+*.db_cache_size=5G
+*.db_create_file_dest='/oradata/INASPE07'
+*.db_create_online_log_dest_1='/oraredo1/INASPE07'
+*.db_create_online_log_dest_2='/oraredo2/INASPE07'
+*.db_domain='hk.standardchartered.com'
+*.db_file_multiblock_read_count=128
+*.db_files=1024
+*.db_name='POHK7PSF'
+#*.db_name='INASPE07'
+*.db_recovery_file_dest='/oradata/INASPE07/arch'
+*.db_recovery_file_dest_size=4000000m
+*.db_unique_name='INASPE07_HKLVDPAPP050'
+*.db_writer_processes=4
+#*.dg_broker_config_file1='/u01/app/oracle/product/db/19.7.0.0.Apr2020/dr1INASPE07_DG.dat'
+#*.dg_broker_config_file2='/u01/app/oracle/product/db/19.7.0.0.Apr2020/dr2INASPE07_DG.dat'
+#*.dg_broker_start=TRUE
+*.diagnostic_dest='/oradata/INASPE07/diagnostic'
+*.dml_locks=2000
+*.enable_pluggable_database=true
+*.event='10422 trace name context forever, level 1'
+*.fal_client='INASPE07'
+*.fal_server=''
+*.filesystemio_options='setall'
+*.global_names=FALSE
+*.instance_name='INASPE07'
+*.java_jit_enabled=FALSE
+*.java_pool_size=64M
+*.large_pool_size=64M
+*.local_listener='(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.23.98.45)(PORT=1621)))'
+#*.local_listener='(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.90.242)(PORT=1632))(ADDRESS=(PROTOCOL=tcp)(HOST=10.21.199.11)(PORT=1532)))'
+#*.log_archive_config='DG_CONFIG=(INASPE07_HKLPDPPSG001,INASPE07_HKLPDSPSG001)'
+#*.log_archive_dest_2='service="INASPE07_DG"','SYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="pogblp2p_hklpdspsg001" net_timeout=30','valid_for=(online_logfile,all_roles)'
+#*.log_archive_dest_state_2='ENABLE'
+*.log_archive_format='%t_%s_%r.dbf'
+*.log_archive_max_processes=30
+*.log_buffer=20971520# MEDIUM
+*.log_checkpoint_interval=100000
+*.log_checkpoint_timeout=1800
+*.max_dump_file_size='52428800'
+*.nls_date_format='DD-MM-YYYY'
+*.nls_language='AMERICAN'
+*.nls_territory='AMERICA'
+*.open_cursors=1000
+*.optimizer_index_caching=0
+*.optimizer_index_cost_adj=100
+*.os_authent_prefix=''
+*.parallel_force_local=TRUE
+*.parallel_max_servers=50
+*.pga_aggregate_limit=5G
+*.pga_aggregate_target=2G
+*.processes=1000
+*.remote_login_passwordfile='EXCLUSIVE'
+*.result_cache_max_size=26214400
+*.sec_protocol_error_further_action='CONTINUE'
+*.session_cached_cursors=200
+*.session_max_open_files=20
+*.sga_max_size=10G
+*.sga_target=10G
+*.shared_pool_size=3328M
+*.sort_area_size=3145728
+*.sql92_security=TRUE
+#*.standby_file_management='AUTO'
+*.streams_pool_size=512M
+*.timed_statistics=true# if you want timed statistics
+*.undo_management='AUTO'
+*.undo_retention=7200
+*.undo_tablespace='UNDOTBS1'
+#*._allow_resetlogs_corruption=TRUE
+#_corrupted_rollback_segments = "_SYSSMU26_4055249985$","_SYSSMU27_82989619$"
+
+oracle@HKLVDPAPP050:/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs [INASPE07]
+
+cd /home/oracle/CR1115173
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> ls -lrt control*.sh
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cp control_AFASPE10_20220425.sh control_INASPE07_20220427.sh
+> vi control_INASPE07_20220427.sh
+:%s/AFASPE10/INASPE07/g
+Check that the NSR_CLIENT is similar to the source server.
+NSR_CLIENT=HKLPDPPSG001
+Update the controlfile info.
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat control_INASPE07_20220427.sh
+export ORACLE_SID=INASPE07
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDPPSG001,NSR_RECOVER_POOL="DC1 DB Backup DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)';
+restore controlfile from 'control_POHK7PSF_oj0pp8hv_203539_1_1';
+release channel CH1;
+release channel CH2;
+}
+EXIT
+EOF
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> vi control_INASPE07_20220428.sh
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat control_INASPE07_20220428.sh
+export ORACLE_SID=INASPE07
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDPPSG001,NSR_RECOVER_POOL="DC1 DB Backup DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)';
+restore controlfile from 'control_POHK7PSF_0k0psch9_203796_1_1';
+release channel CH1;
+release channel CH2;
+}
+EXIT
+EOF
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 13:02:25 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+Connected to an idle instance.
+
+13:02:32 SYS @ idle:>startup nomount pfile=/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initINASPE07.ora
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 12686456 bytes
+Variable Size            4160749568 bytes
+Database Buffers         6509559808 bytes
+Redo Buffers               54419456 bytes
+13:03:19 SYS @ idle:>show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      POHK7PSF
+db_unique_name                       string      INASPE07_HKLVDPAPP050
+global_names                         boolean     FALSE
+instance_name                        string      INASPE07
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      INASPE07_HKLVDPAPP050.hk.stand
+                                                 ardchartered.com
+13:03:31 SYS @ idle:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> nohup ./control_INASPE07_20220427.sh > control_INASPE07_20220427.log &
+> nohup ./control_INASPE07_20220428.sh > control_INASPE07_20220428.log &
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> nohup ./control_INASPE07_20220427.sh > control_INASPE07_20220427.log &
+[1] 13735
+nohup: ignoring input and redirecting stderr to stdout
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat control_INASPE07_20220427.log
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Apr 27 13:04:59 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: POHK7PSF (not mounted)
+
+RMAN> 2> 3> 4> 5> 6> 7> 8> 9>
+using target database control file instead of recovery catalog
+allocated channel: CH1
+channel CH1: SID=1343 device type=SBT_TAPE
+channel CH1: NMDA Oracle v19.5.0.1
+
+allocated channel: CH2
+channel CH2: SID=6 device type=SBT_TAPE
+channel CH2: NMDA Oracle v19.5.0.1
+
+sent command to channel: CH1
+sent command to channel: CH2
+
+Starting restore at 27 Apr 2022 13:05:05
+
+channel CH2: skipped, AUTOBACKUP already found
+channel CH1: restoring control file
+channel CH1: restore complete, elapsed time: 00:00:33
+output file name=/oradata/INASPE07/control/control01.ctl
+output file name=/oradata/INASPE07/control/control02.ctl
+Finished restore at 27 Apr 2022 13:05:38
+
+released channel: CH1
+
+released channel: CH2
+
+RMAN>
+
+Recovery Manager complete.
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat control_INASPE07_20220428.log
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Thu Apr 28 17:07:44 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: POHK7PSF (not mounted)
+
+RMAN> 2> 3> 4> 5> 6> 7> 8> 9>
+using target database control file instead of recovery catalog
+allocated channel: CH1
+channel CH1: SID=1343 device type=SBT_TAPE
+channel CH1: NMDA Oracle v19.5.0.1
+
+allocated channel: CH2
+channel CH2: SID=7 device type=SBT_TAPE
+channel CH2: NMDA Oracle v19.5.0.1
+
+sent command to channel: CH1
+sent command to channel: CH2
+
+Starting restore at 28 Apr 2022 17:07:49
+
+channel CH1: skipped, AUTOBACKUP already found
+channel CH2: restoring control file
+channel CH2: restore complete, elapsed time: 00:00:24
+output file name=/oradata/INASPE07/control/control01.ctl
+output file name=/oradata/INASPE07/control/control02.ctl
+Finished restore at 28 Apr 2022 17:08:13
+
+released channel: CH1
+
+released channel: CH2
+
+RMAN>
+
+Recovery Manager complete.
+
+*****************************************************************************************
+*****************************************************************************************
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 13:06:43 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+13:06:49 SYS @ INASPE07:CDB$ROOT:>alter database mount ;
+
+Database altered.
+
+13:07:11 SYS @ INASPE07:CDB$ROOT:>@/home/oracle/chkdb.sql
+
+INSTANCE_N HOST_NAME
+---------- ---------------
+INASPE07   HKLVDPAPP050
+
+
+NAME      OPEN_MODE
+--------- --------------------
+POHK7PSF  MOUNTED
+
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 PSFSPRD7                       MOUNTED
+13:07:21 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+> cat /home/oracle/chkdb.sql
+set lines 300 pages 1000
+col instance_name for a10
+col host_name for a15
+select instance_name,host_name from v$instance;
+select name,open_mode from v$database;
+show pdbs
+
+==========================================================================================
+==========================================================================================
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> ls -lrt restore*.sh
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cp restore_recover_AFASPE10_20220425.sh restore_recover_INASPE07_20220427.sh
+
+> vi restore_recover_INASPE07_20220427.sh
+:%s/AFASPE10/INASPE07/g
+Check that NSR_CLIENT is equal to the source server hostname.
+e.g. NSR_CLIENT=HKLPDPPSG001
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat restore_recover_INASPE07_20220427.sh
+export ORACLE_SID=INASPE07
+rman target=/ << EOF
+run
+{
+allocate channel d1 type 'SBT_TAPE';
+allocate channel d2 type 'SBT_TAPE';
+allocate channel d3 type 'SBT_TAPE';
+allocate channel d4 type 'SBT_TAPE';
+allocate channel d5 type 'SBT_TAPE';
+allocate channel d6 type 'SBT_TAPE';
+allocate channel d7 type 'SBT_TAPE';
+allocate channel d8 type 'SBT_TAPE';
+allocate channel d9 type 'SBT_TAPE';
+allocate channel d10 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDPPSG001,NSR_RECOVER_POOL="DC1 DB Backup DD12",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradata/INASPE07/nsr/apps/logs)';
+set newname for database to '/oradata/INASPE07/%b';
+RESTORE DATABASE;
+switch datafile all;
+switch tempfile all;
+RECOVER DATABASE;
+}
+EXIT
+EOF
+
+nohup ./restore_recover_INASPE07_20220427.sh > restore_recover_INASPE07_20220427.log &
+Start at Wed Apr 27 13:12:04 HKT 2022
+End at Wed Apr 27 13:12:04 HKT 2022
+
+tail -f restore_recover_INASPE07_20220427.log
+starting media recovery
+
+new media label is "DC1DBBackupDD12.006,DC2DBCloneDD12.003" for piece "arch_POHK7PSF_0j0psc0m_203795_1_1"
+channel d1: starting archived log restore to default destination
+channel d1: restoring archived log
+archived log thread=1 sequence=28124
+channel d1: restoring archived log
+archived log thread=1 sequence=28125
+channel d1: reading from backup piece arch_POHK7PSF_0j0psc0m_203795_1_1
+channel d1: piece handle=arch_POHK7PSF_0j0psc0m_203795_1_1 tag=TAG20220401T174037
+channel d1: restored backup piece 1
+channel d1: restore complete, elapsed time: 00:03:35
+archived log file name=/oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_04_28/o1_mf_1_28124_k6ns1l67_.arc thread=1 sequence=28124
+channel default: deleting archived log(s)
+archived log file name=/oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_04_28/o1_mf_1_28124_k6ns1l67_.arc RECID=40277 STAMP=1103219727
+archived log file name=/oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_04_28/o1_mf_1_28125_k6ns4tl2_.arc thread=1 sequence=28125
+channel default: deleting archived log(s)
+archived log file name=/oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_04_28/o1_mf_1_28125_k6ns4tl2_.arc RECID=40278 STAMP=1103219740
+unable to find archived log
+archived log thread=1 sequence=28126
+released channel: d1
+released channel: d2
+released channel: d3
+released channel: d4
+released channel: d5
+released channel: d6
+released channel: d7
+released channel: d8
+released channel: d9
+released channel: d10
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 04/28/2022 17:56:48
+RMAN-06054: media recovery requesting unknown archived log for thread 1 with sequence 28126 and starting SCN of 13145548747226
+
+RMAN>
+
+Recovery Manager complete.
+
+==========================================================================================
+==========================================================================================
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 14:11:33 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+14:11:40 SYS @ INASPE07:CDB$ROOT:>recover database using backup controlfile until cancel;
+ORA-00279: change 13144956601748 generated at 03/31/2022 13:15:18 needed for thread 1
+ORA-00289: suggestion :
+/oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_04_27/o1_mf_1_28110_%u_.arc
+ORA-00280: change 13144956601748 for thread 1 is in sequence #28110
+
+
+14:11:57 Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+CANCEL
+Media recovery cancelled.
+14:12:03 SYS @ INASPE07:CDB$ROOT:>alter database disable block change tracking;
+alter database disable block change tracking
+*
+ERROR at line 1:
+ORA-19759: block change tracking is not enabled
+
+
+14:12:17 SYS @ INASPE07:CDB$ROOT:>alter database set standby database to maximize performance;
+
+Database altered.
+
+14:12:28 SYS @ INASPE07:CDB$ROOT:>alter database open resetlogs ;
+
+Database altered.
+
+14:14:12 SYS @ INASPE07:CDB$ROOT:>select name , open_mode from v$database  ;
+
+NAME      OPEN_MODE
+--------- --------------------
+POHK7PSF  READ WRITE
+
+14:14:27 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PSFSPRD7                       READ WRITE NO
+14:14:39 SYS @ INASPE07:CDB$ROOT:>alter pluggable database PSFSPRD7 close ;
+
+Pluggable database altered.
+
+14:15:06 SYS @ INASPE07:CDB$ROOT:>alter pluggable database PSFSPRD7 rename global_name to INASPR07 ;
+
+Pluggable database altered.
+
+14:15:22 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       MOUNTED
+14:15:28 SYS @ INASPE07:CDB$ROOT:>alter pluggable database INASPR07 open ;
+
+Pluggable database altered.
+.sq
+14:15:56 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+14:16:03 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+=========================================================================================
+=========================================================================================
+## Run nig to change the database name from POHK7PSF to INASPE07.
+=========================================================================================
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 14:17:19 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+14:17:27 SYS @ INASPE07:CDB$ROOT:>shut immediate ;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+14:18:09 SYS @ INASPE07:CDB$ROOT:>startup mount pfile=/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initINASPE07.ora;
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 12686456 bytes
+Variable Size            4160749568 bytes
+Database Buffers         6509559808 bytes
+Redo Buffers               54419456 bytes
+Database mounted.
+14:18:25 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> nid target=/ dbname=INASPE07
+
+DBNEWID: Release 19.0.0.0.0 - Production on Wed Apr 27 14:19:42 2022
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to database POHK7PSF (DBID=2894115844)
+
+Connected to server version 19.7.0
+
+Control Files in database:
+    /oradata/INASPE07/control/control01.ctl
+    /oradata/INASPE07/control/control02.ctl
+
+Change database ID and database name POHK7PSF to INASPE07? (Y/[N]) => Y
+
+Proceeding with operation
+Changing database ID from 2894115844 to 2111291711
+Changing database name from POHK7PSF to INASPE07
+    Control File /oradata/INASPE07/control/control01.ctl - modified
+    Control File /oradata/INASPE07/control/control02.ctl - modified
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-system_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-sysaux_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-undotbs1_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-system_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-sysaux_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-users_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-undotbs1_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-undotbs2_fno- - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-scb_admin_data_fno-1 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-audit_tbs_fno-1 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/data_d-uohk7psf_ts-sqlt_tbs_fno-1 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/system.379.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs.436.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs.1325.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs.363.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs.318.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs.289.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/sysaux.270.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pstemp.479.99062100 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psdefault.274.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/amapp.476.99062125 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/amlarge.403.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/amwork.310.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/apapp.281.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aplarge.259.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aplarge.457.99062124 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aplarge.294.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/apwork.481.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/arapp.352.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/arlarge.455.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/arwork.449.99062127 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aucapp.426.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/bdapp.365.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/bdlarge.386.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/biapp.304.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/bilarge.429.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/biwork.311.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/caapp.291.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cawork.425.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cpapp.362.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cuaudit.320.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cularg1.490.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cularg2.404.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cularg3.405.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cularge.458.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/dpapp.460.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoapp.292.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eolarge.407.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eolarge.293.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/exapp.468.99062169 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/exlarge.411.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fiapp.361.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/filarge.296.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fsapp.360.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fsapp1.257.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fslarge.357.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fswork.339.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glapp.410.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glapp.448.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gllarge.349.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gllarge.469.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gllarge.438.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gllarge.273.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gllarge.258.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glwork.280.99062124 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/hrapp.447.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/hrlarge.441.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/htapp.368.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/inapp.321.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/inlarge.467.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/inwork.409.99062124 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/lcapp.464.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/lclarge.290.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/mgapp.406.99062127 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/mpapp.763.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/mplarge.432.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oeapp.340.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/omapp.456.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/omlarge.367.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/omwork.354.99062168 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pcapp.303.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pclarge.399.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/poapp.359.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/polarge.465.99062123 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/powork.261.99062125 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psimage.297.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.1324.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.282.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.366.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.1326.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.397.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.278.99062159 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptamsg.431.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptapp.373.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptappe.305.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptcmstar.347.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptlock.419.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptprc.408.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptprjwk.413.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptrpts.485.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pttbl.344.99062122 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pttlrg.279.99062109 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pttree.348.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pttree.1157.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptwork.415.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pvapp.323.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pyapp.369.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rsapp.381.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rslarge.308.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/spapp.395.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tdapp.353.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tdlarge.315.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tdwork.451.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tlapp.442.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tlwork.377.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/trapp.345.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/trlarge.380.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/trwork.440.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wsapp.430.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptaudit.471.99062108 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pswork.268.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wslarge.275.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/foapp.454.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/dplarge.417.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pblarge.372.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/mpwork.324.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pgmlarge.382.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eocmwrk.285.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eodslrg.466.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoeplrg.286.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cfgapp.295.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eotplrg.298.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fawork.276.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fowork.330.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aparch.387.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/aparch.416.99062125 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fgtemp.398.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pcwork.390.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/roapp.383.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pbwork.412.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eotpapp.336.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/exarch.374.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pbimage.337.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/diapp.439.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoewlrg.402.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/exwork.422.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/faapp.314.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eocmapp.388.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/falarge.384.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/sacapp.284.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoewapp.1122.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/trarch.335.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/scbpsf.341.99062151 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wmwork.338.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pipswork.277.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoeiapp.376.99062127 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoiulrg.307.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/trimage.435.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/auclrge.444.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoeclrg.343.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/reimage.421.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/scbpsfidx.1327.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rbapp.463.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cswork.394.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wmlarge.272.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/plwork.322.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tpmapp.462.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fgimage.313.99062116 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rswork.371.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/mglarge.452.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/splarge.266.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psimgr.434.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cplarge.437.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eocfapp.332.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/relarge.443.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoppapp.401.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pgmwork.414.99062129 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoecwrk.306.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/folarge.327.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eodsapp.351.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fgapp.433.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/plapp.423.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoepapp.287.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fgarch.331.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pipslrg.370.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wmapp.478.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ararch.389.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/csapp.283.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eobfapp.271.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eocuapp.484.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pcarch.482.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoecapp.346.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rbtemp.453.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoewwrk.302.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pllarge.445.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/wmimage.488.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoeilrg.301.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eopplrg.424.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/foimage.342.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoiuapp.355.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoltapp.446.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gmapp.328.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/reapp.378.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoculrg.312.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoiuwrk.299.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fgwork.474.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pgmapp.364.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rsfapp.489.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/amarch.396.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/bcapp.420.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/cslarge.334.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/dpwork.358.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eocmlrg.300.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/saclrge.333.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/inarch.317.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eoepwrk.265.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/fglarge.309.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pbapp.385.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glarch.316.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/rework.459.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pipsapp.325.99062115 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glmtd.392.99062130 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glytd.450.99062137 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glmtdidx.393.99062150 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glmtdidx.319.99062147 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glytdidx.329.99062149 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glytdidx.473.99062147 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/tde_gate.475.99062097 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladb.418.99062128 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladb.472.99062151 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladbidx.483.99062149 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladbidx.461.99062154 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/sqlt_tbs.375.99062096 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psimage2.1328.99063560 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/users.1372.99066552 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/scb_admin_data.1373.99066570 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs2.1982.100860478 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/undotbs2.1983.100860480 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/amwork.2051.101512485 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/eolarge.2052.101512500 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladb.2053.101512513 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/gladbidx.2054.101512544 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glmtd.2055.101512562 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/glytd.2056.101512595 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.2057.101512612 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptprc.2058.101512625 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/ptwork.2059.101512641 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/sysaux.827.105956894 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psgtt01.326.106277023 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psmatvw.391.106277023 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/pstemp.696.106793172 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/psindex.1446.107535962 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.821.98364744 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.759.98212796 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oratemp.511.99066496 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp_01.db - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.822.98364744 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.823.98364744 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.824.98364744 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.825.98364744 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.826.98364745 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oratemp.515.99066496 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oratemp.520.99066496 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oratemp.1370.99066496 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/temp.1374.99066572 - dbid changed, wrote new name
+    Datafile /oradata/INASPE07/oratemp.1984.100868641 - dbid changed, wrote new name
+    Control File /oradata/INASPE07/control/control01.ctl - dbid changed, wrote new name
+    Control File /oradata/INASPE07/control/control02.ctl - dbid changed, wrote new name
+    Instance shut down
+
+Database name changed to INASPE07.
+Modify parameter file and generate a new password file before restarting.
+Database ID for database INASPE07 changed to 2111291711.
+All previous backups and archived redo logs for this database are unusable.
+Database is not aware of previous backups and archived logs in Recovery Area.
+Database has been shutdown, open database with RESETLOGS option.
+Succesfully changed database name and ID.
+DBNEWID - Completed succesfully.
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> vi /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initINASPE07.ora
+change the db_name to INASPE07.
+comment
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 14:25:48 2022
+Version 19.7.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+Connected to an idle instance.
+
+14:26:08 SYS @ idle:>startup mount pfile=/u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initINASPE07.ora ;
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 12686456 bytes
+Variable Size            4160749568 bytes
+Database Buffers         6509559808 bytes
+Redo Buffers               54419456 bytes
+Database mounted.
+14:26:24 SYS @ idle:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  MOUNTED
+
+14:26:27 SYS @ idle:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 INASPR07                       MOUNTED
+14:26:39 SYS @ idle:>alter database open resetlogs ;
+
+Database altered.
+
+14:28:07 SYS @ idle:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+14:28:12 SYS @ idle:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+14:28:23 SYS @ idle:>show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      INASPE07
+db_unique_name                       string      INASPE07_HKLVDPAPP050
+global_names                         boolean     FALSE
+instance_name                        string      INASPE07
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      INASPE07_HKLVDPAPP050.hk.stand
+                                                 ardchartered.com
+20:06:03 SYS @ idle:>alter session set container = INASPR07 ;
+
+Session altered.
+
+20:10:58 SYS @ idle:>set pagesize 100 ;
+20:11:15 SYS @ idle:>@c_datacut.sql
+
+COU BUSIN AS_OF_DATE           PROCESS_DATE
+--- ----- -------------------- --------------------
+IND 328   01 Jan 2012 00:00:00 01 Apr 2022 00:00:00
+IND 179   01 Jan 2019 00:00:00 01 Apr 2022 00:00:00
+IND 335   01 Feb 2003 00:00:00 01 Apr 2022 00:00:00
+IND 338   05 Mar 2005 00:00:00 01 Apr 2022 00:00:00
+IND 339   01 Jan 2004 00:00:00 01 Apr 2022 00:00:00
+IND 462   01 Sep 2019 00:00:00 01 Apr 2022 00:00:00
+IND 342   01 Jun 2004 00:00:00 01 Apr 2022 00:00:00
+INC 343   01 Jan 2010 00:00:00 01 Apr 2022 00:00:00
+IND 630   01 Jan 2006 00:00:00 01 Apr 2022 00:00:00
+IND 224   05 Jun 2006 00:00:00 01 Apr 2022 00:00:00
+IND 168   21 Jul 2002 00:00:00 01 Apr 2022 00:00:00
+MUS 250   01 Feb 2003 00:00:00 01 Apr 2022 00:00:00
+
+12 rows selected.
+
+
+14:29:15 SYS @ idle:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.7.0.0.0
+
+
+====================================================================================================================================================
+====================================================================================================================================================
+
+======================================================================================================
+======================================================================================================
+cd /home/oracle/CR1115173
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> ls -lrt rman*.sh
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cp rman_backup_AFASPE10_20220425.sh rman_backup_INASPE07_20220427.sh
+
+vi rman_backup_INASPE07_20220427.sh
+:%s/AFASPE10/INASPE07/g
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> cat rman_backup_INASPE07_20220427.sh
+export ORACLE_SID=INASPE07
+rman target=/ << EOF
+run
+{
+ allocate channel c1 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c2 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c3 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c4 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c5 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c6 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c7 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c8 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c9 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c10 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c11 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c12 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ backup as compressed backupset full database plus archivelog;
+ backup current controlfile format '/oradata/INASPE07/backup/ctrl_%d_%U';
+ RELEASE CHANNEL c1;
+ RELEASE CHANNEL c2;
+ RELEASE CHANNEL c3;
+ RELEASE CHANNEL c4;
+ RELEASE CHANNEL c5;
+ RELEASE CHANNEL c6;
+ RELEASE CHANNEL c7;
+ RELEASE CHANNEL c8;
+ RELEASE CHANNEL c9;
+ RELEASE CHANNEL c10;
+ RELEASE CHANNEL c11;
+ RELEASE CHANNEL c12;
+ }
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> grep / rman_backup_INASPE07_20220425.sh
+rman target=/ << EOF
+ allocate channel c1 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c2 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c3 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c4 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c5 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c6 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c7 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c8 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c9 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c10 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c11 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ allocate channel c12 device type disk format '/oradata/INASPE07/backup/%d_%U';
+ backup current controlfile format '/oradata/INASPE07/backup/ctrl_%d_%U';
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> ls -ld /oradata/INASPE07/backup
+ls: cannot access /oradata/INASPE07/backup: No such file or directory
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> mkdir -p /oradata/INASPE07/backup
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [INASPE07]
+> nohup ./rman_backup_INASPE07_20220427.sh > rman_backup_INASPE07_20220427.log &
+
+Started at Wed Apr 27 14:34:05 HKT 2022
+Ended at Mon Apr 25 14:04:30 HKT 2022
+
+tail -f rman_backup_INASPE07_20220427.log
+
+oracle@HKLVDPAPP050:/home/oracle/CR1115173 [FRTBPSG4]
+> cd /oradata/INASPE07/backup
+oracle@HKLVDPAPP050:/oradata/INASPE07/backup [FRTBPSG4]
+> chmod 644 *
+oracle@HKLVDPAPP050:/oradata/INASPE07/backup [INASPE07]
+> pwd
+/oradata/INASPE07/backup
+oracle@HKLVDPAPP050:/oradata/INASPE07/backup [INASPE07]
+> pwd
+/oradata/INASPE07/backup
+oracle@HKLVDPAPP050:/oradata/INASPE07/backup [INASPE07]
+> ls -al
+total 49009812
+drwxr-xr-x 2 oracle oinstall       4096 Apr 28 20:29 .
+drwxr-xr-x 7 oracle oinstall      12288 Apr 28 19:25 ..
+-rw-r--r-- 1 oracle oinstall  129662976 Apr 28 20:29 ctrl_INASPE07_3h0s3s1e_1_1
+-rw-r--r-- 1 oracle oinstall    3741696 Apr 28 20:13 INASPE07_2d0s3r41_1_1
+-rw-r--r-- 1 oracle oinstall 1222451200 Apr 28 20:19 INASPE07_2e0s3r4g_1_1
+-rw-r--r-- 1 oracle oinstall 2505973760 Apr 28 20:19 INASPE07_2f0s3r4g_1_1
+-rw-r--r-- 1 oracle oinstall 3300777984 Apr 28 20:27 INASPE07_2g0s3r4g_1_1
+-rw-r--r-- 1 oracle oinstall 3612360704 Apr 28 20:27 INASPE07_2h0s3r4h_1_1
+-rw-r--r-- 1 oracle oinstall 6273236992 Apr 28 20:29 INASPE07_2i0s3r4h_1_1
+-rw-r--r-- 1 oracle oinstall 4956364800 Apr 28 20:28 INASPE07_2j0s3r4i_1_1
+-rw-r--r-- 1 oracle oinstall 4909457408 Apr 28 20:28 INASPE07_2k0s3r4j_1_1
+-rw-r--r-- 1 oracle oinstall 3440148480 Apr 28 20:28 INASPE07_2l0s3r4k_1_1
+-rw-r--r-- 1 oracle oinstall 3321004032 Apr 28 20:27 INASPE07_2m0s3r4l_1_1
+-rw-r--r-- 1 oracle oinstall 1516371968 Apr 28 20:18 INASPE07_2n0s3r4l_1_1
+-rw-r--r-- 1 oracle oinstall 2177474560 Apr 28 20:20 INASPE07_2o0s3r4m_1_1
+-rw-r--r-- 1 oracle oinstall 2510274560 Apr 28 20:24 INASPE07_2p0s3r4n_1_1
+-rw-r--r-- 1 oracle oinstall  226738176 Apr 28 20:19 INASPE07_2q0s3rd2_1_1
+-rw-r--r-- 1 oracle oinstall 1445175296 Apr 28 20:22 INASPE07_2r0s3rds_1_1
+-rw-r--r-- 1 oracle oinstall    5103616 Apr 28 20:19 INASPE07_2s0s3rec_1_1
+-rw-r--r-- 1 oracle oinstall  597860352 Apr 28 20:20 INASPE07_2t0s3ref_1_1
+-rw-r--r-- 1 oracle oinstall 1647460352 Apr 28 20:24 INASPE07_2u0s3rfi_1_1
+-rw-r--r-- 1 oracle oinstall 1600389120 Apr 28 20:24 INASPE07_2v0s3rgm_1_1
+-rw-r--r-- 1 oracle oinstall  925384704 Apr 28 20:23 INASPE07_300s3rgn_1_1
+-rw-r--r-- 1 oracle oinstall 1644756992 Apr 28 20:25 INASPE07_310s3rjn_1_1
+-rw-r--r-- 1 oracle oinstall  303169536 Apr 28 20:24 INASPE07_320s3rmc_1_1
+-rw-r--r-- 1 oracle oinstall  262438912 Apr 28 20:24 INASPE07_330s3rn6_1_1
+-rw-r--r-- 1 oracle oinstall  684769280 Apr 28 20:25 INASPE07_340s3rnd_1_1
+-rw-r--r-- 1 oracle oinstall    1122304 Apr 28 20:24 INASPE07_350s3rne_1_1
+-rw-r--r-- 1 oracle oinstall  459268096 Apr 28 20:25 INASPE07_360s3rnf_1_1
+-rw-r--r-- 1 oracle oinstall    1073152 Apr 28 20:24 INASPE07_370s3rnv_1_1
+-rw-r--r-- 1 oracle oinstall    1261568 Apr 28 20:24 INASPE07_380s3ro0_1_1
+-rw-r--r-- 1 oracle oinstall  214310912 Apr 28 20:25 INASPE07_390s3ro4_1_1
+-rw-r--r-- 1 oracle oinstall    1073152 Apr 28 20:24 INASPE07_3a0s3rok_1_1
+-rw-r--r-- 1 oracle oinstall  194330624 Apr 28 20:25 INASPE07_3b0s3rol_1_1
+-rw-r--r-- 1 oracle oinstall   85917696 Apr 28 20:25 INASPE07_3c0s3rp4_1_1
+-rw-r--r-- 1 oracle oinstall    1073152 Apr 28 20:25 INASPE07_3d0s3rp8_1_1
+-rw-r--r-- 1 oracle oinstall    1073152 Apr 28 20:25 INASPE07_3e0s3rpc_1_1
+-rw-r--r-- 1 oracle oinstall    1073152 Apr 28 20:25 INASPE07_3f0s3rpd_1_1
+-rw-r--r-- 1 oracle oinstall    1172992 Apr 28 20:29 INASPE07_3g0s3s1d_1_1
+
+oracle@HKLVDPAPP050:/oradata [INASPE07]
+> du -m INASPE07
+138     INASPE07/control
+77426   INASPE07/backup
+1152227 INASPE07
+
+> du -m /oradata/INASPE07
+0       /oradata/INASPE07/audit
+74      /oradata/INASPE07/control
+2504    /oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog/2022_02_14
+2504    /oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/archivelog
+111     /oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/autobackup/2022_02_14
+111     /oradata/INASPE07/arch/INASPE07_HKLVDPAPP050/autobackup
+2614    /oradata/INASPE07/arch/INASPE07_HKLVDPAPP050
+2614    /oradata/INASPE07/arch
+157     /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/trace
+3       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/alert
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/incident
+6       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/metadata
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/metadata_pv
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/metadata_dgif
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/hm
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/ir
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/incpkg
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/sweep
+1       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/lck
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/cdump
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/stage
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/debug
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/test
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/attention
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/ddl
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/imdb
+0       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log/hcs
+1       /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07/log
+165     /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050/INASPE07
+165     /oradata/INASPE07/diagnostic/diag/rdbms/INASPE07_hklvdpapp050
+165     /oradata/INASPE07/diagnostic/diag/rdbms
+165     /oradata/INASPE07/diagnostic/diag
+165     /oradata/INASPE07/diagnostic
+60914   /oradata/INASPE07/backup
+851036  /oradata/INASPE07
+
+=========================================================================
+Ends
+=========================================================================
+
+## Not required :scp * oracle@10.23.229.85:/oradata/INASPE07/backup
+SCB@april2022

@@ -1,0 +1,124 @@
+> export ORACLE_SID=INASPE07
+> echo $ORACLE_HOME
+/u01/app/oracle/product/db/19.14.0.0.Jan2022
+
+===================================================================================
+===================================================================================
+> echo $TNS_ADMIN
+/u01/app/oracle/local/network/admin
+
+> vi /u01/app/oracle/local/network/admin/tnsnames.ora
+
+INASPR07 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.229.85)(PORT = 1623))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = INASPR07.hk.standardchartered.com)
+    )
+  )
+
+===================================================================================  
+===================================================================================
+> tnsping INASPR07
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 29-APR-2022 15:11:24
+
+Copyright (c) 1997, 2021, Oracle.  All rights reserved.
+
+Used parameter files:
+/u01/app/oracle/local/network/admin/sqlnet.ora
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.229.85)(PORT = 1623))) (CONNECT_DATA = (SERVICE_NAME = INASPR07.hk.standardchartered.com)))
+OK (0 msec)
+
+===================================================================================
+===================================================================================
+> sqlplus testid_01/Apr_2022@INASPR07
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Fri Apr 29 13:12:00 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+15:12:01 TESTID_01 @ INASPE07:INASPR07:>show con_name
+
+CON_NAME
+------------------------------
+INASPR07
+
+===================================================================================
+===================================================================================
+oracle@hklvddapp068:/home/oracle [INASPE07]
+> export ORACLE_SID=INASPE07
+oracle@hklvddapp068:/home/oracle [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Fri Apr 29 15:12:38 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+15:12:44 SYS @ INASPE07:CDB$ROOT:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+15:12:52 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+15:13:00 SYS @ INASPE07:CDB$ROOT:>alter session set container = INASPR07 ;
+
+Session altered.
+
+15:13:08 SYS @ INASPE07:CDB$ROOT:>set pagesize 50 ;
+15:13:15 SYS @ INASPE07:CDB$ROOT:>@/home/oracle/restoration/c_datacut.sql
+
+COUNTRY   BUSINESS_UNIT   AS_OF_DATE                    PROCESS_DATE
+--------- --------------- ----------------------------- -----------------------------
+IND       328             01 Jan 2012 00:00:00          01 Apr 2022 00:00:00
+IND       179             01 Jan 2019 00:00:00          01 Apr 2022 00:00:00
+IND       335             01 Feb 2003 00:00:00          01 Apr 2022 00:00:00
+IND       338             05 Mar 2005 00:00:00          01 Apr 2022 00:00:00
+IND       339             01 Jan 2004 00:00:00          01 Apr 2022 00:00:00
+IND       462             01 Sep 2019 00:00:00          01 Apr 2022 00:00:00
+IND       342             01 Jun 2004 00:00:00          01 Apr 2022 00:00:00
+INC       343             01 Jan 2010 00:00:00          01 Apr 2022 00:00:00
+IND       630             01 Jan 2006 00:00:00          01 Apr 2022 00:00:00
+IND       224             05 Jun 2006 00:00:00          01 Apr 2022 00:00:00
+IND       168             21 Jul 2002 00:00:00          01 Apr 2022 00:00:00
+MUS       250             01 Feb 2003 00:00:00          01 Apr 2022 00:00:00
+
+12 rows selected.
+
+===================================================================================
+
