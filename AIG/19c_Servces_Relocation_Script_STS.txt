@@ -1,0 +1,109 @@
+srvctl status service -d POHK1AFR
+srvctl status service -d POHK1APC
+srvctl status service -d POHK1MES
+srvctl status service -d POHK1COM
+
+
+Service Relocation From Node2[PSTS005] to Node1[PSTS006] and Stop Service running on node2
+------------------------------------------------------------------------------------------
+
+srvctl stop service -d POHK1APC -s aqapac_oltp_prod -i POHK1APC2
+srvctl stop service -d POHK1APC -s stsapac_ro -i POHK1APC2
+srvctl stop service -d POHK1APC -s stsapac_rw -i POHK1APC2
+
+srvctl relocate service -d POHK1APC -s cn_oltp_prod -i POHK1APC2 -t POHK1APC1
+srvctl relocate service -d POHK1APC -s hk_oltp_prod -i POHK1APC2 -t POHK1APC1
+srvctl relocate service -d POHK1APC -s id_oltp_prod -i POHK1APC2 -t POHK1APC1
+srvctl relocate service -d POHK1APC -s my_oltp_prod -i POHK1APC2 -t POHK1APC1
+srvctl relocate service -d POHK1APC -s ph_oltp_prod -i POHK1APC2 -t POHK1APC1
+srvctl relocate service -d POHK1APC -s sg_oltp_prod -i POHK1APC2 -t POHK1APC1
+
+---
+
+srvctl stop service -d POHK1AFR -s aqafri_oltp_prod -i POHK1AFR2
+srvctl stop service -d POHK1AFR -s stsafri_ro -i POHK1AFR2
+srvctl stop service -d POHK1AFR -s stsafri_rw -i POHK1AFR2
+
+srvctl relocate service -d POHK1AFR -s ci_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s cm_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s gb_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s gh_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s gm_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s mu_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s sl_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s tz_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s ug_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s us_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s vn_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s za_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s zm_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+srvctl relocate service -d POHK1AFR -s zw_oltp_prod -i POHK1AFR2 -t POHK1AFR1
+
+---
+
+srvctl stop service -d POHK1MES -s aqmesa_oltp_prod -i POHK1MES2
+srvctl stop service -d POHK1MES -s stsmesa_ro -i POHK1MES2
+srvctl stop service -d POHK1MES -s stsmesa_rw -i POHK1MES2
+
+srvctl relocate service -d POHK1MES -s bd_oltp_prod -i POHK1MES2 -t POHK1MES1
+srvctl relocate service -d POHK1MES -s bn_oltp_prod -i POHK1MES2 -t POHK1MES1
+srvctl relocate service -d POHK1MES -s np_oltp_prod -i POHK1MES2 -t POHK1MES1
+srvctl relocate service -d POHK1MES -s stp_oltp_prod -i POHK1MES2 -t POHK1MES1
+
+---
+
+srvctl stop service -d POHK1COM -s aqcomm_oltp_prod -i POHK1COM2
+srvctl stop service -d POHK1COM -s stscomm_ro -i POHK1COM2
+srvctl stop service -d POHK1COM -s stscomm_rw -i POHK1COM2
+
+srvctl relocate service -d POHK1COM -s comm_oltp_prod -i POHK1COM2 -t POHK1COM1
+
+========================================================================================================
+
+Service Relocation From Node1[PSTS006] to Node2[PSTS005] and Stop Service running on node1
+------------------------------------------------------------------------------------------
+
+srvctl stop service -d POHK1APC -s aqapac_oltp_prod -i POHK1APC1
+srvctl stop service -d POHK1APC -s stsapac_ro -i POHK1APC1
+srvctl stop service -d POHK1APC -s stsapac_rw -i POHK1APC1
+
+srvctl relocate service -d POHK1APC -s in_oltp_prod -i POHK1APC1 -t POHK1APC2
+srvctl relocate service -d POHK1APC -s th_oltp_prod -i POHK1APC1 -t POHK1APC2
+srvctl relocate service -d POHK1APC -s tw_oltp_prod -i POHK1APC1 -t POHK1APC2
+
+---
+
+srvctl stop service -d POHK1AFR -s aqafri_oltp_prod -i POHK1AFR1
+srvctl stop service -d POHK1AFR -s stsafri_ro -i POHK1AFR1
+srvctl stop service -d POHK1AFR -s stsafri_rw -i POHK1AFR1
+
+srvctl relocate service -d POHK1AFR -s bw_oltp_prod -i POHK1AFR1 -t POHK1AFR2
+srvctl relocate service -d POHK1AFR -s ke_oltp_prod -i POHK1AFR1 -t POHK1AFR2
+srvctl relocate service -d POHK1AFR -s ng_oltp_prod -i POHK1AFR1 -t POHK1AFR2
+srvctl relocate service -d POHK1AFR -s snas_oltp_prod -i POHK1AFR1 -t POHK1AFR2
+
+---
+
+srvctl stop service -d POHK1MES -s aqmesa_oltp_prod -i POHK1MES1
+srvctl stop service -d POHK1MES -s stsmesa_ro -i POHK1MES1
+srvctl stop service -d POHK1MES -s stsmesa_rw -i POHK1MES1
+
+srvctl relocate service -d POHK1MES -s ae_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s ao_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s au_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s bh_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s iq_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s jo_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s lk_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s om_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s pk_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s qa_oltp_prod -i POHK1MES1 -t POHK1MES2
+srvctl relocate service -d POHK1MES -s sa_oltp_prod -i POHK1MES1 -t POHK1MES2
+
+---
+
+srvctl stop service -d POHK1COM -s aqcomm_oltp_prod -i POHK1COM1
+srvctl stop service -d POHK1COM -s stscomm_ro -i POHK1COM1
+srvctl stop service -d POHK1COM -s stscomm_rw -i POHK1COM1
+
+srvctl relocate service -d POHK1COM -s gps_oltp_prod -i POHK1COM1 -t POHK1COM2

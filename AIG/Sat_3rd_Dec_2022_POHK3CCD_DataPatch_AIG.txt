@@ -1,0 +1,91 @@
+=========================================================
+AIG FOR POHK3CCD - DATAPATCH EXECUTION - 19c JULY 2022 RU
+=========================================================
+
+NOTE: Capture following first :-
+---------------------------------
+A. All PDBs status should OPEN READ WRITE (NO RESTRICTED) for each CDBs
+
+For each CDBs --> SQL> show pdbs;
+
+B. All database services should up and running on respective CDBs
+
+$ srvctl status service -db <CDB_NAME>
+
+
+1. Perform datapatch sanity check
+
+HKLPDPS2B001 / 002 / 003
+
+$ . oraenv  --> POHK3CCD1/2/3
+$ $ORACLE_HOME/OPatch/datapatch -sanity_checks
+
+2. Review the output and make sure all checked items are OK
+
+3. Disable triggers:
+
+$ mkdir -p /tmp/mtest
+$ cd $ORACLE_HOME/rdbms/admin
+
+$ $ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ $ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+4. Perform datapatch for POHK3CCD
+
+$ cd $ORACLE_HOME/OPatch
+$ ./datapatch -verbose -skip_upgrade_check
+
+5. Database registry check for POHK3CCD and its PDBs
+
+sqlplus / as sysdba
+set markup html on
+
+spool registry_sqlpatch.html
+sho pdbs
+select * from PDB_PLUG_IN_VIOLATIONS where STATUS != 'RESOLVED';
+sho con_name
+select PATCH_ID, ACTION,ACTION_TIME,DESCRIPTION,STATUS from registry$sqlpatch;
+select COMP_ID, COMP_NAME, VERSION, STATUS from dba_registry;
+select OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS from dba_objects where STATUS = 'INVALID' and OWNER in ('SYS','SYSTEM');
+
+alter session set container = CDB$ROOT;
+show con_name
+select PATCH_ID, ACTION,ACTION_TIME,DESCRIPTION,STATUS from registry$sqlpatch;
+select COMP_ID, COMP_NAME, VERSION, STATUS from dba_registry;
+select OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS from dba_objects where STATUS = 'INVALID' and OWNER in ('SYS','SYSTEM');
+
+
+alter session set container = PDB$SEED;
+sho con_name
+select PATCH_ID, ACTION,ACTION_TIME,DESCRIPTION,STATUS from registry$sqlpatch;
+select COMP_ID, COMP_NAME, VERSION, STATUS from dba_registry;
+select OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS from dba_objects where STATUS = 'INVALID' and OWNER in ('SYS','SYSTEM');
+
+
+## repeat the follow lines for each PDB hosted by POHK3CCD #####
+
+alter session set container = PDBP_CAS; <<<<<<<<< change the name for your PDB
+sho con_name
+select PATCH_ID, ACTION,ACTION_TIME,DESCRIPTION,STATUS from registry$sqlpatch;
+select COMP_ID, COMP_NAME, VERSION, STATUS from dba_registry;
+select OWNER, OBJECT_NAME, OBJECT_TYPE, STATUS from dba_objects where STATUS = 'INVALID' and OWNER in ('SYS','SYSTEM');
+
+spool off
+quit
+
+
+6. Enable triggers:
+
+$ cd $ORACLE_HOME/rdbms/admin
+$ $ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ $ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+7. Database healtcheck
+
+- All PDBs status should OPEN READ WRITE (NO RESTRICTED) for each CDBs
+
+For each CDBs --> SQL> show pdbs;
+
+- All database services should up and running on respective CDBs
+
+srvctl status service -db <CDB_NAME>

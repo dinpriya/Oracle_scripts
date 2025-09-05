@@ -1,0 +1,102 @@
+Run Book for Production DB backup & Reclaiming CLOB space
+*******************************************************************************************************************
+Host: PRD DB Server - 10.23.90.210 Or If DR DB server- 10.23.90.211
+Container DB: POHK1ICM
+Server name :- HKLVDPAPP074
+
+PDB Name: PDBP_ICM_PK
+Service Name : pdbp_icm_pk_svc.hk.standardchartered.com
+Backup for Schemas : ICM_PK_AP
+
+Transfer the Dumps : 10.23.90.210 / path - /oradump/DAAS/
+*******************************************************************************************************************
+
+	1. Login to PRD DB Server - 10.23.90.210 Or If DR DB server- 10.23.90.211 
+mkdir /oradump/CHANGES/<CRNO>
+-- owner Rights Need to be oracle 
+. oraenv
+POHK1ICM
+
+	2. sqlplus / as sysdba
+		2.1 alter session set container=PDBP_ICM_PK;
+		2.2 sql> create directory expdp_<CRQ> as '/oradump/CHANGES/<CRQ>';
+
+	3. If required Withdraw the system password from PIM for PDBP_ICM_PK 
+
+	4. TO check the CLOB data Size
+		sql> select segment_name, sum(bytes)/1024/1024/1024 AS GB , TABLESPACE_NAME, count(*) EXTENTS from dba_segments where owner='ICM_PK_AP' and segment_name in ('INTE_IN_OUT_MESSAGES','CUST_EVENTS_LOG','SYS_IL0000079798C00007$$','SYS_LOB0000079798C00007$$') group by segment_name, TABLESPACE_NAME order by extents desc;
+
+	4.1 TO check the DB data Size
+		sql>select owner, sum(bytes)/1024/1024/1024 AS GB , TABLESPACE_NAME, count(*) EXTENTS from dba_segments where owner='ICM_PK_AP'  group by owner, TABLESPACE_NAME order by extents desc;
+
+	4.2 share this output Application Team
+
+	5. cd /oradump/CHANGES/<CRQ>;
+
+	6. Export table dumps
+		nohup expdp userid=system/******@PDBP_ICM_PK TABLES=ICM_PK_AP.CUST_EVENTS_LOG,ICM_PK_AP.INTE_IN_OUT_MESSAGES directory=expdp_<CRQ> dumpfile=expdp_icm_clob.dmp logfile=expdp_icm_clob.log PARALLEL=2 COMPRESSION=NONE
+
+	7. Truncate & Import the Exported tables in same schema
+	7.1 Truncate The exported tables with drop storage.
+		 sql> truncate table ICM_PK_AP.CUST_EVENTS_LOG drop storage;
+		 sql> truncate table ICM_PK_AP.INTE_IN_OUT_MESSAGES drop storage;
+	7.2 Import table dumps
+		 nohup impdb userid=system/******@PDBP_ICM_PK TABLES=ICM_PK_AP.CUST_EVENTS_LOG,ICM_PK_AP.INTE_IN_OUT_MESSAGES directory=expdp_<CRQ> dumpfile=expdp_icm_clob.dmp logfile=impdp_icm_clob.log TABLE_EXISTS_ACTION=REPLACE CONTENT=ALL PARALLEL=2
+
+	8. TO check the CLOB data Size
+		sql> select segment_name, sum(bytes)/1024/1024/1024 AS GB , TABLESPACE_NAME, count(*) EXTENTS from dba_segments where owner='ICM_PK_AP' and segment_name in ('INTE_IN_OUT_MESSAGES','CUST_EVENTS_LOG','SYS_IL0000079798C00007$$','SYS_LOB0000079798C00007$$') group by segment_name, TABLESPACE_NAME order by extents desc;
+
+	8.2 TO check the DB data Size
+		 sql>select owner, sum(bytes)/1024/1024/1024 AS GB , TABLESPACE_NAME, count(*) EXTENTS from dba_segments where owner='ICM_PK_AP'  group by owner, TABLESPACE_NAME order by extents desc;
+
+	9. exec dbms_stats.gather_schema_stats(ownname=>'ICM_PK_AP',ESTIMATE_PERCENT=>10,cascade=>TRUE,granularity=>'ALL',method_opt=>'FOR ALL COLUMNS SIZE REPEAT');
+
+	10. share this output Application Team.
+
+Note : <CRQ> - Change Number
+---   ROLLBACK if  required -------
+
+Not required as objective of this AIG is only to extract data of the schema. No changes made at Database level
+
+########### TNS connection string #############
+
+ICM_PK_PROD=
+  (DESCRIPTION_LIST=
+	(LOAD_BALANCE=off)(FAILOVER=on)
+		(DESCRIPTION=
+			(ADDRESS_LIST= 
+			(ADDRESS=(PROTOCOL=TCP)(HOST=10.23.90.210)(PORT=1621)))
+			(CONNECT_DATA=
+			(SERVICE_NAME=pdbp_icm_pk_svc.hk.standardchartered.com)))
+(DESCRIPTION=
+	(ADDRESS_LIST= 
+		(ADDRESS=(PROTOCOL=TCP)(HOST=10.23.90.211)(PORT=1621)))
+	(CONNECT_DATA=
+		(SERVICE_NAME=pdbp_icm_pk_svc.hk.standardchartered.com)))) 
+
+JDBC:
+jdbc:oracle:thin:@(DESCRIPTION_LIST=
+	(LOAD_BALANCE=off)(FAILOVER=on)
+		(DESCRIPTION=
+			(ADDRESS_LIST= 
+			(ADDRESS=(PROTOCOL=TCP)(HOST=10.23.90.210)(PORT=1621)))
+			(CONNECT_DATA=
+			(SERVICE_NAME=pdbp_icm_pk_svc.hk.standardchartered.com)))
+(DESCRIPTION=
+	(ADDRESS_LIST= 
+		(ADDRESS=(PROTOCOL=TCP)(HOST=10.23.90.211)(PORT=1621)))
+	(CONNECT_DATA=
+		(SERVICE_NAME=pdbp_icm_pk_svc.hk.standardchartered.com)))) 
+
+
+
+
+
+
+
+
+
+
+ 
+
+

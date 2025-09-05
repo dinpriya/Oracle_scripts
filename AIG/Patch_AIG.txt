@@ -1,0 +1,18 @@
+AIG - 19c JULY 2022 RU patching - DR server hklvdsapp090 – scheduled on 10 November 2022
+
+1. Data Guard health check between hklvdpapp090 & hklvdsapp090
+2. Shutdown database in hklvdsapp090
+3. Apply 19c July 2022 RU patch and other required one-off patches
+4. Startup database in hklvdsapp090
+5. Data Guard health check between hklvdpapp090 & hklvdsapp090
+
+
+AIG - 19c JULY 2022 RU patching - PROD server hklvdpapp090 – scheduled on 17 November 2022
+
+1. Data Guard health check between hklvdpapp090 & hklvdsapp090
+2. Shutdown database in hklvdpapp090
+3. Apply 19c July 2022 RU patch and other required one-off patches
+4. Startup database in hklvdpapp090
+5. Data Guard health check between hklvdpapp090 & hklvdsapp090
+6. Perform post patch script execution (datapatch)
+7. Database health check

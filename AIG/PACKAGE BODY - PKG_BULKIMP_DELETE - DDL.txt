@@ -1,0 +1,445 @@
+12:44:24 SYS @ POHK3CCD1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         5 PDBP_CAS                       READ WRITE NO
+12:44:48 SYS @ POHK3CCD1:CDB$ROOT:>SELECT DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_BULKIMP_DELETE','SYS') FROM dual;
+
+DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_BULKIMP_DELETE','SYS')
+--------------------------------------------------------------------------------
+
+  CREATE OR REPLACE NONEDITIONABLE PACKAGE BODY "SYS"."PKG_BULKIMP_DELETE"
+AS
+   PROCEDURE pro_tutil_delete (
+      p_groupid   IN   VARCHAR2,
+      p_userid    IN   VARCHAR2,
+      p_impref    IN   VARCHAR2,
+      filetype    IN   VARCHAR2
+   )
+   IS
+      tranno       VARCHAR2 (16);
+      l_txncount   NUMBER;
+      l_count      NUMBER;
+      l_orgcnt     NUMBER;
+      l_cicount    NUMBER;
+      l_check      NUMBER;
+      j            INTEGER;
+      k            INTEGER;
+      btno         varchartab;
+      trx          varchartab;
+          instrrefno   varchartab;
+      status       VARCHAR2 (4);
+   BEGIN
+      SELECT COUNT (brsfilereferenceno) - 1
+        INTO l_txncount
+        FROM ds_bulkimp_response
+       WHERE brsfilereferenceno = p_impref;
+
+      BEGIN
+         /********  CAS Changes Starts here *****************/
+         /*IF filetype = 'SUBACCOUNT'
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM cas_sub_accounts_pnd
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+
+            UPDATE cas_sub_accounts_pnd
+               SET delete_flag = 'Y',
+                   txn_status = '111',
+                   modified_by = p_userid,
+                   modified_date = SYSDATE
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+         ELSIF filetype = 'SI'
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM cas_standing_instr_pnd
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+
+            UPDATE cas_standing_instr_pnd
+               SET delete_flag = 'Y',
+                   txn_status = '111',
+                   modified_by = p_userid,
+                   modified_date = SYSDATE
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+         ELSIF filetype = 'HOLD'
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM cas_hld_rel_pnd
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+
+            UPDATE cas_hld_rel_pnd
+               SET delete_flag = 'Y',
+                   txn_status = '111',
+                   modified_by = p_userid,
+                   modified_date = SYSDATE
+             WHERE file_ref_no = p_impref
+               AND txn_status IN ('109', '110', '111', '115');
+         END IF;
+
+         IF (filetype = 'SUBACCOUNT' OR filetype = 'SI' OR filetype = 'HOLD'
+            )
+         THEN
+            SELECT COUNT (brsfilereferenceno)
+              INTO l_txncount
+              FROM ds_bulkimp_response
+             WHERE brsfilereferenceno = p_impref AND brscode = 'SCBI1';
+
+            IF (l_txncount = l_count)
+            THEN
+               DELETE FROM ds_bulkimp_filestatus
+                     WHERE bfsfilereferenceno = p_impref
+                       AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_response
+                     WHERE brsfilereferenceno = p_impref;
+            ELSE
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'P'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               UPDATE ds_bulkimp_response
+                  SET brsstatus = 'P',
+                      brscode = 'D01'
+                WHERE brsfilereferenceno = p_impref AND brscode = 'SCBI0';
+            END IF;
+         END IF;*/
+
+         /********  CAS Changes ends here *****************/
+         IF (filetype = 'PAYMENT' OR filetype = 'QPAYMENT')
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM ds_pay_txns
+             WHERE paygroupid = p_groupid
+               AND payimportref = p_impref
+               AND deleteflag = 'N'
+               AND paystatuscode IN ('2', '4', '6');
+
+            SELECT paytrxkey
+            BULK COLLECT INTO trx
+              FROM ds_pay_txns
+             WHERE paygroupid = p_groupid
+               AND payimportref = p_impref
+               AND paystatuscode IN ('2', '4', '6');
+
+            UPDATE ds_pay_txns
+               SET deleteflag = 'Y'
+             WHERE payimportref = p_impref
+               AND paygroupid = p_groupid
+               AND paystatuscode IN ('2', '4', '6');
+
+            /*FOR k IN 1 .. trx.COUNT
+            LOOP
+               DELETE FROM ds_pay_instructions
+                     WHERE ppitrxkey = trx (k);
+
+               DELETE FROM ds_pay_fxcontract_dtls
+                     WHERE pfctrxkey = trx (k);
+
+               DELETE FROM ds_pay_invoice_dtls
+                     WHERE pintrxkey = trx (k);
+
+               DELETE FROM ds_pay_doc_checklists
+                     WHERE pdctrxkey = trx (k);
+
+               DELETE FROM ds_pay_custom_invoice_hdr
+                     WHERE pchtrxkey = trx (k);
+
+               DELETE FROM ds_pay_custom_invoice_dtl
+                     WHERE pcktrxkey = trx (k);
+            END LOOP;*/
+         ELSIF (filetype = 'CUSTODY' OR filetype = 'CUSTODYSINGLE' OR filetype=
+'UACSTD')
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM ds_custody_ti_staging
+             WHERE ctigroupid = p_groupid
+               AND ctifilename = p_impref
+               AND ctistatusmesg IN ('Complete', 'Incomplete');
+
+            SELECT COUNT (*)
+              INTO l_cicount
+              FROM ds_custody_ti_staging
+             WHERE ctigroupid = p_groupid
+               AND ctifilename = p_impref
+               AND ctistatusmesg NOT IN ('Complete', 'Incomplete');
+
+            SELECT brsp1
+              INTO l_orgcnt
+              FROM ds_bulkimp_response
+             WHERE brsref = p_impref;
+
+            l_check := l_cicount + l_count;
+
+            DELETE FROM ds_custody_ti_staging
+                  WHERE ctifilename = p_impref
+                    AND ctigroupid = p_groupid
+                    AND ctistatusmesg IN ('Complete', 'Incomplete');
+
+            IF (l_cicount = 0)
+            THEN
+               DELETE FROM ds_bulkimp_filestatus
+                     WHERE bfsfilereferenceno = p_impref
+                       AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_response
+                     WHERE brsfilereferenceno = p_impref;
+            ELSE
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'P'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               UPDATE ds_bulkimp_response
+                  SET brsstatus = 'P',
+                      brscode = 'D01'
+                WHERE brsfilereferenceno = p_impref AND brsref = p_impref;
+            END IF;
+                        ELSIF (filetype = 'CARSPSINGLE')
+                        THEN
+                                SELECT COUNT (*)
+                                INTO l_cicount
+                                        FROM ss_ca_instr
+                                        WHERE groupid = p_groupid
+                                        AND bifilename = p_impref
+                                        AND instrstatus IN ('6', '2');
+                        IF (l_cicount > 0)
+            THEN
+                                SELECT distinct instrrefnum
+                                        BULK COLLECT INTO instrrefno
+                                        FROM ss_ca_instr
+                                        WHERE groupid = p_groupid
+                                        AND bifilename = p_impref
+                                        AND instrstatus IN ('6', '2');
+                                FOR j IN 1 .. instrrefno.COUNT
+                                LOOP
+                                 DELETE FROM SS_CA_INSTR_OPT
+                                 WHERE instrrefnum= instrrefno (j);
+                                END LOOP;
+                        END IF;
+                                SELECT COUNT (*)
+                                        INTO l_count
+                                        FROM ss_ca_instr
+                                        WHERE groupid = p_groupid
+                                        AND bifilename = p_impref
+                                        AND instrstatus IN ('6', '2');
+
+                                SELECT COUNT (*)
+                                        INTO l_cicount
+                                        FROM ss_ca_instr
+                                        WHERE groupid = p_groupid
+                                        AND bifilename = p_impref
+                                        AND instrstatus NOT IN ('6', '2');
+                                    l_check := l_cicount + l_count;
+                         IF (l_count >0)
+            THEN
+            DELETE FROM SS_CA_INSTR
+                                WHERE bifilename = p_impref
+                AND groupid = p_groupid
+                AND instrstatus IN ('6', '2');
+                        END IF;
+            IF (l_cicount = 0)
+            THEN
+               DELETE FROM ds_bulkimp_filestatus
+                     WHERE bfsfilereferenceno = p_impref
+                       AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_response
+                     WHERE brsfilereferenceno = p_impref;
+            ELSE
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'P'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               UPDATE ds_bulkimp_response
+                  SET brsstatus = 'P',
+                      brscode = 'D01'
+                WHERE brsfilereferenceno = p_impref AND brsref = p_impref;
+            END IF;
+                        ELSIF (filetype = 'COLLECTIONS')
+         THEN
+            SELECT dihbatchnbr
+            BULK COLLECT INTO btno
+              FROM ds_ti_ddt_hdr
+             WHERE dihgrpid = p_groupid
+               AND dihimpfilename = p_impref
+               AND dihstatus IN ('C', 'I');
+
+            /*FOR j IN 1 .. btno.COUNT
+            LOOP
+               DELETE FROM ds_ti_ddt_det
+                     WHERE didbatchnbr = btno (j);
+
+               DELETE FROM ds_ti_ddt_invoices
+                     WHERE dinbatchnbr = btno (j);
+            END LOOP;*/
+
+            SELECT COUNT (*)
+              INTO l_count
+              FROM ds_ti_ddt_hdr
+             WHERE dihgrpid = p_groupid
+               AND dihimpfilename = p_impref
+               AND dihstatus IN ('C', 'I');
+
+            SELECT COUNT (*)
+              INTO l_cicount
+              FROM ds_ti_ddt_hdr
+             WHERE dihgrpid = p_groupid
+               AND dihumi = p_impref
+               AND dihstatus NOT IN ('C', 'I');
+
+            l_check := l_cicount + l_count;
+
+            UPDATE ds_ti_ddt_hdr
+               SET dihstatus = 'D'
+             WHERE dihimpfilename = p_impref
+               AND dihgrpid = p_groupid
+               AND dihstatus IN ('I', 'C');
+
+            IF (l_txncount = l_count)
+            THEN
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'D'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_filestatus
+                     WHERE bfsfilereferenceno = p_impref
+                       AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_response
+                     WHERE brsfilereferenceno = p_impref;
+            ELSE
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'P'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               UPDATE ds_bulkimp_response
+                  SET brsstatus = 'P',
+                      brscode = 'D01'
+                WHERE brsfilereferenceno = p_impref AND brscode = 'SN052';
+            END IF;
+         ELSIF (filetype = 'CLS')
+         THEN
+            SELECT COUNT (*)
+              INTO l_count
+              FROM ds_cls_fxtrade_txns
+             WHERE cltgrpid = p_groupid
+               AND cltumi = p_impref
+               AND cltstatus IN ('I', 'C');
+
+            UPDATE ds_cls_fxtrade_txns
+               SET deleteflag = 'N'
+             WHERE cltumi = p_impref
+               AND cltgrpid = p_groupid
+               AND cltstatus IN ('I', 'C');
+         END IF;
+
+         IF (filetype = 'PAYMENT' OR filetype = 'QPAYMENT' OR filetype = 'CLS'
+            )
+         THEN
+            IF (l_txncount = l_count)
+            THEN
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'D'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_filestatus
+                     WHERE bfsfilereferenceno = p_impref
+                       AND bfsgroupid = p_groupid;
+
+               DELETE FROM ds_bulkimp_response
+                     WHERE brsfilereferenceno = p_impref;
+            /*    update ds_bulkimp_response
+              set brsstatus = 'D',BRSCODE='D01'
+            where brsfilereferenceno = p_impref
+                  and brsref=p_impref; */
+            ELSE
+               UPDATE ds_bulkimp_filestatus
+                  SET bfsstatus = 'P'
+                WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+               UPDATE ds_bulkimp_response
+                  SET brsstatus = 'P',
+                      brscode = 'D01'
+                WHERE brsfilereferenceno = p_impref AND brsref = p_impref;
+            END IF;
+         END IF;
+
+                /* IF (filetype = 'IPAYSTOP-CSV')
+         THEN
+                        SELECT COUNT (*)
+              INTO l_count
+              FROM ds_pay_stop_txns
+             where pspgroupid = p_groupid
+                        and PSPIMPORTREF = p_impref
+                        and PSPSTATUS in ('2','6')
+                        and deleteflag='N';
+
+                         IF (l_count > 0)
+                         THEN
+                                update ds_pay_stop_txns
+                                set deleteflag='Y'
+                                where pspgroupid = p_groupid
+                                and PSPIMPORTREF = p_impref
+                                and PSPSTATUS in ('2','6')
+                                and deleteflag='N';
+
+                                UPDATE ds_bulkimp_filestatus
+                    SET bfsstatus = 'P'
+                    WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+
+                    UPDATE ds_bulkimp_response
+                    SET brsstatus = 'P',
+                    brscode = 'D01'
+                    WHERE brsfilereferenceno = p_impref;
+
+                                status := 'P';
+                        ELSE
+                                status := 'NA';
+                        END IF;
+
+                END IF;*/
+
+                 IF (status != 'NA')
+                 THEN
+         BEGIN
+            status := 'N';
+
+            SELECT bfsstatus
+              INTO status
+              FROM ds_bulkimp_filestatus
+             WHERE bfsfilereferenceno = p_impref AND bfsgroupid = p_groupid;
+         EXCEPTION
+            WHEN NO_DATA_FOUND
+            THEN
+               NULL;
+         END;
+                END IF;
+         pkg_ti_response.return_response (pkg_ti_response.debatch_success,
+                                          p_impref,
+                                          status
+                                         );
+      EXCEPTION
+         WHEN pkg_ti_response.error
+         THEN
+            RAISE;
+         WHEN OTHERS
+         THEN
+            pkg_ti_response.return_response (pkg_ti_response.db_error,
+                                             SQLCODE,
+                                             SUBSTR (SQLERRM, 1, 75)
+                                            );
+      END;
+   END pro_tutil_delete;
+END pkg_bulkimp_delete;
+
+
+12:44:53 SYS @ POHK3CCD1:CDB$ROOT:>

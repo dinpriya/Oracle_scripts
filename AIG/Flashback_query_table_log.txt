@@ -1,0 +1,137 @@
+
+SYS @ TOHK1TST:CDB$ROOT:>create user flash_test identified by Flashtestflashtest_flash16 default tablespace users;
+
+User created.
+
+sqlplus flash_test/Flashtestflashtest_flash16@PDBT_TEST
+
+CREATE TABLE employee
+(  employee_id	NUMBER	PRIMARY KEY
+,  last_name	VARCHAR2 (20)
+,  first_name	VARCHAR2 (20)
+,  hire_date	DATE
+);
+
+INSERT INTO employee 
+(       employee_id
+,	last_name
+,	first_name
+,	hire_date
+)
+SELECT	ROWNUM
+,	SUBSTR (object_name, 1, 20)
+,	SUBSTR (owner,	     1, 20)
+,	created
+FROM	all_objects
+WHERE	ROWNUM	<= 100
+;
+
+FLASH_TEST @ TOHK1TST:PDBT_TEST:>select count(*) from employee;
+
+  COUNT(*)
+----------
+       100
+
+SYS @ TOHK1TST:CDB$ROOT:>select sysdate from dual;
+
+SYSDATE
+-----------------------------
+19 May 2025 12:34:40
+
+
+15:59:33 FLASH_TEST @ TOHK1TST:PDBT_TEST:>delete from employee where FIRST_NAME='PUBLIC';
+
+75 rows deleted.
+
+15:59:42 FLASH_TEST @ TOHK1TST:PDBT_TEST:>select count(*) from employee;
+
+  COUNT(*)
+----------
+        25
+
+15:59:51 FLASH_TEST @ TOHK1TST:PDBT_TEST:>commit;
+
+Commit complete.
+
+15:59:54 FLASH_TEST @ TOHK1TST:PDBT_TEST:>select sysdate from dual;
+
+SYSDATE
+-----------------------------
+19 May 2025 16:00:22
+
+Flashback query to see data without performing flashback task.
+
+16:00:22 FLASH_TEST @ TOHK1TST:PDBT_TEST:>select count(*) from employee as of TIMESTAMP
+   TO_TIMESTAMP('2025-05-19 12:34:00', 'YYYY-MM-DD HH:MI:SS')16:08:21   2  ;
+
+  COUNT(*)
+----------
+       100
+
+
+16:08:24 FLASH_TEST @ TOHK1TST:PDBT_TEST:>select count(*) from employee;
+
+  COUNT(*)
+----------
+        25
+		
+Even, we can insert the data using flashback data which are needed. if records are already there in table then it will fail with unique constraints error.
+To avoid, We can create a new table and can insert data.
+		
+
+16:09:53 FLASH_TEST @ TOHK1TST:PDBT_TEST:>insert into employee (select *from employee as of TIMESTAMP TO_TIMESTAMP('2025-05-19 12:34:00','YYYY-MM-DD HH:MI:SS'));
+insert into employee (select *from employee as of TIMESTAMP TO_TIMESTAMP('2025-05-19 12:34:00','YYYY-MM-DD HH:MI:SS'))
+*
+ERROR at line 1:
+ORA-00001: unique constraint (FLASH_TEST.SYS_C008646) violated
+
+
+CREATE TABLE employee_temp
+(  employee_id	NUMBER	PRIMARY KEY
+,  last_name	VARCHAR2 (20)
+,  first_name	VARCHAR2 (20)
+,  hire_date	DATE
+);
+
+16:11:36 FLASH_TEST @ TOHK1TST:PDBT_TEST:>16:11:36 FLASH_TEST @ TOHK1TST:PDBT_TEST:>16:11:36   2  16:11:36   3  16:11:36   4  16:11:36   5  16:11:36   6
+Table created.
+
+16:11:36 FLASH_TEST @ TOHK1TST:PDBT_TEST:>insert into employee_temp (select *from employee as of TIMESTAMP TO_TIMESTAMP('2025-05-19 12:34:00','YYYY-MM-DD HH:MI:SS'));
+
+100 rows created.
+
+16:11:47 FLASH_TEST @ TOHK1TST:PDBT_TEST:>commit;
+
+Commit complete.
+
+FLASH_TEST @ TOHK1TST:PDBT_TEST:>select count(*) from employee_temp;
+
+  COUNT(*)
+----------
+       100
+	   	
+Flashback table before drop with new name,
+
+16:27:08 SYS @ TOHK1TST:CDB$ROOT:>FLASHBACK TABLE flash_test.employee to before drop RENAME TO NEW_EMP;
+
+Flashback complete.
+
+Flashback table to required timestamp,
+
+16:29:31 SYS @ TOHK1TST:CDB$ROOT:>ALTER TABLE flash_test.NEW_EMP ENABLE ROW MOVEMENT;
+
+Table altered.
+
+16:30:03 SYS @ TOHK1TST:CDB$ROOT:>FLASHBACK TABLE flash_test.NEW_EMP to TIMESTAMP TO_TIMESTAMP('2025-05-19 15:34:00', 'YYYY-MM-DD HH24:MI:SS');
+
+Flashback complete.
+
+16:30:44 SYS @ TOHK1TST:CDB$ROOT:>select count(*) from flash_test.NEW_EMP;
+
+  COUNT(*)
+----------
+       100
+
+16:39:31 SYS @ TOHK1TST:CDB$ROOT:>ALTER TABLE flash_test.NEW_EMP DISABLE ROW MOVEMENT;
+
+Table altered.

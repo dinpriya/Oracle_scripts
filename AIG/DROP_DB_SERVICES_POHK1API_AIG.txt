@@ -1,0 +1,50 @@
+=====================================================================
+AIG FOR DROPPING 2 DATABASE SERVICES - POHK1API (ON PROD & DR SERVER)
+=====================================================================
+
+Database service names:
+api_ro
+api_rw
+
+-----
+PROD
+-----
+1. Login HKLPDPS2B001/02/03 standby db servers.
+
+a. Check the Services status on Standby POHK1API DB.
+
+srvctl status service -db POHK1API -s api_ro
+srvctl status service -db POHK1API -s api_rw 
+
+b. Check the Services stop on Standby POHK1API DB.
+
+srvctl stop service -db POHK1API -s api_ro
+srvctl stop service -db POHK1API -s api_rw 
+
+c. Check if any session through below Services in POHK1API db than kill it before drop.
+
+d. Check the Services remove on Standby POHK1API DB.
+
+srvctl remove service -db POHK1API -s api_ro
+srvctl remove service -db POHK1API -s api_rw 
+
+
+-------------
+STANDBY (DR)
+-------------
+2. Login HKLPDSS2B001/02/03 standby db servers.
+
+a. Check the Services status on Standby POHK1API_DG DB.
+
+srvctl status service -db POHK1API_DG -s api_ro
+srvctl status service -db POHK1API_DG -s api_rw 
+
+b. Check the Services stop on Standby POHK1API_DG DB.
+
+srvctl stop service -db POHK1API_DG -s api_ro
+srvctl stop service -db POHK1API_DG -s api_rw 
+
+c. Check the Services remove on Standby POHK1API_DG DB.
+
+srvctl remove service -db POHK1API_DG -s api_ro
+srvctl remove service -db POHK1API_DG -s api_rw

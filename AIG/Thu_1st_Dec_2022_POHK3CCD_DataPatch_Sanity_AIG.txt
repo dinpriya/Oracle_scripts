@@ -1,0 +1,68 @@
+==========================================================
+AIG FOR SANITY ACTION ITEMS - POHK3CCD - 1st DECEMBER 2022
+==========================================================
+
+NOTE: Capture following
+-----------------------
+A. All PDBs status should OPEN READ WRITE (NO RESTRICTED) for each CDBs
+
+For each CDBs --> SQL> show pdbs;
+
+B. All database services should up and running on respective CDBs
+
+$ srvctl status service -db <CDB_NAME>
+
+
+1. Perform datapatch sanity check
+
+HKLPDPS2B001 / 002 / 003
+
+$ . oraenv  --> POHK3CCD1/2/3
+$ $ORACLE_HOME/OPatch/datapatch -sanity_checks
+
+2. Review the output and make sure all checked items are OK
+
+3. As per Oracle Support suggestion in SR 3-31369928831 : POHK3CCD_PDBP_CAS_Sanity.txt, perform following :
+
+	a. Gather dictionary statistics for POHK3CCD - PDB$SEED:
+	
+	$ $ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -l /tmp -c 'PDB$SEED' -b gatherstats -- --x"exec dbms_stats.gather_dictionary_stats"
+	
+	b. Drop following packages in POHK3CCD - PDBP_CAS created under SYS user as they are not Oracle built-in packages:
+
+OWNER    OBJECT_NAME                       OBJECT_TYPE        CREATED              LAST_DDL_TIME        STATUS  O
+-------- --------------------------------- ------------------ -------------------- -------------------- ------- -
+SYS      PKG_BULKIMP_DELETE                PACKAGE            10 Oct 2021 04:30:38 10 Oct 2021 04:30:38 VALID   N
+SYS      PKG_FILTER                        PACKAGE BODY       10 Oct 2021 04:30:15 28 Nov 2022 12:04:11 INVALID N
+SYS      PKG_BULKIMP_DELETE                PACKAGE BODY       10 Oct 2021 04:30:38 28 Nov 2022 12:04:11 INVALID N
+SYS      PKG_TUTIL_BULKIMPORT_INSERT       PACKAGE            10 Oct 2021 04:31:31 05 Dec 2021 05:31:31 VALID   N
+SYS      PKG_TUTIL_BULKIMPORT_INSERT       PACKAGE BODY       10 Oct 2021 04:31:31 28 Nov 2022 12:04:11 INVALID N
+
+SQL> alter session set container=PDBP_CAS;
+SQL> show con_name;
+SQL> set lines 200 pages 100 long 2000000
+SQL> col OWNER for a15 tru
+SQL> col OBJECT_NAME for a25 tru
+SQL> select owner, object_name,object_type,oracle_maintained ,status FROM dba_objects where status='INVALID' and owner in ('SYS','SYSTEM') order by owner,object_name;
+
+SQL> DROP PACKAGE SYS.PKG_BULKIMP_DELETE;
+SQL> DROP PACKAGE SYS.PKG_TUTIL_BULKIMPORT_INSERT;
+SQL> DROP PACKAGE BODY SYS.PKG_FILTER;
+
+SQL> select owner, object_name,object_type,oracle_maintained ,status FROM dba_objects where status='INVALID' and owner in ('SYS','SYSTEM') order by owner,object_name;
+
+4. Perform datapatch sanity check again
+
+$ $ORACLE_HOME/OPatch/datapatch -sanity_checks
+
+5. Review the output and make sure all checked items are OK
+
+6. Database healtcheck
+
+- All PDBs status should OPEN READ WRITE (NO RESTRICTED) for each CDBs
+
+For each CDBs --> SQL> show pdbs;
+
+- All database services should up and running on respective CDBs
+
+srvctl status service -db <CDB_NAME>

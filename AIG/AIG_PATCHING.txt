@@ -1,0 +1,34 @@
+AIG - 19c JULY 2022 RU patching - DR server hklvdsapp090 – scheduled on 10 November 2022
+
+1. Data Guard health check between hklvdpapp090 & hklvdsapp090
+2. Shutdown database in hklvdsapp090
+3. Install new 19c Oracle Home with 19c July 2022 RU in place (including to apply following additional DST patches):
+
+              Patch 31335037: RDBMS - DSTV35 UPDATE - TZDATA2020A#
+              Patch 31335142: DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX#    
+
+4. Startup database in hklvdsapp090 (from existing/original 19c Oracle Home)
+5. Data Guard health check between hklvdpapp090 & hklvdsapp090
+
+
+AIG - 19c JULY 2022 RU patching - PROD server hklvdpapp090 – scheduled on 17 November 2022
+
+1. Data Guard health check between hklvdpapp090 & hklvdsapp090
+2. Shutdown database in hklvdpapp090
+3. Install new 19c Oracle Home with 19c July 2022 RU in place (including to apply following additional DST patches):
+
+              Patch 31335037: RDBMS - DSTV35 UPDATE - TZDATA2020A#
+              Patch 31335142: DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX#4.
+
+4. Startup database in (PROD) hklvdpapp090 from new 19c Oracle Home
+5. Shutdown database in (DR) hklvdsapp090 and startup database from new 19c Oracle Home
+5. Data Guard health check between hklvdpapp090 & hklvdsapp090
+6. Perform post patch script execution (datapatch)
+7. Take backup of existing .bash_profile file owned by oracle user and /etc/oratab file on both hklvdpapp090 & hklvdsapp090
+8. Modify accordingly both files above for pointing to new 19c Oracle Home path location on both hklvdpapp090 & hklvdsapp090
+9. Restart listener on both hklvdpapp090 & hklvdsapp090 from new 19c Oracle Home
+9. Database health check
+
+NOTE: 
+1.	Please kindly raise the change request and add this SNOW Approver group - AO-IN MR DBA TSO APV for approval.
+2.	Add Change Task and individually add hklvdpapp090 & hklvdsapp090 at the Configuration Item and make sure the “PID is required” is set to Yes for us to gain access via OneVault.

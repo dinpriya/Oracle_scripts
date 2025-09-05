@@ -1,0 +1,474 @@
+12:46:03 SYS @ POHK3CCD1:CDB$ROOT:>SHOW PDBS;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         5 PDBP_CAS                       READ WRITE NO
+12:46:05 SYS @ POHK3CCD1:CDB$ROOT:>SELECT DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_FILTER','SYS') FROM dual;
+
+DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_FILTER','SYS')
+--------------------------------------------------------------------------------
+
+  CREATE OR REPLACE NONEDITIONABLE PACKAGE BODY "SYS"."PKG_FILTER"
+IS
+   g_fields         varchartab   := varchartab ();
+   g_operators      varchartab   := varchartab ();
+   g_fieldvalues    varchartab   := varchartab ();
+   g_batchtxnflag   VARCHAR2 (1) := 'B';
+
+   FUNCTION return_filter (
+      p_groupid        IN   VARCHAR2,
+      p_applnid        IN   VARCHAR2,
+      p_serviceid      IN   VARCHAR2,
+      p_batchtxnflag   IN   VARCHAR2,
+      p_fields         IN   varchartab,
+      p_operators      IN   varchartab,
+      p_fieldvalues    IN   varchartab
+   )
+      RETURN VARCHAR2
+   AS
+      output              VARCHAR2 (4000)                        := NULL;
+      l_output            VARCHAR2 (4000)                        := NULL;
+      l_dbcolumn          VARCHAR2 (4000)                        := NULL;
+      l_field             wb_searchfields.sfd_fieldname%TYPE;
+      l_operator          wb_searchfields.sfd_defoperator%TYPE;
+      l_fieldvalue        VARCHAR2 (100);
+      l_fieldtype         wb_searchfields.sfd_fieldtype%TYPE;
+      l_timezone          VARCHAR2 (3)                           := NULL;
+      l_cgrtimezonectry   ds_cust_grp_ref.cgrtimezonectry%TYPE   DEFAULT NULL;
+      l_cgrtimezonecode   ds_cust_grp_ref.cgrtimezonecode%TYPE   DEFAULT NULL;
+      l_timezonedate      VARCHAR2 (25)                          DEFAULT NULL;
+      l_fieldoperator1    wb_searchfields.sfd_defoperator%TYPE;
+          l_ambersand_chk     wb_searchfields.sfd_defoperator%TYPE;
+
+      FUNCTION formatted (
+         p_groupid      IN   VARCHAR2,
+         p_fieldname    IN   VARCHAR2,
+         p_fieldvalue   IN   VARCHAR2,
+         p_operator     IN   VARCHAR2
+      )
+         RETURN VARCHAR2
+      IS
+         l_formattedoutput    VARCHAR2 (4000);
+         l_datefieldcheck     DATE;
+         l_numberfieldcheck   NUMBER;
+         l_fieldtype          wb_searchfields.sfd_fieldtype%TYPE;
+         l_fieldvalue         VARCHAR2 (4000)
+                                        := REPLACE (p_fieldvalue, '''', '''''');
+
+         l_fieldoperator      wb_searchfields.sfd_defoperator%TYPE;
+         l_operator           wb_searchfields.sfd_defoperator%TYPE;
+      BEGIN
+         l_operator := p_operator;
+
+         IF p_fieldvalue IS NULL
+         THEN
+            l_formattedoutput := NULL;
+         ELSE
+            SELECT sfd_fieldtype
+              INTO l_fieldtype
+              FROM wb_searchfields
+             WHERE sfd_fieldname = p_fieldname;
+
+            BEGIN
+               SELECT sfo_operator
+                 INTO l_fieldoperator
+                 FROM wb_searchfieldoperators
+                WHERE sfo_fieldname = p_fieldname AND sfo_operator =
+                                                                   l_operator;
+            EXCEPTION
+               WHEN NO_DATA_FOUND
+               THEN
+                  l_operator := '=';
+            END;
+
+            IF UPPER (p_operator) in ( 'IN' ,'NOT IN')
+            THEN
+               IF l_fieldtype = 'CHAR'
+               THEN
+                  l_formattedoutput :=
+                             '(''' || REPLACE (l_fieldvalue, ',', ''',''') || ''
+')';
+               ELSE
+                  l_formattedoutput := '(' || l_fieldvalue || ')';
+               END IF;
+            ELSE
+               IF l_fieldtype IN ('CHAR', 'NVARCHAR2')
+               THEN
+                  IF l_operator = 'LIKE'
+                  THEN
+                     l_formattedoutput :=
+                                  '''' || UPPER (l_fieldvalue || '%') || '''';
+                  ELSE
+                     l_formattedoutput := '''' || l_fieldvalue || '''';
+                  END IF;
+               ELSIF l_fieldtype = 'DATE'
+               THEN
+--                  BEGIN
+                     l_datefieldcheck := TO_DATE (l_fieldvalue, 'dd/mm/yyyy');
+                     l_formattedoutput :=
+                            'to_date(''' || l_fieldvalue || ''',''dd/mm/yyyy'')'
+;
+--                   EXCEPTION
+--                      WHEN OTHERS
+--                      THEN
+--                         l_formattedoutput := NULL;
+--                         NULL;
+--                  END;
+               ELSIF l_fieldtype = 'DATETIME'
+               THEN
+   --               BEGIN
+                     l_datefieldcheck :=
+                               TO_DATE (l_fieldvalue, 'dd/mm/yyyy hh24:mi:ss');
+                     l_formattedoutput :=    'to_date('''
+                                          || l_fieldvalue
+                                          || ''',''dd/mm/yyyy hh24:mi:sss'')';
+--                   EXCEPTION
+--                      WHEN OTHERS
+--                      THEN
+--                         l_formattedoutput := NULL;
+--                         NULL;
+--                  END;
+               ELSIF l_fieldtype in ( 'NUMBER','FLOAT')
+               THEN
+ --                 BEGIN
+                     l_numberfieldcheck := TO_NUMBER (l_fieldvalue);
+                     l_formattedoutput := l_fieldvalue;
+--                   EXCEPTION
+--                      WHEN OTHERS
+--                      THEN
+--                         l_formattedoutput := NULL;
+--                         NULL;
+--                   END;
+               ELSE
+                  l_formattedoutput := l_fieldvalue;
+               END IF;
+            END IF;
+         END IF;
+
+         RETURN (l_formattedoutput);
+      END formatted;
+   BEGIN
+      FOR i IN 1 .. p_fields.COUNT
+      LOOP
+         l_field := TRIM (p_fields (i));
+         l_fieldvalue := TRIM (p_fieldvalues (i));
+         l_operator := TRIM (p_operators (i));
+
+         IF l_fieldvalue = '%'
+         THEN
+            l_fieldvalue := 'ALL';
+         END IF;
+
+
+                 l_ambersand_chk := SUBSTR (l_operator, 1, 1);
+
+
+
+         IF l_ambersand_chk = '&'
+         THEN
+            l_operator := '\' || l_operator;
+
+            IF SUBSTR (l_operator, 3, 3) = 'gt;'
+            THEN
+               l_operator := REPLACE (l_operator, '\'||'&'||'gt;', '>');
+            ELSIF SUBSTR (l_operator, 3, 3) = 'lt;'
+            THEN
+               l_operator := REPLACE (l_operator, '\'||'&'||'lt;', '<');
+            END IF;
+         END IF;
+
+
+
+         IF (l_field IS NOT NULL AND l_operator IN ('NULL', 'NOT NULL'))
+           THEN
+            l_operator := ' IS ' || l_operator;
+
+            BEGIN
+               SELECT sfm_dbfieldname
+                 INTO l_dbcolumn
+                 FROM wb_searchfieldmap
+                WHERE sfm_applnid = p_applnid
+                  AND sfm_serviceid = p_serviceid
+                  AND sfm_batchtxnflag = p_batchtxnflag
+                  AND sfm_fieldname = l_field;
+            EXCEPTION
+               WHEN NO_DATA_FOUND
+               THEN
+                  l_dbcolumn := NULL;
+            END;
+
+            IF output IS NOT NULL
+            THEN
+               output := output || ' AND ';
+            END IF;
+
+            IF l_dbcolumn IS NOT NULL
+            THEN
+
+               output := output || l_dbcolumn || ' ' || l_operator;
+
+            END IF;
+         ELSIF     (    l_field IS NOT NULL
+                    AND l_fieldvalue IS NOT NULL
+                    AND l_operator IS NOT NULL
+                   )
+               AND (l_fieldvalue != 'ALL')
+         THEN
+            SELECT sfd_fieldtype, timezone
+              INTO l_fieldtype, l_timezone
+              FROM wb_searchfields
+             WHERE sfd_fieldname = l_field;
+
+            BEGIN
+               SELECT sfo_operator
+                 INTO l_fieldoperator1
+                 FROM wb_searchfieldoperators
+                WHERE sfo_fieldname = l_field AND sfo_operator = l_operator;
+            EXCEPTION
+               WHEN NO_DATA_FOUND
+               THEN
+                  l_operator := '=';
+            END;
+
+            BEGIN
+               SELECT sfm_dbfieldname
+                 INTO l_dbcolumn
+                 FROM wb_searchfieldmap
+                WHERE sfm_applnid = p_applnid
+                  AND sfm_serviceid = p_serviceid
+                  AND sfm_batchtxnflag = p_batchtxnflag
+                  AND sfm_fieldname = l_field;
+            EXCEPTION
+               WHEN NO_DATA_FOUND
+               THEN
+                  l_dbcolumn := NULL;
+            END;
+
+            IF l_dbcolumn IS NOT NULL
+            THEN
+               l_output := formatted (
+                              p_groupid,
+                              l_field,
+                              l_fieldvalue,
+                              l_operator
+                           );
+
+               IF output IS NOT NULL AND l_output IS NOT NULL
+               THEN
+                  output := output || ' AND ';
+               END IF;
+
+               IF l_fieldtype IN ('DATE', 'DATETIME')
+               THEN
+                  IF l_timezone = 'Y'
+                  THEN
+                     BEGIN
+                        SELECT cgrtimezonectry, cgrtimezonecode
+                          INTO l_cgrtimezonectry, l_cgrtimezonecode
+                          FROM ds_cust_grp_ref
+                         WHERE cgrgrpid = p_groupid;
+
+                        l_dbcolumn :=    'trunc(pkg_common.fn_convert_timezone (
+'
+                                      || ''''
+                                      || l_cgrtimezonectry
+                                      || ''''
+                                      || ','
+                                      || ''''
+                                      || l_cgrtimezonecode
+                                      || ''''
+                                      || ','
+                                      || l_dbcolumn
+                                      || '))';
+                     EXCEPTION
+                        WHEN NO_DATA_FOUND
+                        THEN
+                           NULL;
+                        WHEN OTHERS
+                        THEN
+                           NULL;
+                     END;
+                  ELSE
+                     l_dbcolumn := 'trunc(' || l_dbcolumn || ')';
+                  END IF;
+               END IF;
+
+
+               IF l_output IS NOT NULL
+               THEN
+                  IF l_fieldtype = 'CHAR' AND l_operator = 'LIKE'
+                  THEN
+                     output :=    output
+                               || 'UPPER('
+                               || l_dbcolumn
+                               || ')'
+                               || ' '
+                               || l_operator
+                               || ' '
+                               || formatted (
+                                     p_groupid,
+                                     l_field,
+                                     l_fieldvalue,
+                                     l_operator
+                                  );
+                  ELSIF l_fieldtype = 'NVARCHAR2' AND l_operator = 'LIKE'
+                  THEN
+                     output :=    output
+                               || 'UPPER(TRANSLATE('
+                               || l_dbcolumn
+                               || ' USING CHAR_CS))'
+                               || ' '
+                               || l_operator
+                               || ' '
+                               || formatted (
+                                     p_groupid,
+                                     l_field,
+                                     l_fieldvalue,
+                                     l_operator
+                                  );
+                  ELSIF l_fieldtype = 'NVARCHAR2' AND l_operator IN ('=', '!=')
+                  THEN
+                     output :=    output
+                               || 'TRANSLATE('
+                               || l_dbcolumn
+                               || ' USING CHAR_CS)'
+                               || ' '
+                               || l_operator
+                               || ' '
+                               || formatted (
+                                     p_groupid,
+                                     l_field,
+                                     l_fieldvalue,
+                                     l_operator
+                                  );
+                  ELSE
+                     output :=    output
+                               || l_dbcolumn
+                               || ' '
+                               || l_operator
+                               || ' '
+                               || formatted (
+                                     p_groupid,
+                                     l_field,
+                                     l_fieldvalue,
+                                     l_operator
+                                  );
+                  END IF;
+
+                  l_output := NULL;
+               END IF;
+            END IF;
+         END IF;
+      END LOOP;
+
+      IF output IS NOT NULL
+      THEN
+         output := 'AND (' || output || ')';
+      ELSE
+         output := ' ';
+      END IF;
+
+      RETURN output;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+                 output := 'and 1 != 1';
+         RETURN output;
+   END return_filter;
+
+   FUNCTION return_sort (
+      p_applnid        IN   VARCHAR2,
+      p_serviceid      IN   VARCHAR2,
+      p_batchtxnflag        VARCHAR2,
+      p_fields              varchartab,
+      p_ascdesc             varchartab,
+      p_position            varchartab := NULL
+   )
+      RETURN VARCHAR2
+   AS
+      output         VARCHAR2 (4000) := NULL;
+      l_tempoutput   VARCHAR2 (4000);
+      l_operator     VARCHAR2 (20);
+      l_dbcolumn     VARCHAR2 (30);
+      l_counter      NUMBER;
+      l_position     varchartab      := varchartab ();
+   BEGIN
+      IF p_position IS NULL
+      THEN
+         FOR i IN 1 .. p_fields.COUNT
+         LOOP
+            l_position.EXTEND;
+            l_position (i) := i;
+         END LOOP;
+      ELSE
+         l_position := p_position;
+      END IF;
+
+      IF p_fields.COUNT <= p_ascdesc.COUNT
+      THEN
+         l_counter := p_fields.COUNT;
+      ELSE
+         l_counter := p_ascdesc.COUNT;
+      END IF;
+
+      FOR i IN 1 .. l_position.COUNT
+      LOOP
+         FOR j IN 1 .. l_counter
+         LOOP
+            IF l_position (j) = i
+            THEN
+               IF (    p_applnid IS NOT NULL
+                   AND p_serviceid IS NOT NULL
+                   AND p_fields (j) IS NOT NULL
+                   AND p_ascdesc IS NOT NULL
+                  )
+               THEN
+                  BEGIN
+                     SELECT sfm_dbfieldname
+                       INTO l_dbcolumn
+                       FROM wb_searchfieldmap
+                      WHERE sfm_applnid = p_applnid
+                        AND sfm_serviceid = p_serviceid
+                        AND sfm_batchtxnflag = p_batchtxnflag
+                        AND sfm_fieldname = p_fields (j);
+                  EXCEPTION
+                     WHEN NO_DATA_FOUND
+                     THEN
+                        l_dbcolumn := NULL;
+                  END;
+
+                  IF l_dbcolumn IS NOT NULL
+                  THEN
+                     IF output IS NOT NULL
+                     THEN
+                        output := output || ',';
+                     END IF;
+
+                     output := output || ' ' || l_dbcolumn || ' ' || p_ascdesc (
+
+                                                                        j
+                                                                     );
+                  END IF;
+               END IF;
+
+               EXIT;
+            END IF;
+         END LOOP;
+      END LOOP;
+
+      IF output IS NOT NULL
+      THEN
+         output := 'Order by ' || output;
+      END IF;
+
+      RETURN output;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         RETURN NULL;
+   END return_sort;
+
+END;
+
+
+12:46:07 SYS @ POHK3CCD1:CDB$ROOT:>

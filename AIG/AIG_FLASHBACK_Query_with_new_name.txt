@@ -1,0 +1,19 @@
+Flashback query to see data without performing flashback task. This will help PSS to validate data, I used this in one of MIM incident and issue got resolved.
+
+select count(*) from employee  as of TIMESTAMP TO_TIMESTAMP('2025-05-19 12:34:00', 'YYYY-MM-DD HH:MI:SS');
+
+Even, we can insert the data using flashback data which are needed. if records are already there in table, then it will fail with unique constraints error. To avoid, we can create a new table with same metadata and can insert data.
+
+insert into employee_temp (select *from employee as of TIMESTAMP TO_TIMESTAMP('2025-05-19 12:34:00','YYYY-MM-DD HH:MI:SS'));
+
+Flashback table before drop with new name,
+
+FLASHBACK TABLE flash_test.employee to before drop RENAME TO NEW_EMP;
+
+Flashback table to required timestamp,
+
+ALTER TABLE flash_test.NEW_EMP ENABLE ROW MOVEMENT;
+
+FLASHBACK TABLE flash_test.NEW_EMP to TIMESTAMP TO_TIMESTAMP('2025-05-19 15:34:00', 'YYYY-MM-DD HH24:MI:SS');
+
+ALTER TABLE flash_test.NEW_EMP DISABLE ROW MOVEMENT;

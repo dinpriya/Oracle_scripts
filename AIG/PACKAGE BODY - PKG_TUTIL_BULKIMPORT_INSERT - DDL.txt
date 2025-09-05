@@ -1,0 +1,583 @@
+12:47:02 SYS @ POHK3CCD1:CDB$ROOT:>SHOW PDBS;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         5 PDBP_CAS                       READ WRITE NO
+12:47:05 SYS @ POHK3CCD1:CDB$ROOT:>SELECT DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_TUTIL_BULKIMPORT_INSERT','SYS') FROM dual;
+
+DBMS_METADATA.GET_DDL('PACKAGE_BODY','PKG_TUTIL_BULKIMPORT_INSERT','SYS')
+--------------------------------------------------------------------------------
+
+  CREATE OR REPLACE NONEDITIONABLE PACKAGE BODY "SYS"."PKG_TUTIL_BULKIMPORT_INSE
+RT" AS
+  /* For Audit Trail Reporting: BEGIN */
+  g_filerefernceno VARCHAR2(30);
+  PROCEDURE pro_tutil_bulkimport_insert(p_bfsfilereferenceno IN VARCHAR2,
+                                        p_bfsgroupid         IN VARCHAR2,
+                                        p_bfsfiletype        IN VARCHAR2,
+                                        p_bfsdescription     IN VARCHAR2,
+                                        p_createdby          IN VARCHAR2,
+                                        p_bfsorgfilename     IN VARCHAR2,
+                                        p_bfsfilehash        IN VARCHAR2,
+                                        p_bfsfilepath        IN VARCHAR2,
+                                        p_bfsismultifile     IN VARCHAR2,
+                                        p_bfsencodescheme    IN VARCHAR2,
+                                        p_bfsencodesel       IN VARCHAR2,
+                                        p_bfsvaluedate       IN VARCHAR2,
+                                        p_bfsencfilehash     IN VARCHAR2,
+                                        p_fcuflag            IN VARCHAR2 default
+ null,
+                                        p_fmtRiskFlag        IN VARCHAR2 default
+ null,
+                                        p_issingleumi        IN VARCHAR2 default
+ null,
+                                        P_imgfilepath        IN VARCHAR2 default
+ null) IS
+    p_wsrparams          LONG;
+    p_wsrapplnid         VARCHAR2(10);
+    l_bfsfilehash        ds_bulkimp_filestatus.bfsfilehash%TYPE DEFAULT NULL;
+    l_bfsfilereferenceno ds_bulkimp_filestatus.bfsfilereferenceno%TYPE DEFAULT N
+ULL;
+    L_REQUEST_ID         CORE_SERVICE_REQUEST.REQ_ID%TYPE;
+    l_userdaps           VARCHARTAB;
+    l_daperrorflag       BOOLEAN;
+    l_task               CORE_SERVICE_REQUEST.TASK_ID%TYPE;
+    l_oobnconfiguration  NUMBER DEFAULT 0;
+    p_fmtFlag            VARCHAR2(1);
+  BEGIN
+    BEGIN
+      SELECT bfsfilereferenceno
+        INTO l_bfsfilereferenceno
+        FROM ds_bulkimp_filestatus
+       WHERE bfsgroupid = p_bfsgroupid
+         AND bfsfilehash = p_bfsfilehash
+         AND bfsfiletype = p_bfsfiletype;
+      pkg_ti_response.return_response(pkg_ti_response.duplicate_file,
+                                      l_bfsfilereferenceno,
+                                      p_bfsfilereferenceno);
+
+      pkg_ti_response.pr_check_failure;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        NULL;
+    END;
+
+    IF (p_fmtRiskFlag = 'true') THEN
+      BEGIN
+        SELECT COUNT(1)
+          INTO l_oobnconfiguration
+          FROM DS_PYT_CATEGORY_DETAILS DPCD
+         WHERE DPCD.PCDFIELDAVL = 'Y'
+           AND DPCD.PCDPYTTYPE = 'ALL'
+           AND DPCD.PCDCTRYCODE in ((select cgrcountrycode
+                                      from ds_cust_grp_ref
+                                     where cgrgrpid = p_bfsgroupid
+                                       and deleteflag = 'N'),
+                                    'AL')
+           AND DPCD.PCDFIELDNAME IN ('OOBNSMS', 'OOBNEMAIL')
+           AND DPCD.DELETEFLAG = 'N';
+
+      EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          l_oobnconfiguration := 0;
+      END;
+    END IF;
+
+    IF (l_oobnconfiguration > 0) THEN
+      p_fmtFlag := 'Y';
+    ELSE
+      p_fmtFlag := 'N';
+    END IF;
+
+    INSERT INTO ds_bulkimp_filestatus
+      (bfsfilereferenceno,
+       bfsgroupid,
+       bfsfiletype,
+       bfsdescription,
+       createdby,
+       createddate,
+       modifiedby,
+       modifieddate,
+       versionnum,
+       bfsorgfilename,
+       bfsfilehash,
+       bfsfilepath,
+       bfsstatus,
+       bfspymtvaluedate,
+       bfsencfilehash, /*Added for Encrypted File Duplicate Check */
+       bfsfmtflag)
+    VALUES
+      (p_bfsfilereferenceno,
+       p_bfsgroupid,
+       p_bfsfiletype,
+       p_bfsdescription,
+       p_createdby,
+       SYSDATE,
+       p_createdby,
+       SYSDATE,
+       '1',
+       p_bfsorgfilename,
+       p_bfsfilehash,
+       p_bfsfilepath,
+       '1',
+       to_date(decode(p_bfsvaluedate, 'null', '', p_bfsvaluedate),
+               'dd/mm/yyyy'),
+       p_bfsencfilehash, /*Added for Encrypted File Duplicate Check */
+       p_fmtFlag);
+
+    IF (p_bfsfiletype = 'QPAYMENT') THEN
+      l_task := 'qpConvert';
+
+    ELSE
+      IF (p_bfsfiletype = 'Collections-Mandate' OR
+         p_bfsfiletype = 'Collections-DDAIMG') THEN
+        l_task := 'bi_mandate';
+      ELSE
+        IF (p_bfsfiletype = 'Collections-Invoice') THEN
+          l_task := 'bi_invocie';
+
+        ELSE
+          IF (p_bfsfiletype = 'Collections-DDI') THEN
+            l_task := 'bi';
+          ELSE
+            IF (p_bfsfiletype = 'Template Payment' OR
+               p_bfsfiletype = 'TEMPLATES-DOC') THEN
+              l_task := 'tbi';
+              /** icas change start here**/
+            ELSIF (p_bfsfiletype = 'SUBACCOUNT') THEN
+              l_task := 'subaccount';
+            ELSIF (p_bfsfiletype = 'HOLD') THEN
+              l_task := 'hold';
+            ELSIF (p_bfsfiletype = 'SI') THEN
+              l_task := 'si';
+            ELSIF (p_bfsfiletype = 'SMEPAYEE') THEN
+              l_task := 'bi';
+            ELSIF (p_bfsfiletype = 'SMEPAYMENT') THEN
+              l_task := 'bi';
+            ELSIF (p_bfsfiletype = 'INDIATAX') THEN
+              l_task := 'bitax';
+            ELSIF (p_bfsfiletype = 'India Tax') THEN
+              l_task := 'bi_tax_in';
+              /** icas change end here**/
+            ELSE
+              IF (p_bfsfiletype = 'Japan-Residential Tax') THEN
+                l_task := 'bi_tax';
+              ELSE
+                IF (p_bfsfiletype = 'CUSTODYSINGLE') THEN
+                  l_task := 'bisingle';
+                ELSE
+                  IF (p_bfsfiletype = 'UACSTD') THEN
+                    l_task := 'bisingle';
+                  ELSE
+                    IF (p_bfsfiletype = 'UAFXCSTD') THEN
+                      l_task := 'bi';
+                    ELSE
+                      IF (p_bfsfiletype = 'UATDCSTD') THEN
+                        l_task := 'bi';
+                      ELSIF (p_bfsfiletype = 'UACA') THEN
+                        l_task := 'carspbisingle';
+                      ELSIF (p_bfsfiletype = 'CARSPSINGLE') THEN
+                        l_task := 'carspbisingle';
+                      ELSIF (p_bfsfiletype = 'IPAYSTOP-CSV') THEN
+                        l_task := 'stpcnclbi';
+                      ELSE
+                          IF (p_bfsfiletype = 'MMIDBI') THEN
+                                l_task := 'mmid';
+                      ELSIF (p_bfsfiletype = 'BILLGENBI') THEN
+                                l_task := 'taxbillgen';
+                      ELSIF (p_bfsfiletype = 'PAYERDDA Create') THEN
+                                l_task := 'payerdda';
+
+                      ELSE
+                        l_task := 'bi';
+                      END IF;
+                    END IF;
+                  END IF;
+                END IF;
+              END IF;
+            END IF;
+          END IF;
+        END IF;
+      END IF;
+     END IF;
+    END IF;
+
+    SELECT DECODE(UPPER(p_bfsfiletype),
+                  'PAYMENT',
+                  'tpymt',
+                                  'MMIDBI',
+                                  'tpymt',
+                                  'BILLGENBI',
+                                  'tpymt',
+                  'PAYERDDA Create',
+                  'tpymt',
+                  'COLLECTIONS-MANDATE',
+                  'tcoln',
+                  'COLLECTIONS-DDI',
+                  'tcoln',
+                  'COLLECTIONS-INVOICE',
+                  'tcoln',
+                  'COLLECTIONS-DDAIMG',
+                  'tcoln',
+                  'CUSTODY',
+                  'tcstd',
+                  'CUSTODYSINGLE',
+                  'tcstd',
+                  'UACSTD',
+                  'tcstd',
+                  'UAFXCSTD',
+                  'tcstd',
+                  'UACA',
+                  'tcstd',
+                  'UATDCSTD',
+                  'tcstd',
+                  'CARSPSINGLE',
+                  'tcstd',
+                  'CLS',
+                  'tcls',
+                  'QPAYMENT',
+                  'tpymt',
+                  'Template Payment',
+                  'tpymt',
+                  'PAYEE',
+                  'mpymt',
+                  /** icas change start here**/
+                  'SUBACCOUNT',
+                  'icas',
+                  'HOLD',
+                  'icas',
+                  'SI',
+                  'icas',
+                  /** icas change start here**/
+                  'SMEPAYEE',
+                  'mpymt',
+                  'SMEPAYMENT',
+                  'tpymt',
+                  'IPAYSTOP-CSV',
+                  'tpymt',
+                  'tpymt')
+      INTO p_wsrapplnid
+      FROM DUAL;
+
+    p_wsrparams := '<parameters><refno>' || p_bfsfilereferenceno ||
+                   '</refno><filepath>' || p_bfsfilepath ||
+                   '</filepath><ismultifile>' || p_bfsismultifile ||
+                   '</ismultifile><encodescheme>' || p_bfsencodescheme ||
+                   '</encodescheme><encodesel>' || p_bfsencodesel ||
+                   '</encodesel><fcuflag>' || p_fcuflag ||
+                   '</fcuflag><isSingleUmi>' || p_issingleumi ||
+                   '</isSingleUmi><imgFilePath>' || P_imgfilepath ||
+                   '</imgFilePath></parameters>';
+
+    L_REQUEST_ID     := PKG_XFW.FN_SERVICE_REQUEST(P_WSRAPPLNID,
+                                                   'transactions',
+                                                   l_task,
+                                                   P_BFSGROUPID,
+                                                   P_CREATEDBY,
+                                                   'en',
+                                                   P_WSRPARAMS,
+                                                   P_WSRPARAMS);
+    g_filerefernceno := p_bfsfilereferenceno;
+    pkg_ti_response.return_response(pkg_ti_response.insert_success,
+                                    p_bfsfilereferenceno);
+  EXCEPTION
+    WHEN pkg_ti_response.error THEN
+      RAISE;
+    WHEN OTHERS THEN
+      pkg_ti_response.return_response(pkg_ti_response.db_error,
+                                      SQLCODE,
+                                      SUBSTR(SQLERRM, 1, 75));
+      pkg_ti_response.pr_check_failure;
+  END pro_tutil_bulkimport_insert;
+  PROCEDURE pro_tutil_bulkimport_inserttmx(p_bfsfilereferenceno IN VARCHAR2,
+                                        p_bfsgroupid         IN VARCHAR2,
+                                        p_bfsfiletype        IN VARCHAR2,
+                                        p_bfsdescription     IN VARCHAR2,
+                                        p_createdby          IN VARCHAR2,
+                                        p_bfsorgfilename     IN VARCHAR2,
+                                        p_bfsfilehash        IN VARCHAR2,
+                                        p_bfsfilepath        IN VARCHAR2,
+                                        p_bfsismultifile     IN VARCHAR2,
+                                        p_bfsencodescheme    IN VARCHAR2,
+                                        p_bfsencodesel       IN VARCHAR2,
+                                        p_bfsvaluedate       IN VARCHAR2,
+                                        p_bfsencfilehash     IN VARCHAR2,
+                                        p_fcuflag            IN VARCHAR2 default
+ null,
+                                        p_fmtRiskFlag        IN VARCHAR2 default
+ null,
+                                        p_issingleumi        IN VARCHAR2 default
+ null,
+                                        P_imgfilepath        IN VARCHAR2 default
+ null,
+                                        p_tokentype          IN VARCHAR2 default
+ null,
+                                        p_useragent          IN VARCHAR2 default
+ null,
+                                        p_clientip           IN VARCHAR2 default
+ null,
+                                                                                p_uniqueid           IN VARCHAR2 default null) IS
+    p_wsrparams          LONG;
+    p_wsrapplnid         VARCHAR2(10);
+    l_bfsfilehash        ds_bulkimp_filestatus.bfsfilehash%TYPE DEFAULT NULL;
+    l_bfsfilereferenceno ds_bulkimp_filestatus.bfsfilereferenceno%TYPE DEFAULT N
+ULL;
+    L_REQUEST_ID         CORE_SERVICE_REQUEST.REQ_ID%TYPE;
+    l_userdaps           VARCHARTAB;
+    l_daperrorflag       BOOLEAN;
+    l_task               CORE_SERVICE_REQUEST.TASK_ID%TYPE;
+    l_oobnconfiguration  NUMBER DEFAULT 0;
+    p_fmtFlag            VARCHAR2(1);
+  BEGIN
+    BEGIN
+      SELECT bfsfilereferenceno
+        INTO l_bfsfilereferenceno
+        FROM ds_bulkimp_filestatus
+       WHERE bfsgroupid = p_bfsgroupid
+         AND bfsfilehash = p_bfsfilehash
+         AND bfsfiletype = p_bfsfiletype;
+      pkg_ti_response.return_response(pkg_ti_response.duplicate_file,
+                                      l_bfsfilereferenceno,
+                                      p_bfsfilereferenceno);
+
+      pkg_ti_response.pr_check_failure;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        NULL;
+    END;
+
+    IF (p_fmtRiskFlag = 'true') THEN
+      BEGIN
+        SELECT COUNT(1)
+          INTO l_oobnconfiguration
+          FROM DS_PYT_CATEGORY_DETAILS DPCD
+         WHERE DPCD.PCDFIELDAVL = 'Y'
+           AND DPCD.PCDPYTTYPE = 'ALL'
+           AND DPCD.PCDCTRYCODE in ((select cgrcountrycode
+                                      from ds_cust_grp_ref
+                                     where cgrgrpid = p_bfsgroupid
+                                       and deleteflag = 'N'),
+                                    'AL')
+           AND DPCD.PCDFIELDNAME IN ('OOBNSMS', 'OOBNEMAIL')
+           AND DPCD.DELETEFLAG = 'N';
+
+      EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          l_oobnconfiguration := 0;
+      END;
+    END IF;
+
+    IF (l_oobnconfiguration > 0) THEN
+      p_fmtFlag := 'Y';
+    ELSE
+      p_fmtFlag := 'N';
+    END IF;
+
+    INSERT INTO ds_bulkimp_filestatus
+      (bfsfilereferenceno,
+       bfsgroupid,
+       bfsfiletype,
+       bfsdescription,
+       createdby,
+       createddate,
+       modifiedby,
+       modifieddate,
+       versionnum,
+       bfsorgfilename,
+       bfsfilehash,
+       bfsfilepath,
+       bfsstatus,
+       bfspymtvaluedate,
+       bfsencfilehash, /*Added for Encrypted File Duplicate Check */
+       bfsfmtflag)
+    VALUES
+      (p_bfsfilereferenceno,
+       p_bfsgroupid,
+       p_bfsfiletype,
+       p_bfsdescription,
+       p_createdby,
+       SYSDATE,
+       p_createdby,
+       SYSDATE,
+       '1',
+       p_bfsorgfilename,
+       p_bfsfilehash,
+       p_bfsfilepath,
+       '1',
+       to_date(decode(p_bfsvaluedate, 'null', '', p_bfsvaluedate),
+               'dd/mm/yyyy'),
+       p_bfsencfilehash, /*Added for Encrypted File Duplicate Check */
+       p_fmtFlag);
+
+    IF (p_bfsfiletype = 'QPAYMENT') THEN
+      l_task := 'qpConvert';
+
+    ELSE
+      IF (p_bfsfiletype = 'Collections-Mandate' OR
+         p_bfsfiletype = 'Collections-DDAIMG') THEN
+        l_task := 'bi_mandate';
+      ELSE
+        IF (p_bfsfiletype = 'Collections-Invoice') THEN
+          l_task := 'bi_invocie';
+
+        ELSE
+          IF (p_bfsfiletype = 'Collections-DDI') THEN
+            l_task := 'bi';
+          ELSE
+            IF (p_bfsfiletype = 'Template Payment' OR
+               p_bfsfiletype = 'TEMPLATES-DOC') THEN
+              l_task := 'tbi';
+              /** icas change start here**/
+            ELSIF (p_bfsfiletype = 'SUBACCOUNT') THEN
+              l_task := 'subaccount';
+            ELSIF (p_bfsfiletype = 'HOLD') THEN
+              l_task := 'hold';
+            ELSIF (p_bfsfiletype = 'SI') THEN
+              l_task := 'si';
+            ELSIF (p_bfsfiletype = 'SMEPAYEE') THEN
+              l_task := 'bi';
+            ELSIF (p_bfsfiletype = 'SMEPAYMENT') THEN
+              l_task := 'bi';
+            ELSIF (p_bfsfiletype = 'INDIATAX') THEN
+              l_task := 'bitax';
+            ELSIF (p_bfsfiletype = 'India Tax') THEN
+              l_task := 'bi_tax_in';
+              /** icas change end here**/
+            ELSE
+              IF (p_bfsfiletype = 'Japan-Residential Tax') THEN
+                l_task := 'bi_tax';
+              ELSE
+                IF (p_bfsfiletype = 'CUSTODYSINGLE') THEN
+                  l_task := 'bisingle';
+                ELSE
+                  IF (p_bfsfiletype = 'UACSTD') THEN
+                    l_task := 'bisingle';
+                  ELSE
+                    IF (p_bfsfiletype = 'UAFXCSTD') THEN
+                      l_task := 'bi';
+                    ELSE
+                      IF (p_bfsfiletype = 'UATDCSTD') THEN
+                        l_task := 'bi';
+                      ELSIF (p_bfsfiletype = 'UACA') THEN
+                        l_task := 'carspbisingle';
+                      ELSIF (p_bfsfiletype = 'CARSPSINGLE') THEN
+                        l_task := 'carspbisingle';
+                      ELSIF (p_bfsfiletype = 'IPAYSTOP-CSV') THEN
+                        l_task := 'stpcnclbi';
+                      ELSE
+                          IF (p_bfsfiletype = 'MMIDBI') THEN
+                                l_task := 'mmid';
+                      ELSIF (p_bfsfiletype = 'BILLGENBI') THEN
+                                l_task := 'taxbillgen';
+                      ELSIF (p_bfsfiletype = 'PAYERDDA Create') THEN
+                                l_task := 'payerdda';
+
+                      ELSE
+                        l_task := 'bi';
+                      END IF;
+                    END IF;
+                  END IF;
+                END IF;
+              END IF;
+            END IF;
+          END IF;
+        END IF;
+      END IF;
+     END IF;
+    END IF;
+
+    SELECT DECODE(UPPER(p_bfsfiletype),
+                  'PAYMENT',
+                  'tpymt',
+                                  'MMIDBI',
+                                  'tpymt',
+                                  'BILLGENBI',
+                                  'tpymt',
+                  'PAYERDDA Create',
+                  'tpymt',
+                  'COLLECTIONS-MANDATE',
+                  'tcoln',
+                  'COLLECTIONS-DDI',
+                  'tcoln',
+                  'COLLECTIONS-INVOICE',
+                  'tcoln',
+                  'COLLECTIONS-DDAIMG',
+                  'tcoln',
+                  'CUSTODY',
+                  'tcstd',
+                  'CUSTODYSINGLE',
+                  'tcstd',
+                  'UACSTD',
+                  'tcstd',
+                  'UAFXCSTD',
+                  'tcstd',
+                  'UACA',
+                  'tcstd',
+                  'UATDCSTD',
+                  'tcstd',
+                  'CARSPSINGLE',
+                  'tcstd',
+                  'CLS',
+                  'tcls',
+                  'QPAYMENT',
+                  'tpymt',
+                  'Template Payment',
+                  'tpymt',
+                  'PAYEE',
+                  'mpymt',
+                  /** icas change start here**/
+                  'SUBACCOUNT',
+                  'icas',
+                  'HOLD',
+                  'icas',
+                  'SI',
+                  'icas',
+                  /** icas change start here**/
+                  'SMEPAYEE',
+                  'mpymt',
+                  'SMEPAYMENT',
+                  'tpymt',
+                  'IPAYSTOP-CSV',
+                  'tpymt',
+                  'tpymt')
+      INTO p_wsrapplnid
+      FROM DUAL;
+
+    p_wsrparams := '<parameters><refno>' || p_bfsfilereferenceno ||
+                   '</refno><filepath>' || p_bfsfilepath ||
+                   '</filepath><ismultifile>' || p_bfsismultifile ||
+                   '</ismultifile><encodescheme>' || p_bfsencodescheme ||
+                   '</encodescheme><encodesel>' || p_bfsencodesel ||
+                   '</encodesel><fcuflag>' || p_fcuflag ||
+                   '</fcuflag><isSingleUmi>' || p_issingleumi ||
+                   '</isSingleUmi><imgFilePath>' || P_imgfilepath ||
+                   '</imgFilePath></parameters>';
+
+    L_REQUEST_ID     := PKG_XFW.FN_SERVICE_REQUEST_TMX(P_WSRAPPLNID,
+                                                   'transactions',
+                                                   l_task,
+                                                   P_BFSGROUPID,
+                                                   P_CREATEDBY,
+                                                   'en',
+                                                   P_WSRPARAMS,
+                                                   P_WSRPARAMS,
+                                                                                                   p_tokentype,
+                                                                                                   p_useragent,
+                                                                                                   p_clientip,
+                                                                                                   p_uniqueid);
+    g_filerefernceno := p_bfsfilereferenceno;
+    pkg_ti_response.return_response(pkg_ti_response.insert_success,
+                                    p_bfsfilereferenceno);
+  EXCEPTION
+    WHEN pkg_ti_response.error THEN
+      RAISE;
+    WHEN OTHERS THEN
+      pkg_ti_response.return_response(pkg_ti_response.db_error,
+                                      SQLCODE,
+                                      SUBSTR(SQLERRM, 1, 75));
+      pkg_ti_response.pr_check_failure;
+  END pro_tutil_bulkimport_inserttmx;
+  END pkg_tutil_bulkimport_insert;
+
+
+12:47:06 SYS @ POHK3CCD1:CDB$ROOT:>

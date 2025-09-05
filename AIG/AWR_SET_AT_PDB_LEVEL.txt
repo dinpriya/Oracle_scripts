@@ -1,0 +1,5 @@
+alter session set container=ORCL; >>>>  Set the container Name
+alter system set awr_pdb_autoflush_enabled=true;
+conn system/<pwd>@orclcdb     >>>> Login into PDB database
+alter system set AWR_SNAPSHOT_TIME_OFFSET=1000000 scope=both;  >>> Set the arameter to avoid performance issue while generating snapshot at the same time in CDB and PDB level.
+exec dbms_workload_repository.create_snapshot();

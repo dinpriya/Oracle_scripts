@@ -1,0 +1,91 @@
+AIG:
+=====
+
+TABLE LEVEL RECOVERY FROM STANDBY BY DOING FLASHBACK ON STANDBY
+
+This guide tells about recovering table from Physical Standby by flashing back to point-in-time and then doing EXP (traditional).
+
+Step-by-step procedure:
+
+1. Get the timestamp till what time they need records in table from PSS.
+2. Collect the details of MRP apply instance & then Cancelled MRP via DGMGRL. Make sure DR DB is in sync. 
+
+DGMGRL> show configuration;
+DGMGRL> show database '<stdbyname>' ==> Record the MRP instance.
+DGMGRL> edit database '<stdby db name>' set state='APPLY-OFF';
+
+3. Shutdown all the instances for this database using SRVCTL.
+
+$ srvctl stop database -d <stdbyname> -o immediate
+_OR_
+$ srvctl stop instance -i <instname> -d <stdbyname> -o immediate
+
+4.  Startup one instance in MOUNT state using SRVCTL
+
+$ srvctl start instance -i <instname> -d <stdbyname> -o mount
+
+Ensure MRP is turned OFF
+
+SQL> select inst_id,process,status from gv$archived_log where process='MRP0';
+_OR_
+DGMGRL> show configuration;
+DGMGRL> show database '<stdbyname>';
+
+5. Ensure the necessary arch logs are available in the OS to do this.
+There might be few arch logs required to recover upto this point-in-time during the Flashback.
+So just on the safer side, we need to ensure that arch logs *around* the PITR timings are available at the OS level.
+If you don’t have, then you can restore few arch sequences from backupset using RMAN. 
+
+6. Flashback database to timestamp taken from application team.
+
+SQL> flashback database to timestamp to_timestamp('2016-11-13 15:30:00','yyyy-MO-DD hh24:mi:ss');
+
+If you are using SQLPLUS to do the FB & if the above said arch logs are missing, then FB cmd will throw error before starting.
+To avoid this you can issue the FB cmd from RMAN prompt so that RMAN will internally take care of any missing arch logs & restore them as required.
+
+> RMAN target /
+
+RMAN > flashback database to timestamp to_timestamp('2016-11-13 15:30:00','yyyy-MO-DD hh24:mi:ss'); 
+
+7. Monitor Alert log for completion.
+
+$ tail -100f <alertlogfullpath>
+
+8. Once the FB completes, stop the instance and then start it in MOUNT state.
+
+$ srvctl stop instance -i <instname> -d <stdbyname> -o immediate
+$ srvctl start instance -i <instname> -d <stdbyname> -o mount
+
+9. Set the "job_queue_processes" to "0" (collect the value prior to update)
+
+SQL> show parameter job_queue_processes
+SQL> alter system set job_queue_processes=0 scope=both sid='*';
+
+10. Open DB in read only mode.
+
+SQL> alter database open read only;
+
+11. Do the record count and confirm with PSS. If all good, proceed further.
+
+12. Do an "exp" (traditional way) of the required tables. Transfer the dump to Primary site and import using "IGNORE=Y" if needed after getting confirmation from PSS.
+
+13. Once, PSS confirms on the data quality, we need to ROLL FWD the standby DB. Proceed further after taking go-ahead.
+
+14. Stop the instance & start it in MOUNT state. (
+
+15. Ensure to set the "job_queue_processes" parameter back to the Original value taken at Step 9. Ensure MRP is kept down.
+
+16. From SQLPLUS prompt, do a recovery.
+
+	SQL> alter database recover automatic standby database parallel 5 until cancel;
+
+17. Above recover cmd will throw error after recovering upto the latest arch log seq. Then from SQLPLUS, cancel the recovery.
+
+	SQL> recover cancel; ==> This will shows as "Media recovery complete".
+
+18. Start the MRP using DGMGRL
+
+DGMGRL> edit database '<stdby db name>' set state='APPLY-ON';
+
+19. Ensure MRP is up and DR DB is in sync.
+

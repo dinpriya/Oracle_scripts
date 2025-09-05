@@ -1,0 +1,23 @@
+Implementation Plan
+=======================================================
+Login to HKLPDPS2B003
+
+lsnrctl status LISTENER | grep svc_pohk2ccd_ngo_gl_onl
+
+export ORACLE_SID=POHK2CCD3
+sqlplus / as sysdba
+alter session set container=PDBP_NGO;
+
+set pages 333 lines 777
+col PDB_NAME for a12
+col HOST_NAME for a12
+select s.inst_id,p.con_id,p.name PDB_NAME,i.instance_name,i.host_name,s.name service_name ,name_hash service_hash from gv$active_services s,gv$instance i ,gv$pdbs p
+where s.name not like 'SYS%' and substr(s.name,1,instr(s.name,'_')-1) not in(select name from v$database) and i.inst_id=s.inst_id  and p.con_id=s.con_id and p.inst_id=s.inst_id and s.name not like 'pdb%' and s.name='svc_pohk2ccd_ngo_gl_onl' order by s.inst_id,2
+/
+
+select inst_id,service_name,count(*),min(logon_time)mint,max(logon_time)maxt from gv$session where service_name like 'svc_pohk2ccd_ngo_gl_onl'  group by inst_id,service_name order by 2,1;
+
+
+exec dbms_service.stop_service('svc_pohk2ccd_ngo_gl_onl');
+
+lsnrctl status LISTENER | grep svc_pohk2ccd_ngo_gl_onl

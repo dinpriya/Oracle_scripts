@@ -1,0 +1,99 @@
+1) Withdraw the EID for hklpdsotp003
+2) Check DB TEST is running or not.
+   ps -ef | grep pmon
+3) If DB not running then open in mount mode to drop the DB
+   export ORACLE_SID=TEST
+   sqlplus '/as sysdba'
+   startup mount exclusive restrict
+   
+4) Capture the ASM disk group utilization from ASM instance
+   set lines 113 
+select name, 
+round((total_mb-free_mb)/1024) USED_GB, 
+round(free_mb/1024) FREE_GB, 
+round(total_mb/1024) TOTAL_GB, 
+round(free_mb/total_mb*100) "FREE_%", 
+round(((total_mb-free_mb)/1024/70)*100) "30%_FREE_TARGET", 
+round((((total_mb/100)*80)/1024)-((total_mb-free_mb)/1024)) "GB_BEFORE_20%" 
+from v$asm_diskgroup order by name;
+
+5) Drop the DB
+   export ORACLE_SID=TEST
+   sqlplus '/as sysdba'
+   select name,open_mode from v$database;
+   drop database;
+
+6) Capture the ASM disk group utilization from ASM instance
+   set lines 113 
+   select name, 
+   round((total_mb-free_mb)/1024) USED_GB, 
+   round(free_mb/1024) FREE_GB, 
+   round(total_mb/1024) TOTAL_GB, 
+   round(free_mb/total_mb*100) "FREE_%", 
+   round(((total_mb-free_mb)/1024/70)*100) "30%_FREE_TARGET", 
+   round((((total_mb/100)*80)/1024)-((total_mb-free_mb)/1024)) "GB_BEFORE_20%" 
+   from v$asm_diskgroup order by name;
+
+   Verify the Free space in DATA_RESTORATION disk group. It should be 100% free space.
+
+7) After verify proceed to drop the disk group
+   sudo -iu grid
+   sqlplus '/as sysasm'
+   set pages 100 lines 1000
+   col path for a55
+   col name for a15
+   col HEADER_STATUS for a15
+   col failgroup for a15
+   select group_number,name,state,type from v$asm_diskgroup;
+
+    GROUP_NUMBER|NAME           |STATE                            |TYPE
+------------|---------------|---------------------------------|------------------
+           1|DATA           |MOUNTED                          |EXTERN
+           2|FRA            |MOUNTED                          |EXTERN
+           3|GIMR           |MOUNTED                          |EXTERN
+           4|INTERNAL       |MOUNTED                          |NORMAL
+           5|REDO1          |MOUNTED                          |EXTERN
+           6|REDO2          |MOUNTED                          |EXTERN
+           7|TEST           |MOUNTED                          |EXTERN --> TEST disk group need to be drop.
+
+
+   select group_number,name,header_status,os_mb/1024,path,failgroup from v$asm_disk where GROUP_NUMBER=7 order by path;
+
+   GROUP_NUMBER|NAME           |HEADER_STATUS  |OS_MB/1024|PATH                                                        |FAILGROUP
+------------|---------------|---------------|----------|------------------------------------------------------------|---------------
+           7|TEST_0008      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_001    |TEST_0008
+           7|TEST_0012      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_002    |TEST_0012
+           7|TEST_0014      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_003    |TEST_0014
+           7|TEST_0015      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_004    |TEST_0015
+           7|TEST_0004      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_005    |TEST_0004
+           7|TEST_0005      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_006    |TEST_0005
+           7|TEST_0007      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_007    |TEST_0007
+           7|TEST_0009      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_008    |TEST_0009
+           7|TEST_0011      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_009    |TEST_0011
+           7|TEST_0010      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_010    |TEST_0010
+           7|TEST_0000      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_011    |TEST_0000
+           7|TEST_0013      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_012    |TEST_0013
+           7|TEST_0006      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_013    |TEST_0006
+           7|TEST_0016      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_014    |TEST_0016
+           7|TEST_0003      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_015    |TEST_0003
+           7|TEST_0002      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_016    |TEST_0002
+           7|TEST_0017      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_017    |TEST_0017
+           7|TEST_0019      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_018    |TEST_0019
+           7|TEST_0018      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_019    |TEST_0018
+           7|TEST_0001      |MEMBER         |500.060547|/dev/oracleasm/disks/asm_disk_hds_allflash_data_test_020    |TEST_0001
+
+20 rows selected.
+
+
+   drop diskgroup TEST;
+
+8) Provide the logs to PSS and Provide the 20 FORMER/CANDIDATE disk details to LINUX team for release the disk.
+
+   select group_number,name,header_status,os_mb/1024,path,failgroup from v$asm_disk where header_status='FORMER';
+
+9) PSS verification
+
+Rollback
+
+Not required.
+

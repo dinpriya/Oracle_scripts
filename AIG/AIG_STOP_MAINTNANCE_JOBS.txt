@@ -1,0 +1,39 @@
+
+Login to server HKLPDPS2B002
+
+export ORACLE_SID=XXXX (Export respective database)
+
+sqlplus sys as sysdba
+
+*** Do below steps in both CDB and in all PDB
+
+alter session set nls_date_format='DD-MON-YY HH24:MI:SS';
+
+select sysdate from dual;
+
+set feedback on
+set lines 180 pages 1000
+col client_name for a40
+col attributes for a60
+
+To check,
+
+select client_name, status, con_id from cdb_autotask_client;
+
+To disable,
+
+exec DBMS_AUTO_TASK_ADMIN.disable(client_name => 'auto space advisor', operation	=> NULL, window_name => NULL);
+exec DBMS_AUTO_TASK_ADMIN.disable(client_name => 'auto optimizer stats collection', operation   => NULL,  window_name => NULL);
+exec DBMS_AUTO_TASK_ADMIN.disable(client_name => 'sql tuning advisor', operation	=> NULL, window_name => NULL);
+
+To check,
+select client_name, status, con_id from cdb_autotask_client;
+
+To enable,
+
+exec DBMS_AUTO_TASK_ADMIN.enable(client_name => 'auto space advisor', operation	=> NULL, window_name => NULL);
+exec DBMS_AUTO_TASK_ADMIN.enable(client_name => 'auto optimizer stats collection', operation   => NULL,  window_name => NULL);
+exec DBMS_AUTO_TASK_ADMIN.enable(client_name => 'sql tuning advisor', operation	=> NULL, window_name => NULL);
+
+To check,
+select client_name, status, con_id from cdb_autotask_client;
