@@ -1,0 +1,627 @@
+
+#!/bin/bash
+# Managed by Ansible
+# set -x
+
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+log_name=app_health_check_script_execution_status.log
+rm /home/oracle/scb_app_health_check_DO_NOT_DELETE/logs/*
+SET_DB_ENV () {
+
+if [ `uname` = "SunOS" ] || [ `uname` = "AIX" ]
+then
+
+        var1=`ps -ef|grep smon|grep -v grep|grep -v ASM|grep -v osysmon|awk '{print $9}'| cut -d_ -f3|wc -l`
+
+#        if [ ${var1} -lt 1 ]
+        if [ ${var1} = 0 ]
+        then
+#                echo  "####  " | tee -a ${script_path}/${log_name}
+                echo " NOT FOUND ANY DB INSTANCES RUNNING ON THIS SERVER $hostname"  | tee -a ${script_path}/${log_name4}
+#                echo  "####  " | tee -a ${script_path}/${log_name}
+        else
+                for DBNAME in `ps -ef|grep smon|grep -v grep|grep -v ASM|grep -v osysmon|awk '{print $9}'| cut -d_ -f3`
+                do
+
+                DBSID=`ps -ef|grep smon|grep -v grep|grep -v ASM|grep -v osysmon|awk '{print $9}'| cut -d_ -f3`
+                ORAHOME=`/bin/sed '/^ *#/d;s/#.*//' /var/opt/oracle/oratab | grep ${DBNAME} | head -1 | cut -d: -f2`
+
+#                export ORACLE_SID=${DBSID}
+                export ORACLE_SID=${DBNAME}
+                export ORACLE_HOME=${ORAHOME}
+                export LD_LIBRARY_PATH=${ORAHOME}/lib
+                export PATH=$ORACLE_HOME/bin:$PATH;
+#                echo "############################"  | tee -a ${script_path}/${log_name}
+#                echo "calling DB_ROLE_CHECK_FUNC"  | tee -a ${script_path}/${log_name}
+
+                DB_ROLE_CHECK_FUNC
+                done
+        fi
+else
+        var1=`ps -ef|grep smon|grep -v grep|grep -v ASM|grep -v osysmon|awk '{print $8}'| sed 's/ora_smon_//'|grep -v sed|grep -v MGMTDB |wc -l`
+
+        if [ ${var1} -lt 1 ]
+        then
+#                echo  "####  " | tee -a ${script_path}/${log_name4}
+                echo " NOT FOUND ANY DB INSTANCES RUNNING ON THIS SERVER $hostname"  | tee -a ${script_path}/${log_name4}
+#                echo  "####  " | tee -a ${script_path}/${log_name4}
+        else
+                for DBNAME in `ps -ef|grep smon|grep -v grep|grep -v ASM|grep -v osysmon|awk '{print $8}'| sed 's/ora_smon_//'|grep -v sed|grep -v MGMTDB`
+                do
+
+                DBSID=`/bin/ps -ef | grep smon | grep ${DBNAME} | awk '{print $8}' | sed 's/ora_smon_//'`
+                ORAHOME=`/bin/sed '/^ *#/d;s/#.*//' /etc/oratab | grep ${DBNAME} | head -1 | cut -d: -f2`
+
+#                export ORACLE_SID=${DBSID}
+                export ORACLE_SID=${DBNAME}
+                export ORACLE_HOME=${ORAHOME}
+                export LD_LIBRARY_PATH=${ORAHOME}/lib
+                export PATH=$ORACLE_HOME/bin:$PATH;
+#                echo "############################"  | tee -a ${script_path}/${log_name}
+#                echo "DB_ROLE_CHECK_FUNC"  | tee -a ${script_path}/${log_name}
+
+                DB_ROLE_CHECK_FUNC
+                done
+        fi
+fi
+
+}
+
+DB_ROLE_CHECK_FUNC () {
+
+var1=`sqlplus -s "/ as sysdba" <<EOF
+SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
+select substr(DATABASE_ROLE,1,8) from v\\$database ;
+EXIT;
+EOF`
+if [ "$var1" !=  "PHYSICAL" ]
+then
+#echo " " ; echo  "Database instance is "${var1} | tee -a ${script_path}/${log_name}_${hostname}
+#echo " " | tee -a ${script_path}/${log_name}_${hostname}
+echo  "#### Database role  ---Primary Node "
+
+DB_VR_CHECK_FUNC
+else
+echo  "#### Checks skipped on standby database $DBNAME running on $hostname, will run on Primary side" | tee -a ${log_path}/${log_name}_standby
+
+fi
+}
+
+DB_VR_CHECK_FUNC () {
+
+var0=`sqlplus -s "/ as sysdba" <<EOF
+SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
+select substr(version,1,2) from v\\$instance;
+EXIT;
+EOF`
+var2=`sqlplus -s "/ as sysdba" <<EOF
+SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
+select count(*) from v\\$pdbs;
+EXIT;
+EOF`
+if [ "$var0" = "12" ]
+then
+if [ $var2 = 0 ]
+then
+DB_CDB_CHECK_FUNC
+else
+PDB_INFO_CHECK_FUNC
+fi
+elif [ "$var0" = "19" ]
+then
+if [ $var2 = 0 ]
+then
+DB_CDB_CHECK_FUNC1
+else
+PDB_INFO_CHECK_FUNC1
+fi
+else
+DB_INFO_CHECK_FUNC
+
+fi
+}
+
+PDB_INFO_CHECK_FUNC () {
+export ORACLE_SID=${ORACLE_SID}
+export ORACLE_HOME=${ORAHOME}
+export LD_LIBRARY_PATH=${ORAHOME}/lib
+export PATH=$ORACLE_HOME/bin:$PATH;
+script_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+var_pdbs=($(sqlplus -S / as sysdba << EOF
+set feedback off
+set head off
+set pagesize 0
+select name from (select distinct con_id, name from gv\$containers where name not in('PDB\$SEED','CDB\$ROOT') order by con_id);
+exit;
+EOF))
+for i in "${!var_pdbs[@]}"
+do
+log_name1=Long_running_queries_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name2=Blocking_sessions_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name3=Plan_flip_last24_hrs_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name4=CPU_consuming_queries_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name6=unusable_indexes_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name7=object_stats_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name8=invalid_objects_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name9=Tablespace_usage_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name10=top25_space_consuming_obj_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name11=top_temp_consuming_sqls_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name12=top_IO_consuming_sqls_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name14=Sequence_max_details_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name15=DB_patch_version_${ORACLE_SID}_${var_pdbs[$i]}.txt
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name1}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query1.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name2}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query2.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name3}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query3.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name4}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query4.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name6}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query6.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name7}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query7.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name8}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query8.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name9}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query9.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name10}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query10.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name11}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query11.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name12}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query12.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name14}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query14.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name15}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query15_12c.sql
+EXIT;
+EOF
+
+done
+}
+
+PDB_INFO_CHECK_FUNC1 () {
+export ORACLE_SID=${ORACLE_SID}
+export ORACLE_HOME=${ORAHOME}
+export LD_LIBRARY_PATH=${ORAHOME}/lib
+export PATH=$ORACLE_HOME/bin:$PATH;
+script_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+var_pdbs=($(sqlplus -S / as sysdba << EOF
+set feedback off
+set head off
+set pagesize 0
+select name from (select distinct con_id, name from gv\$containers where name not in('PDB\$SEED','CDB\$ROOT') order by con_id);
+exit;
+EOF))
+for i in "${!var_pdbs[@]}"
+do
+log_name1=Long_running_queries_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name2=Blocking_sessions_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name3=Plan_flip_last24_hrs_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name4=CPU_consuming_queries_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name6=unusable_indexes_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name7=object_stats_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name8=invalid_objects_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name9=Tablespace_usage_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name10=top25_space_consuming_obj_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name11=top_temp_consuming_sqls_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name12=top_IO_consuming_sqls_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name14=Sequence_max_details_${ORACLE_SID}_${var_pdbs[$i]}.txt
+log_name15=DB_patch_version_${ORACLE_SID}_${var_pdbs[$i]}.txt
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name1}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query1.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name2}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query2.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name3}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query3.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name4}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query4.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name6}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query6.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name7}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query7.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name8}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query8.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name9}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query9.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name10}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query10.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name11}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query11.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name12}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query12.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name14}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query14.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name15}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+alter session set container=${var_pdbs[$i]};
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query15_19c.sql
+EXIT;
+EOF
+
+done
+}
+
+DB_CDB_CHECK_FUNC () {
+export ORACLE_SID=${ORACLE_SID}
+export ORACLE_HOME=${ORAHOME}
+export LD_LIBRARY_PATH=${ORAHOME}/lib
+export PATH=$ORACLE_HOME/bin:$PATH;
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+log_name1=Long_running_queries_${ORACLE_SID}.txt
+log_name2=Blocking_sessions_${ORACLE_SID}.txt
+log_name3=Plan_flip_last24_hrs_${ORACLE_SID}.txt
+log_name4=CPU_consuming_queries_${ORACLE_SID}.txt
+log_name5=MAX_connections_${ORACLE_SID}.txt
+log_name6=unusable_indexes_${ORACLE_SID}.txt
+log_name7=object_stats_${ORACLE_SID}.txt
+log_name8=invalid_objects_${ORACLE_SID}.txt
+log_name9=Tablespace_usage_${ORACLE_SID}.txt
+log_name10=top25_space_consuming_obj_${ORACLE_SID}.txt
+log_name11=top_temp_consuming_sqls_${ORACLE_SID}.txt
+log_name12=top_IO_consuming_sqls_${ORACLE_SID}.txt
+log_name14=Sequence_max_details_${ORACLE_SID}.txt
+log_name15=DB_patch_version_${ORACLE_SID}.txt
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name1}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query1.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name2}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query2.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name3}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query3.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name4}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query4.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name5}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query5.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name6}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query6.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name7}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query7.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name8}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query8.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name9}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query9.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name10}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query10.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name11}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query11.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name12}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query12.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name14}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query14.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name15}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query15_12c.sql
+EXIT;
+EOF
+}
+DB_CDB_CHECK_FUNC1 () {
+export ORACLE_SID=${ORACLE_SID}
+export ORACLE_HOME=${ORAHOME}
+export LD_LIBRARY_PATH=${ORAHOME}/lib
+export PATH=$ORACLE_HOME/bin:$PATH;
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+log_name1=Long_running_queries_${ORACLE_SID}.txt
+log_name2=Blocking_sessions_${ORACLE_SID}.txt
+log_name3=Plan_flip_last24_hrs_${ORACLE_SID}.txt
+log_name4=CPU_consuming_queries_${ORACLE_SID}.txt
+log_name5=MAX_connections_${ORACLE_SID}.txt
+log_name6=unusable_indexes_${ORACLE_SID}.txt
+log_name7=object_stats_${ORACLE_SID}.txt
+log_name8=invalid_objects_${ORACLE_SID}.txt
+log_name9=Tablespace_usage_${ORACLE_SID}.txt
+log_name10=top25_space_consuming_obj_${ORACLE_SID}.txt
+log_name11=top_temp_consuming_sqls_${ORACLE_SID}.txt
+log_name12=top_IO_consuming_sqls_${ORACLE_SID}.txt
+log_name14=Sequence_max_details_${ORACLE_SID}.txt
+log_name15=DB_patch_version_${ORACLE_SID}.txt
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name1}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query1.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name2}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query2.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name3}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query3.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name4}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query4.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name5}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query5.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name6}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query6.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name7}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query7.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name8}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query8.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name9}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query9.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name10}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query10.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name11}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query11.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name12}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query12.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name14}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query14.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name15}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/12c_19c_queries/Query15_19c.sql
+EXIT;
+EOF
+}
+
+DB_INFO_CHECK_FUNC () {
+export ORACLE_SID=${ORACLE_SID}
+export ORACLE_HOME=${ORAHOME}
+export LD_LIBRARY_PATH=${ORAHOME}/lib
+export PATH=$ORACLE_HOME/bin:$PATH;
+log_path=/home/oracle/scb_app_health_check_DO_NOT_DELETE/logs
+log_name1=Long_running_queries_${ORACLE_SID}.txt
+log_name2=Blocking_sessions_${ORACLE_SID}.txt
+log_name3=Plan_flip_last24_hrs_${ORACLE_SID}.txt
+log_name4=CPU_consuming_queries_${ORACLE_SID}.txt
+log_name5=MAX_connections_${ORACLE_SID}.txt
+log_name6=unusable_indexes_${ORACLE_SID}.txt
+log_name7=object_stats_${ORACLE_SID}.txt
+log_name8=invalid_objects_${ORACLE_SID}.txt
+log_name9=Tablespace_usage_${ORACLE_SID}.txt
+log_name10=top25_space_consuming_obj_${ORACLE_SID}.txt
+log_name11=top_temp_consuming_sqls_${ORACLE_SID}.txt
+log_name12=top_IO_consuming_sqls_${ORACLE_SID}.txt
+log_name14=Sequence_max_details_${ORACLE_SID}.txt
+log_name15=DB_patch_version_${ORACLE_SID}.txt
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name1}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query1.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name2}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query2.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name3}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query3.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name4}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query4.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name5}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query5.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name6}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query6.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name7}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query7.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name8}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query8.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name9}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query9.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name10}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query10.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name11}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query11.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name12}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query12.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name14}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query14.sql
+EXIT;
+EOF
+sqlplus -s "/ as sysdba" <<EOF | tee -a ${log_path}/${log_name15}
+SET PAGESIZE 1000 FEEDBACK OFF VERIFY OFF HEADING ON ECHO OFF
+@/home/oracle/scb_app_health_check_DO_NOT_DELETE/11g_queries/Query15.sql
+EXIT;
+EOF
+}
+
+#####################################
+MAIN ()
+{
+SET_DB_ENV
+}
+
+MAIN

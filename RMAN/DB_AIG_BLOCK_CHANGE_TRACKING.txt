@@ -1,0 +1,29 @@
+1.  To enable the RMAN block change tracking for PG117A
+
+	Login in INFODB as sysdba and run below :
+
+	col STATUS for a20
+	col FILENAME for a70
+	select name from v$database;
+	select * from v$block_change_tracking;
+	alter database enable block change tracking using file '/ora_fra/RMAN/INFODB/TRACKING_FILE/block_change_INFODB.log';
+	select * from v$block_change_tracking;
+
+2.Cron schedule for PG117A to be added in crontab:
+
+######House keeping script########
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/infodb/infodb/alert -type f -name '*.xml' -mtime +1 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/infodb/infodb/trace -type f -name '*.trm' -mtime +5 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/infodb/infodb/trace -type f -name '*.trc' -mtime +5 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/tnslsnr/PG117A/listener_infodb/alert -type f -name '*.xml' -mtime +1 -exec rm {} \;
+
+
+3.Cron schedule for PG171 to be added in crontab:
+
+######House keeping script########
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/ql_prdhk/ql_prdhk/alert -type f -name '*.xml' -mtime +1 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/ql_prdhk/ql_prdhk/trace -type f -name '*.trm' -mtime +5 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/rdbms/ql_prdhk/ql_prdhk/trace -type f -name '*.trc' -mtime +5 -exec rm {} \;
+0 1 * * 0 find /prd/oracle11g/diag/tnslsnr/PG171/listener/alert -type f -name '*.xml' -mtime +1 -exec rm {} \; 
+
+

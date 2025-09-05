@@ -1,0 +1,21 @@
+SQL> exec dbms_stats.gather_table_stats(ownname => 'QLDSADMIN', tabname =>'DS_OA_TXNS_ID', cascade => TRUE, degree => 6,estimate_percent => 100,method_opt => 'FOR ALL COLUMNS SIZE AUTO');
+
+
+PL/SQL procedure successfully completed.
+
+
+SQL> exec dbms_stats.gather_table_stats(ownname => 'QLDSADMIN', tabname =>'DS_OA_BALANCES_ID', cascade => TRUE, degree => 6,estimate_percent => 100,method_opt => 'FOR ALL COLUMNS SIZE AUTO');
+
+
+PL/SQL procedure successfully completed.
+
+SQL> SQL> select name from v$database;
+
+NAME
+---------------------------
+INFODB
+
+SQL> !hostname
+PG117A
+
+SQL>

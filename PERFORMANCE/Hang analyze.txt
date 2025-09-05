@@ -1,0 +1,10 @@
+sqlplus -s '/ as sysdba'
+oradebug setmypid
+oradebug -G all hanganalyze 3
+wait for 3 min
+oradebug -G all hanganalyze 3
+wait for 3 min
+oradebug -G all hanganalyze 3
+wait for 3 min
+oradebug -G all hanganalyze 3
+exit

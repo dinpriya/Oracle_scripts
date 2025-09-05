@@ -1,0 +1,2 @@
+
+select inst_id,service_name,count(*),min(logon_time)mint,max(logon_time)maxt from gv$session where service_name like 'svc%'  group by inst_id,service_name order by 2,1;

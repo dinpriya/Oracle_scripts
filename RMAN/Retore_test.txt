@@ -1,0 +1,521 @@
+################################ Restoration test from Rman backup ################################
+
+Step - 1 --> Send a mail to backup team to ask to use below parameters for restore
+
+NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL=" DC1 DB Clone DD11"
+
+------  NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL=" DC1 DB Clone DD11"
+
+Step -2 --> Drop DB where we have to restore (hklvdpapp071)
+
+oracle@hklvdpapp071:/home/oracle [POHK3CCD]
+> . oraenv
+ORACLE_SID = [POHK3CCD] ? POHK2CCD
+
+10:22:11 SYS @ POHK2CCD:CDB$ROOT:>select name from v$database;
+
+NAME
+---------
+POHK2CCD
+
+10:22:42 SYS @ POHK2CCD:CDB$ROOT:>select host_name from v$instance;
+
+HOST_NAME
+----------------------------------------------------------------
+hklvdpapp071
+
+10:22:51 SYS @ POHK2CCD:CDB$ROOT:>shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+10:23:44 SYS @ POHK2CCD:CDB$ROOT:>startup mount exclusive restrict;
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 23315128 bytes
+Variable Size            6039797760 bytes
+Database Buffers         4.7513E+10 bytes
+Redo Buffers              110899200 bytes
+Database mounted.
+10:24:01 SYS @ POHK2CCD:CDB$ROOT:>select host_name from v$instance;
+
+HOST_NAME
+----------------------------------------------------------------
+hklvdpapp071
+
+10:24:13 SYS @ POHK2CCD:CDB$ROOT:>select name from v$database;
+
+NAME
+---------
+POHK2CCD
+
+10:24:29 SYS @ POHK2CCD:CDB$ROOT:>drop database;
+
+Database dropped.
+
+Step 3 --> startup the DB in nomount
+
+sqlplus sys as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Thu May 18 10:37:42 2023
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter password:
+Connected to an idle instance.
+
+10:37:43 SYS @ idle:>startup nomount pfile='/u01/app/oracle/local/dbs/initPOHK2CCD.ora';
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 23315128 bytes
+Variable Size            6039797760 bytes
+Database Buffers         4.7513E+10 bytes
+Redo Buffers              110899200 bytes
+
+10:38:07 SYS @ idle:>show parameter sga
+
+10:38:32 SYS @ idle:>show parameter db_file
+
+10:38:39 SYS @ idle:>show parameter log_file_name
+
+10:38:53 SYS @ idle:>!ls -lrt /oradump/POHK2CCD_19c/nsr/apps/logs (log file location)
+
+10:41:28 SYS @ idle:>exit
+
+Step 4 --> restore a control file
+
+> rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Thu May 18 10:42:32 2023
+Version 19.13.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: POHK2CCD (not mounted)
+
+RMAN> run
+2> {
+3> allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+restore  primary controlfile from 'control_POHK2CCD_nk1qsajj_691956_1_1';
+release channel CH1;
+release channel CH2;
+}4> 5> 6> 7> 8> 9>
+
+using target database control file instead of recovery catalog
+allocated channel: CH1
+channel CH1: SID=2358 device type=SBT_TAPE
+channel CH1: NMDA Oracle v19.5.0.5
+
+allocated channel: CH2
+channel CH2: SID=2829 device type=SBT_TAPE
+channel CH2: NMDA Oracle v19.5.0.5
+
+sent command to channel: CH1
+sent command to channel: CH2
+
+Starting restore at 18 May 2023 10:42:48
+
+channel CH2: skipped, AUTOBACKUP already found
+channel CH1: restoring control file
+channel CH1: restore complete, elapsed time: 00:00:42
+output file name=/oradata/POHK2CCD/CONTROLFILE/current01.ctl
+output file name=/oradata/POHK2CCD/CONTROLFILE/current02.ctl
+Finished restore at 18 May 2023 10:43:30
+
+released channel: CH1
+
+released channel: CH2
+
+RMAN> alter database mount;
+
+Statement processed
+
+RMAN> exit
+
+> sqlplus sys as sysdba
+
+10:44:10 SYS @ POHK2CCD:CDB$ROOT:>elect name,open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+POHK2CCD  MOUNTED
+
+10:44:17 SYS @ POHK2CCD:CDB$ROOT:>select host_name from v$instance;
+
+HOST_NAME
+----------------------------------------------------------------
+hklvdpapp071
+
+10:44:22 SYS @ POHK2CCD:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 PDBP_FWB                       MOUNTED
+         4 PDBP_NGO                       MOUNTED
+         6 PDBP_AIC                       MOUNTED
+10:44:28 SYS @ POHK2CCD:CDB$ROOT:>exit
+
+Step 5 --> Drop the previous db files from the exiting location
+
+oracle@hklvdpapp071:/oradata [POHK2CCD]
+> cd POHK2CCD
+> ls -lrt
+total 4
+drwxr-x---.  4 oracle oinstall   54 Apr 22 12:24 autobackup
+drwxr-x---.  3 oracle oinstall   32 Apr 22 13:21 backupset
+drwxr-x---.  2 oracle oinstall   60 May 18 10:43 CONTROLFILE
+drwxr-x---. 19 oracle oinstall 4096 May 18 10:43 archivelog
+> cd CONTROLFILE/
+> ls -lrt
+total 169568
+-rw-r-----. 1 oracle oinstall 86818816 May 18 10:47 current02.ctl
+-rw-r-----. 1 oracle oinstall 86818816 May 18 10:47 current01.ctl
+> cd ../
+oracle@hklvdpapp071:/oradata/POHK2CCD [POHK2CCD]
+> du -sh *
+92G     archivelog
+210M    autobackup
+35M     backupset
+166M    CONTROLFILE
+oracle@hklvdpapp071:/oradata/POHK2CCD/archivelog [POHK2CCD]
+> rm -rf *
+oracle@hklvdpapp071:/oradata/POHK2CCD/archivelog [POHK2CCD]
+> cd ../autobackup/
+oracle@hklvdpapp071:/oradata/POHK2CCD/autobackup [POHK2CCD]
+> ls -lrt
+total 0
+drwxr-x---. 2 oracle oinstall  98 Apr 21 02:41 2023_04_21
+drwxr-x---. 2 oracle oinstall 186 Apr 22 13:21 2023_04_22
+oracle@hklvdpapp071:/oradata/POHK2CCD/autobackup [POHK2CCD]
+> rm -rf *
+oracle@hklvdpapp071:/oradata/POHK2CCD/autobackup [POHK2CCD]
+> cd ../
+> cd backupset/
+oracle@hklvdpapp071:/oradata/POHK2CCD/backupset [POHK2CCD]
+> ls -lrt
+total 0
+drwxr-x---. 2 oracle oinstall 66 Apr 22 13:26 2023_04_22
+oracle@hklvdpapp071:/oradata/POHK2CCD/backupset [POHK2CCD]
+> rm -rf *
+> cd ..
+oracle@hklvdpapp071:/oradata/POHK2CCD [POHK2CCD]
+> du -sh *
+0       archivelog
+0       autobackup
+0       backupset
+166M    CONTROLFILE
+
+Step -6 --> Restore a database (run .sh file)
+
+oracle@hklvdpapp071:/home/oracle [POHK2CCD] 
+> cp restore_apr2022.sh restore_apr2023.sh
+
+> cat restore_apr2023.sh
+rman target=/ msglog=/home/oracle/restore_APR2023.log << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+allocate channel CH9 type 'SBT_TAPE';
+allocate channel CH10 type 'SBT_TAPE';
+allocate channel CH11 type 'SBT_TAPE';
+allocate channel CH12 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+RESTORE DATABASE ;
+switch datafile all;
+switch tempfile all;
+RECOVER DATABASE ;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+release channel CH9;
+release channel CH10;
+release channel CH11;
+release channel CH12;
+}
+EXIT
+EOF
+
+oracle@hklvdpapp071:/home/oracle [POHK2CCD]
+> nohup sh restore_apr2023.sh >> RMAN_RESTORE_LOG_APR2023.log &
+[1] 3019954
+nohup: ignoring input and redirecting stderr to stdout
+oracle@hklvdpapp071:/home/oracle [POHK2CCD]
+> jobs
+[1]+  Running                 nohup sh restore_apr2023.sh >> RMAN_RESTORE_LOG_APR2023.log &
+
+oracle@hklvdpapp071:/home/oracle [POHK2CCD]
+> tail -f restore_APR2023.log
+archived log file name=/oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_1_162670_l6cgzhlq_.arc RECID=33 STAMP=1137160050
+archived log file name=/oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_1_162671_l6cgzlj9_.arc thread=1 sequence=162671
+channel default: deleting archived log(s)
+archived log file name=/oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_3_171472_l6cgy5z0_.arc RECID=5 STAMP=1137160031
+archived log file name=/oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_3_171473_l6cgyzpf_.arc thread=3 sequence=171473
+channel default: deleting archived log(s)
+archived log file name=/oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_2_229934_l6cgyzyk_.arc RECID=30 STAMP=1137160046
+unable to find archived log
+archived log thread=2 sequence=229935
+released channel: CH1
+released channel: CH2
+released channel: CH3
+released channel: CH4
+released channel: CH5
+released channel: CH6
+released channel: CH7
+released channel: CH8
+released channel: CH9
+released channel: CH10
+released channel: CH11
+released channel: CH12
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 05/18/2023 13:55:04
+RMAN-06054: media recovery requesting unknown archived log for thread 2 with sequence 229935 and starting SCN of 13253650630215
+
+RMAN>exit
+
+Step -7 --> Open a DB
+
+> sqlplus sys as sysdba
+14:04:11 SYS @ POHK2CCD:CDB$ROOT:>select name,open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+POHK2CCD  MOUNTED
+
+14:04:19 SYS @ POHK2CCD:CDB$ROOT:>recover database using backup controlfile until cancel;
+ORA-00279: change 13253650630215 generated at 04/30/2023 04:35:58 needed for thread 2
+ORA-00289: suggestion : /oradata/POHK2CCD/archivelog/2023_05_18/o1_mf_2_229935_%u_.arc
+ORA-00280: change 13253650630215 for thread 2 is in sequence #229935
+14:04:44 Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+cancel
+Media recovery cancelled.
+
+14:04:51 SYS @ POHK2CCD:CDB$ROOT:>alter database open resetlogs;
+alter database open resetlogs
+*
+ERROR at line 1:
+ORA-03113: end-of-file on communication channel
+Process ID: 3292009
+Session ID: 3774 Serial number: 40042
+
+14:06:12 SYS @ idle:>alter database set standby to maximize performance;
+
+Database altered.
+
+14:14:05 SYS @ idle:>alter database open;
+
+Database altered.
+
+14:14:42 SYS @ idle:>shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+14:15:51 SYS @ idle:>exit
+
+> sqlplus sys as sysdba
+14:16:09 SYS @ idle:>startup
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 23315128 bytes
+Variable Size            6039797760 bytes
+Database Buffers         4.7513E+10 bytes
+Redo Buffers              110899200 bytes
+Database mounted.
+Database opened.
+
+14:16:38 SYS @ idle:>select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+POHK2CCD  READ WRITE           PRIMARY
+
+14:17:09 SYS @ idle:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBP_FWB                       MOUNTED
+         4 PDBP_NGO                       MOUNTED
+         6 PDBP_AIC                       MOUNTED
+
+14:17:13 SYS @ idle:>alter pluggable database PDBP_NGO open read write;
+
+Pluggable database altered.
+
+14:17:43 SYS @ idle:>alter pluggable database PDBP_FWB open read write;
+
+Pluggable database altered.
+
+14:17:56 SYS @ idle:>alter pluggable database PDBP_AIC  open read write;
+
+Pluggable database altered.
+
+14:18:03 SYS @ idle:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBP_FWB                       READ WRITE NO
+         4 PDBP_NGO                       READ WRITE NO
+         6 PDBP_AIC                       READ WRITE NO
+
+14:18:18 SYS @ idle:>select host_name from v$instance;
+
+HOST_NAME
+----------------------------------------------------------------
+hklvdpapp071
+
+14:18:30 SYS @ idle:>alter session set container=PDBP_NGO;
+
+Session altered.
+
+14:31:09 SYS @ POHK2CCD:CDB$ROOT:>select file_name,file_ID,tablespace_name,bytes/1024/1024 MB,autoextensible from dba_temp_files;
+
+
+FILE_NAME                                                  FILE_ID TABLESPACE_NAME                        MB AUT
+------------------------------------------------------- ---------- ------------------------------ ---------- ---
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/t          7 TEMP                                 3072 YES
+empfile/temp.1297.1104717531
+
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/t          8 TEMP                                 3072 YES
+empfile/temp.1298.1104717541
+
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/t          9 TEMP                                 3072 YES
+empfile/temp.1299.1104717545
+
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/t         10 TEMP                                 3072 YES
+empfile/temp.1300.1104717547
+
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/t          4 TEMP                                   39 YES
+empfile/temp.300.1054661593
+
+14:19:47 SYS @ idle:>alter session set container=PDBP_FWB;
+
+Session altered.
+
+select file_name,file_ID,tablespace_name,bytes/1024/1024 MB,autoextensible from dba_temp_files;
+14:27:27 SYS @ POHK2CCD:CDB$ROOT:>
+FILE_NAME                                                  FILE_ID TABLESPACE_NAME                        MB AUT
+------------------------------------------------------- ---------- ------------------------------ ---------- ---
+/oradata/pohk2ccd_dg/b1770f1d613dbe97e0538ac7150a5e27/t          3 TEMP
+empfile/temp.298.1054661593
+
+4:28:36 SYS @ POHK2CCD:CDB$ROOT:>alter database tempfile '/oradata/pohk2ccd_dg/b1770f1d613dbe97e0538ac7150a5e27/tempfile/temp.298.1054661593' drop;
+
+Database altered.
+
+14:28:52 SYS @ POHK2CCD:CDB$ROOT:>alter tablespace temp add tempfile '/oradata/pohk2ccd_dg/b1770f1d613dbe97e0538ac7150a5e27/tempfile/temp01.dbf' size 10g;
+
+Tablespace altered.
+
+14:29:23 SYS @ POHK2CCD:CDB$ROOT:>select file_name,file_ID,tablespace_name,bytes/1024/1024 MB,autoextensible from dba_temp_files;
+
+FILE_NAME                                                  FILE_ID TABLESPACE_NAME                        MB AUT
+------------------------------------------------------- ---------- ------------------------------ ---------- ---
+/oradata/pohk2ccd_dg/b1770f1d613dbe97e0538ac7150a5e27/t          3 TEMP                                10240 NO
+empfile/temp01.dbf
+
+14:29:37 SYS @ POHK2CCD:CDB$ROOT:>alter session set container=PDBP_AIC;
+
+Session altered.
+
+14:29:47 SYS @ POHK2CCD:CDB$ROOT:>select file_name,file_ID,tablespace_name,bytes/1024/1024 MB,autoextensible from dba_temp_files;
+
+FILE_NAME                                                  FILE_ID TABLESPACE_NAME                        MB AUT
+------------------------------------------------------- ---------- ------------------------------ ---------- ---
+/oradata/pohk2ccd_dg/b345b4fd0d1bd53de0538ac7150ab0f4/t          6 TEMP
+empfile/temp.1296.1104717475
+
+14:30:30 SYS @ POHK2CCD:CDB$ROOT:>alter database tempfile '/oradata/pohk2ccd_dg/b345b4fd0d1bd53de0538ac7150ab0f4/tempfile/temp.1296.1104717475' drop;
+
+Database altered.
+
+14:30:53 SYS @ POHK2CCD:CDB$ROOT:>select file_name,file_ID,tablespace_name,bytes/1024/1024 MB,autoextensible from dba_temp_files;
+
+FILE_NAME                                                  FILE_ID TABLESPACE_NAME                        MB AUT
+------------------------------------------------------- ---------- ------------------------------ ---------- ---
+/oradata/pohk2ccd_dg/b345b4fd0d1bd53de0538ac7150ab0f4/t          6 TEMP                                10240 NO
+empfile/temp01.dbf
+
+14:31:46 SYS @ POHK2CCD:CDB$ROOT:>alter session set container=CDB$ROOT;
+
+14:32:05 SYS @ POHK2CCD:CDB$ROOT:>shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+14:32:46 SYS @ POHK2CCD:CDB$ROOT:>startup
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 23315128 bytes
+Variable Size            6039797760 bytes
+Database Buffers         4.7513E+10 bytes
+Redo Buffers              110899200 bytes
+Database mounted.
+Database opened.
+
+14:34:03 SYS @ POHK2CCD:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBP_FWB                       MOUNTED
+         4 PDBP_NGO                       MOUNTED
+         6 PDBP_AIC                       MOUNTED
+
+14:34:23 SYS @ POHK2CCD:CDB$ROOT:>alter pluggable database PDBP_NGO open read write;
+
+Pluggable database altered.
+
+14:34:44 SYS @ POHK2CCD:CDB$ROOT:>alter pluggable database PDBP_FWB open read write;
+
+Pluggable database altered.
+
+14:35:08 SYS @ POHK2CCD:CDB$ROOT:>alter pluggable database PDBP_AIC  open read write;
+
+Pluggable database altered.
+
+14:35:33 SYS @ POHK2CCD:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBP_FWB                       READ WRITE NO
+         4 PDBP_NGO                       READ WRITE NO
+         6 PDBP_AIC                       READ WRITE NO
+
+14:35:36 SYS @ POHK2CCD:CDB$ROOT:>select name,open_mode,database_role from v$database;
+
+NAME                      OPEN_MODE            DATABASE_ROLE
+------------------------- -------------------- ----------------
+POHK2CCD                  READ WRITE           PRIMARY
+
+14:35:51 SYS @ POHK2CCD:CDB$ROOT:>select host_name from v$instance;
+
+HOST_NAME
+----------------------------------------------------------------
+hklvdpapp071
+
+14:36:33 SYS @ POHK2CCD:CDB$ROOT:>alter system switch logfile;
+14:36:11 SYS @ POHK2CCD:CDB$ROOT:>exit
+
+####################################################################################################################

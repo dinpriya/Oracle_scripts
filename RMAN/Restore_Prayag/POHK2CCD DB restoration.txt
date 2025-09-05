@@ -1,0 +1,429 @@
+	Severity 2		Severity 2		SR 3-31823442691 : Not able to open DB after restoration.
+
+
+
+startup nomount pfile='/u01/app/oracle/product/db/19.9.0.0.Oct2020/dbs/initPOHK2CCD.ora';
+startup nomount pfile='/u01/app/oracle/local/dbs/initPOHK2CCD.ora';
+HKLVIPAPP021
+
+PFA list of files and below are the parameters.
+NSR_SERVER=HKLVIPAPP021
+NSR_CLIENT=HKLPDSS2B002
+NSR_RECOVER_POOL="DC1 DB Clone DD11
+
+
+
+NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11"
+NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11"
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+restore  primary controlfile from 'control_POHK2CCD_ma0pdgl9_203466_1_1';
+release channel CH1;
+release channel CH2;
+}
+EXIT
+EOF
+
+Starting backup at 27-MAR-22
+channel CH1: starting full datafile backup set
+channel CH1: specifying datafile(s) in backup set
+including current control file in backup set
+channel CH1: starting piece 1 at 27-MAR-22
+channel CH1: finished piece 1 at 27-MAR-22
+piece handle=control_POHK2CCD_ma0pdgl9_203466_1_1 tag=POHK2CCD_CTLBKUP comment=API Version 2.0,MMS Version 19.5.0.0
+channel CH1: backup set complete, elapsed time: 00:01:16
+Finished backup at 27-MAR-22
+
+RMAN:control_POHK2CCD_ma0pdgl9_203466_1_1
+
+Starting Control File and SPFILE Autobackup at 27-MAR-22
+piece handle=c-1753618398-20220327-01 comment=API Version 2.0,MMS Version 19.5.0.0
+Finished Control File and SPFILE Autobackup at 27-MAR-22
+
+---Step 12 : restore and recover database 
+
+NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11"
+
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+RESTORE DATABASE ;
+switch datafile all;
+switch tempfile all;
+RECOVER DATABASE ;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+EXIT
+EOF
+
+
+
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+RECOVER DATABASE ;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+EXIT
+EOF
+
+
+system.258.1053860775
+
+
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+RESTORE datafile 1 ;
+switch datafile all;
+switch tempfile all;
+RECOVER DATABASE ;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+EXIT
+EOF
+
+/oradata/pohk2ccd_dg
+
+startup nomount pfile='/u01/app/oracle/local/dbs/initPOHK2CCD.ora';
+
+CREATE TEMPORARY TABLESPACE TEMP2    TEMPFILE '/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/temp2_01.dbf'    SIZE 200G;
+
+ set heading off;
+ set echo off;
+ set pages 2000
+ set long 99999
+ spool tablespace_temp.sql
+ select dbms_metadata.get_ddl('TABLESPACE', 'TEMP') from dba_temp_files;
+
+CREATE TEMPORARY TABLESPACE TEMP2 TEMPFILE '/oradata/pohk2ccd_dg/temp2_01.dbf' SIZE 100M AUTOEXTEND ON NEXT 1024M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M;
+
+CREATE TEMPORARY TABLESPACE TEMP2 TEMPFILE '/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/temp2_01.dbf' SIZE 100M AUTOEXTEND ON NEXT 1024M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M;
+
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE TEMP2;
+
+CDL_WKFL_PYMT_AUTHMATRIX
+
+select TABLESPACE_NAME from dba_tablespaces where TABLESPACE_NAME like '%TEMP%';
+
+alter database set standby to maximize performance;
+
+TABLESPACE_NAME
+------------------------------
+TEMP
+
+
+/oradata/pohk2ccd_dg/b186c9434c086277e0538ac7150a0ad8/tempfile
+4
+	  
+B176CCE99BFA7D96E0538AC7150AFBCB
+/oradata/pohk2ccd_dg/b176cce99bfa7d96e0538ac7150afbcb/datafile/undotbs1.269.1053860797
+RMAN> run{
+set newname for datafile 1 to new;
+restore database;
+switch datafile all;
+recover database;
+}
+
+ased channel: CH2
+released channel: CH3
+released channel: CH4
+released channel: CH5
+released channel: CH6
+released channel: CH7
+released channel: CH8
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 12/30/2022 09:24:49
+RMAN-06094: datafile 10 must be restored
+
+
+recover database using backup controlfile until cancel;
+
+
+released channel: CH6
+released channel: CH7
+released channel: CH8
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 12/30/2022 09:21:19
+RMAN-06094: datafile 9 must be restored
+
+
+
+/oradata_ccd02/pohk2ccd_dg/datafile/system.258.1053860775
+
+
+
+
+ ALTER DATABASE CLEAR LOGFILE GROUP  14; 
+ ALTER DATABASE CLEAR LOGFILE member '+REDO1/POHK2CCD_DG/ONLINELOG/group_7.278.1053860835';
+ 
+ select group#,member from v$logfile;
+ 
+ALTER DATABASE DROP LOGFILE GROUP 7;
+alter database clear unarchived logfile group 1;
+
+ALTER DATABASE DROP LOGFILE member '+REDO1/POHK2CCD_DG/ONLINELOG/group_7.278.1053860835';
+alter system set standby_file_management=manual;
+
+
+10:41:50 SYS @ idle:>recover database using backup controlfile until cancel;
+ORA-00279: change 13137054763665 generated at 03/27/2022 01:31:18 needed for thread 1
+ORA-00289: suggestion : /orafra/POHK2CCD/archivelog/2023_01_12/o1_mf_1_60296_%u_.arc
+ORA-00280: change 13137054763665 for thread 1 is in sequence #60296
+
+
+
+
+
+new media label is "DC2DBBackupDD11.001,DC1DBCloneDD11.001" for piece "full_POHK2CCD_v118dbdj_411617_1_1"
+channel CH1: starting datafile backup set restore
+channel CH1: specifying datafile(s) to restore from backup set
+channel CH1: restoring datafile 00001 to /oradata_ccd02/pohk2ccd_dg/datafile/system.258.1053860775
+channel CH1: reading from backup piece full_POHK2CCD_v118dbdj_411617_1_1
+
+
+/oradata_ccd02/pohk2ccd_dg/b345b4fd0d1bd53de0538ac7150ab0f4/datafile/ts_cc_aic_gl_rac.1386.1113414345
+
+
+
+
+list backup of archivelog sequence 60296 thread 1;
+
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 01/12/2023 10:48:40
+RMAN-06054: media recovery requesting unknown archived log for thread 1 with sequence 60296 and starting SCN of 13137054763665
+
+
+
+RUN {
+              set archivelog destination to '/orafra/POHK2CCD/archivelog/2023_01_11/';
+              restore archivelog from logseq 60296 until logseq 60297;
+              }
+			  
+			  
+			  
+			  
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+set archivelog destination to '/orafra/POHK2CCD/archivelog/2023_01_11/';
+restore archivelog from logseq 60296 until logseq 60297 from tag='POHK2CCD_DB_BKUP';
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+
+tag=POHK2CCD_DB_BKUP
+
+
+
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+set archivelog destination to '/orafra/POHK2CCD/archivelog/2023_01_11/';
+restore archivelog all from tag='POHK2CCD_DB_BKUP';
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+
+
+select FILE#,recover,status,checkpoint_change#,checkpoint_time, resetlogs_change#, resetlogs_time, count(*), fuzzy from v$datafile_header where fuzzy='YES' or recover='YES' group by (FILE#,recover,status,checkpoint_change#,checkpoint_time, resetlogs_change#, resetlogs_time,fuzzy);
+
+
+
+
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+list backup of archivelog all ;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+
+
+run
+{
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+list backup of archivelog all from tag='POHK2CCD_DB_BKUP';
+}
+
+
+
+> ls -lrt  POHK2CCD_DG2_270322004510_Rman_hot_level_0.msglog
+-rw-r--r-- 1 oracle oinstall 1094588 Mar 27  2022 POHK2CCD_DG2_270322004510_Rman_hot_level_0.msglog
+oracle@HKLPDSS2B002:/home/oracle/log []
+
+
+rman target=/ << EOF
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+RESTORE DATABASE UNTIL SEQUENCE 60295;
+switch datafile all;
+switch tempfile all;
+RECOVER DATABASE UNTIL SEQUENCE 60295;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}
+EXIT
+EOF
+
+
+RESTORE DATABASE UNTIL SEQUENCE 13244;
+RECOVER DATABASE UNTIL SEQUENCE 13244;
+
+RESTORE DATABASE  UNTIL SEQUENCE 60295;
+
+
+set until sequence xxxx thread 1;
+
+restore database;
+
+recover database;
+
+
+
+
+tag=POHK2CCD_ARCHBKUP
+
+
+
+
+run
+{
+allocate channel CH1 type 'SBT_TAPE';
+allocate channel CH2 type 'SBT_TAPE';
+allocate channel CH3 type 'SBT_TAPE';
+allocate channel CH4 type 'SBT_TAPE';
+allocate channel CH5 type 'SBT_TAPE';
+allocate channel CH6 type 'SBT_TAPE';
+allocate channel CH7 type 'SBT_TAPE';
+allocate channel CH8 type 'SBT_TAPE';
+send 'NSR_ENV=(NSR_SERVER=HKLVIPAPP021,NSR_CLIENT=HKLPDSS2B002,NSR_RECOVER_POOL="DC1 DB Clone DD11",NSR_DEBUG_LEVEL=1,NSR_DPRINTF=TRUE,NSR_DIAGNOSTIC_DEST=/oradump/POHK2CCD_19c/nsr/apps/logs)';
+restore archivelog  all from tag='POHK2CCD_ARCHBKUP';
+recover database;
+release channel CH1;
+release channel CH2;
+release channel CH3;
+release channel CH4;
+release channel CH5;
+release channel CH6;
+release channel CH7;
+release channel CH8;
+}

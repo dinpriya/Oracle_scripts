@@ -1,0 +1,226 @@
+exit 0
+#!/bin/ksh
+# Name : scb_missing_files.sh
+# Version Date     Author   Change
+# v1.0    1/27/17  1377076  Creation
+# DESCRIPTION : To copy missing archive log files from primary to standby, run the script in the standby then run in primary
+script_version="1.0.0"
+# Script version: v4
+###################################################################################################################################
+#set -x
+typeset -i STATUS=0
+
+SCRIPTPATH=$0
+DIRPATH=$(dirname $SCRIPTPATH)
+
+case $DIRPATH in
+ ./*) PATHDIR=$(pwd); LPATHDIR=$(dirname $PATHDIR);;
+ . )  PATHDIR=$(pwd); LPATHDIR=$(dirname $PATHDIR);;
+ * )  PATHDIR=$(dirname $SCRIPTPATH); LPATHDIR=$(dirname $PATHDIR);;
+esac
+
+LOGPATH=${LPATHDIR}/logs
+HOST_NAME=`hostname`;
+
+# Source the oracle .profile
+#. ~oracle/.profile >/dev/null
+
+
+function mlog
+{
+    LDTIME=$(date '+%Y-%b-%d %H:%M:%S')
+    echo "${LDTIME} : ${1}" | tee -a ${LOGFILE}
+}
+
+function usage
+{
+    echo "Usage:";
+    echo "------";
+    echo "scb_missing_files.sh -d <database name>"
+    exit 1;
+}
+while getopts :d:D: arguments
+do
+ case $arguments in
+ d) DBNAME=${OPTARG}
+    ;;
+ *) echo "${OPTARGS} is not a valid argument\n"
+    usage
+    ;;
+ esac
+done
+
+#echo "Arguments:${arguments}]]";
+if [ -z $DBNAME ]; then
+        usage
+fi
+
+DBNAME=PUK06DASARK
+DBN_SID=$(ps -ef | grep smon | grep -v grep | grep -i $DBNAME | awk '{print $8}' | awk -F_ '{print $3}')
+LOGFILE=${LOGPATH}/scb_cp_arch_${DBN_SID}_${DTIME}.log
+
+if [[ "${DBN_SID}" = "" ]]; then
+    mlog "ERROR: Database not currently running. Exiting"
+    exit 1
+else
+    export ORACLE_SID=$DBN_SID
+fi
+
+
+function setoratab
+{
+EXISTS_ORATAB=$(cat /etc/oratab|grep -v "^#"| grep $DBN_SID |head -1)
+if [[ "$EXISTS_ORATAB" == "" ]]; then
+    mlog "ERROR: Database does not exist in oratab. Exiting"
+    exit 1
+else
+    export ORACLE_SID=`echo $EXISTS_ORATAB | awk -F: '{print $1}'`
+    export ORACLE_HOME=`echo $EXISTS_ORATAB | awk -F: '{print $2}'`
+echo $ORACLE_SID
+echo $ORACLE_HOME
+    export ORAENV_ASK=NO
+    . $ORACLE_HOME/bin/oraenv
+    export ORAENV_ASK=YES
+fi
+}
+
+setoratab
+
+mlog "INFO : starting... "
+dest_loc="";
+function get_dest
+{
+echo "Destination function called...";
+dest_loc=$(sqlplus -S / as sysdba <<EOF
+set feedb off;
+set head off;
+select destination from v\$archive_dest_status where dest_id=3;
+exit;
+EOF
+);
+dest_loc=$(echo $dest_loc|tr -d '\n')
+}
+
+dab_name="";
+function get_db_name
+{
+echo "Get Database function called...."
+dab_name=$(sqlplus -S / as sysdba <<EOF
+set feedb off;
+set head off;
+select name from v\$database;
+exit;
+EOF
+);
+dab_name=$(echo $dab_name|tr -d '\n'|sed 's/ //g')
+}
+get_dest;
+DTIME=$(date '+%y%m%d_%H%M%S')
+ftime=$DTIME
+if [[ ! -f $dest_loc/timestamp.log ]]; then
+echo $DTIME > $dest_loc/timestamp.log
+else
+while read asm1
+do
+ftime=$asm1
+done <  $dest_loc/timestamp.log
+#ftime < 'cat $dest_loc/timestamp.log'
+fi
+function get_primary_sub
+{
+echo "Primary function called...";
+sleep 3
+get_dest;
+get_db_name;
+DTIME=$(date '+%y%m%d_%H%M%S')
+ftime=$(echo $ftime|tr -d '\n')
+#ftime=170814_112202
+#ftime=200328_163500
+if [ "$dab_name" != "" ]; then
+if [ "$dest_loc" != "" ]; then
+#if [ -s  "$dest_loc/standby_files_${dab_name}.log" ]; then
+dbFile=$(sqlplus -S / as sysdba <<EOF
+set feedb off;
+set head off;
+select a.thread#||'_'||a.sequence#||'_'||a.resetlogs_id||'.dbf'||':'||a.name||':'||b.destination from v\$archived_log a,v\$archive_dest_status b where b.dest_id=a.dest_id and a.dest_id=1 and to_char(a.completion_time,'yymmdd_hh24miss') >= '${ftime}';
+exit;
+EOF
+);
+printf "$dbFile" >/tmp/prima_files_s${dab_name}.log
+sed '/^\s*$/d' /tmp/prima_files_s${dab_name}.log > /tmp/prima_files_${dab_name}.log
+cat /tmp/prima_files_${dab_name}.log > $dest_loc/prima_files_${dab_name}_${DTIME}.log
+#DTIME=$(date '+%y%m%d_%H%M%S')
+#echo $DTIME > $dest_loc/timestamp.log
+while read abc || [[ -n $abc ]];
+do
+var1=$(echo $abc|awk -F ":" '{print $1}')
+var2=$(echo $abc|awk -F ":" '{print $2}')
+var1=$(echo $var1|tr -d '\n')
+var2=$(echo $var2|tr -d '\n')
+var3=$dest_loc/$var1
+if [[ ! -f $var3 ]]; then
+#cp $var2 $dest_loc/$var1
+sudo -i -u grid /u01/app/oracle/global/scripts/CLIp/bin/asmcmdcpshell.sh $var2 $dest_loc/$var1
+echo "$var2 ""  $dest_loc/$var1" >>$dest_loc/fcp_prima_to_nas_${dab_name}_${DTIME}.log
+fi
+done < "/tmp/prima_files_${dab_name}.log"
+echo $DTIME > $dest_loc/timestamp.log
+ls -lart $dest_loc >$dest_loc/fcp_list_${dab_name}_${DTIME}.log
+else
+        echo "Could not find the archive destination location";
+fi
+#mv "$dest_loc"/fcp.log > "$dest_loc"/fcp_"${DTIME}".log
+fi
+#for fileS in `cat /tmp/prima_files.log|grep -ive '^$'`;
+#do
+#checkFile=`echo $fileS|awk -F: '{print $1"_"$2"_"$3}'`;
+#srcFile=`echo $fileS|awk -F: '{print $NF}'`
+#if [ ! -f "${DEST_PATH}/${checkFile}.dbf" ]; then
+#       echo "SOURCE: $srcFile";
+#       echo "File does not exists, So copying to destination:${DEST_PATH}/${checkFile}.dbf";
+#       cp $srcFile ${DEST_PATH}/${checkFile}.dbf
+#fi
+#done;
+}
+
+function houseKeep
+{
+echo "Purging archive script log files older that ${1} days...";
+#find ${dest_loc} -name "prima_files_${dab_name}*" -mtime +${1} -exec rm -fr {} \;
+#find ${dest_loc} -name "standby_files_${dab_name}*" -mtime +${1} -exec rm -fr {} \;
+#find ${dest_loc} -name "fcp_${dab_name}*" -mtime +${1} -exec rm -fr {} \;
+find ${dest_loc} -name "prima_files_*" -mtime +${1} -exec rm -fr {} \;
+find ${dest_loc} -name "standby_files_*" -mtime +${1} -exec rm -fr {} \;
+find ${dest_loc} -name "fcp_*" -mtime +${1} -exec rm -fr {} \;
+}
+dbType=$(sqlplus -S / as sysdba <<EOF
+set feedb off;
+set head off;
+select DATABASE_ROLE from v\$database
+exit;
+EOF
+);
+dbType=`echo $dbType|tr -d '\n'`
+echo "<$dbType>";
+
+if [ "$dbType" == "PRIMARY" ]; then
+        echo "PRIM";
+        get_primary_sub
+        houseKeep 10;
+else
+        echo "STAND";
+fi
+
+hsname=`hostname`
+date_a=$(date +%Y-%m-%d_%I:%M:%S)
+wget -q -T 10 --tries=1 --no-check-certificate --delete-after "https://database/pls/apex/CLIP_TRACKER_API?P_HOSTNAME=${hsname}&P_INST_NAME=$DBN_SID&P_DB_NAME
+=$DBNAME&P_SCRIPT_NAME=scb_missing_files&P_SCRIPT_VERSION=$script_version&P_TECHNOLOGY=Oracle&P_RUNDATE=$date_a&P_CLIP_VERSION=3.2"
+wgetCheck=$(echo $?)
+if [ $wgetCheck -gt 0 ]; then
+        wget -q -T 10 --tries=1 --no-check-certificate --delete-after "https://10.193.31.85:4443/pls/apex/CLIP_TRACKER_API?P_HOSTNAME=${hsname}&P_INST_NAME=$
+DBN_SID&P_DB_NAME=$DBNAME&P_SCRIPT_NAME=scb_missing_files&P_SCRIPT_VERSION=$script_version&P_TECHNOLOGY=Oracle&P_RUNDATE=$date_a&P_CLIP_VERSION=3.2"
+fi
+#echo "Return code: $STATUS";
+mlog "INFO : end... "
+
+exit $STATUS

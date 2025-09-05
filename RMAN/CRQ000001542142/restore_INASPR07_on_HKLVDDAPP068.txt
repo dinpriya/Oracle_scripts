@@ -1,0 +1,1175 @@
+Target Test database (For restoration to UAT)								
+Source Server	Source IP address	Src CDB		Src PDB		Target Server	Target IP address	Tgt CDB		Tgt PDB		Oracle Version
+HKLVDPAPP050	10.23.98.45		AFASPE10	AFASPR10	hklvddapp068	10.23.229.85		AFASPE10	AFASPR10	19C
+HKLVDPAPP050	10.23.98.45		INASPE07 	INASPR07 	hklvddapp068	10.23.229.85		INASPE07 	INASPR07 	19C
+
+
+HKLPDDPSG001	10.23.142.60	CDB:INASPE07	PDB:INASPR07
+------------------------------------------------------------
+ssh oracle@10.23.229.85
+SCB@april2022
+
+Withdraw session.
+
+stty erase ^? ; set -o vi ;
+
+export ORACLE_SID=INASPE07
+cd /home/oracle/restoration
+
+oracle@hklpddpsg001:/home/oracle []
+> cat .bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+. ~/.bash_profile
+
+oracle@hklpddpsg001:/home/oracle []
+> cat .bash_profile
+# These values need setting by the DBA
+export ORACLE_SID=DOHK1PGL
+export ORACLE_HOSTNAME=
+#
+#
+export ORACLE_BASE=/u01/app/oracle/local
+export DB_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+export ORA_INV=/u01/app/oracle/oraInventoryexport ADR_HOME=$ORACLE_BASE/diag
+export ORA_ADMIN=$ORACLE_BASE/admin
+export AHF_HOME=$ORACLE_BASE/oracle.ahf
+export AGENT_HOME=/u01/app/oracle/product/agent/agent13c/agent_inst
+export ORACLE_HOME=$DB_HOME
+export TNS_ADMIN=$ORACLE_BASE/network/admin
+export LDAP_ADMIN=$TNS_ADMIN
+export SQLPATH=$ORACLE_HOME/sqlscripts
+export NLS_LANG='AMERICAN_AMERICA.AL32UTF8'
+export NLS_DATE_FORMAT='DD Mon YYYY HH24:MI:SS'
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export PATH=$AHF_HOME/bin:$ORACLE_HOME/bin:/bin:/usr/bin:/usr/sbin:/etc:/usr/local/bin:/sbin:$PATH:
+export EDITOR=vi
+[[ $- == *i* ]] && stty erase ^?
+
+umask 022
+#ulimit -n 65536
+#ulimit -u 16384
+
+alias agenthome='export ORACLE_HOME=$AGENT_HOME;export LD_LIBRARY_PATH=$ORACLE_HOME/lib;export PATH=$ORACLE_HOME/bin:$PATH'
+alias dbshome='export ORACLE_HOME=$DB_HOME;export LD_LIBRARY_PATH=$ORACLE_HOME/lib;export PATH=$ORACLE_HOME/bin:$PATH'
+
+export PS1='`/usr/bin/whoami`@${HOSTNAME}:${PWD} [${ORACLE_SID}]
+> '
+
+if [ -f $ORACLE_HOME/scbscripts/scb_ora_aliases ]; then
+ . $ORACLE_HOME/scbscripts/scb_ora_aliases
+
+
+vi .19.sh
+. .profile_19c_DBs
+echo $ORACLE_HOME
+env |grep 19
+stty erase ^?
+set -o vi
+
+Restore target DB on Test server HKLPDDPSG001
+Note: Refer Sheet ""DB restore"" Step Target test database for CDB/PDB names
+
+Backup Data:
+oracle@hklvddapp068:/oradata/INASPE07/backup [INASPE07]
+> hostname -i;date;pwd;ls -ltrh
+10.23.229.85
+Thu Apr 28 22:59:06 HKT 2022
+/oradata/INASPE07/backup
+total 47G
+-rw-r--r--. 1 oracle oinstall 124M Apr 28 21:11 ctrl_INASPE07_3h0s3s1e_1_1
+-rw-r--r--. 1 oracle oinstall 3.6M Apr 28 21:11 INASPE07_2d0s3r41_1_1
+-rw-r--r--. 1 oracle oinstall 1.2G Apr 28 21:11 INASPE07_2e0s3r4g_1_1
+-rw-r--r--. 1 oracle oinstall 2.4G Apr 28 21:11 INASPE07_2f0s3r4g_1_1
+-rw-r--r--. 1 oracle oinstall 3.1G Apr 28 21:12 INASPE07_2g0s3r4g_1_1
+-rw-r--r--. 1 oracle oinstall 3.4G Apr 28 21:12 INASPE07_2h0s3r4h_1_1
+-rw-r--r--. 1 oracle oinstall 5.9G Apr 28 21:13 INASPE07_2i0s3r4h_1_1
+-rw-r--r--. 1 oracle oinstall 4.7G Apr 28 21:14 INASPE07_2j0s3r4i_1_1
+-rw-r--r--. 1 oracle oinstall 4.6G Apr 28 21:15 INASPE07_2k0s3r4j_1_1
+-rw-r--r--. 1 oracle oinstall 3.3G Apr 28 21:15 INASPE07_2l0s3r4k_1_1
+-rw-r--r--. 1 oracle oinstall 3.1G Apr 28 21:16 INASPE07_2m0s3r4l_1_1
+-rw-r--r--. 1 oracle oinstall 1.5G Apr 28 21:16 INASPE07_2n0s3r4l_1_1
+-rw-r--r--. 1 oracle oinstall 2.1G Apr 28 21:16 INASPE07_2o0s3r4m_1_1
+-rw-r--r--. 1 oracle oinstall 2.4G Apr 28 21:17 INASPE07_2p0s3r4n_1_1
+-rw-r--r--. 1 oracle oinstall 217M Apr 28 21:17 INASPE07_2q0s3rd2_1_1
+-rw-r--r--. 1 oracle oinstall 1.4G Apr 28 21:17 INASPE07_2r0s3rds_1_1
+-rw-r--r--. 1 oracle oinstall 4.9M Apr 28 21:17 INASPE07_2s0s3rec_1_1
+-rw-r--r--. 1 oracle oinstall 571M Apr 28 21:17 INASPE07_2t0s3ref_1_1
+-rw-r--r--. 1 oracle oinstall 1.6G Apr 28 21:17 INASPE07_2u0s3rfi_1_1
+-rw-r--r--. 1 oracle oinstall 1.5G Apr 28 21:18 INASPE07_2v0s3rgm_1_1
+-rw-r--r--. 1 oracle oinstall 883M Apr 28 21:18 INASPE07_300s3rgn_1_1
+-rw-r--r--. 1 oracle oinstall 1.6G Apr 28 21:18 INASPE07_310s3rjn_1_1
+-rw-r--r--. 1 oracle oinstall 290M Apr 28 21:18 INASPE07_320s3rmc_1_1
+-rw-r--r--. 1 oracle oinstall 251M Apr 28 21:18 INASPE07_330s3rn6_1_1
+-rw-r--r--. 1 oracle oinstall 654M Apr 28 21:18 INASPE07_340s3rnd_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_350s3rne_1_1
+-rw-r--r--. 1 oracle oinstall 438M Apr 28 21:18 INASPE07_360s3rnf_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_370s3rnv_1_1
+-rw-r--r--. 1 oracle oinstall 1.3M Apr 28 21:18 INASPE07_380s3ro0_1_1
+-rw-r--r--. 1 oracle oinstall 205M Apr 28 21:18 INASPE07_390s3ro4_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_3a0s3rok_1_1
+-rw-r--r--. 1 oracle oinstall 186M Apr 28 21:18 INASPE07_3b0s3rol_1_1
+-rw-r--r--. 1 oracle oinstall  82M Apr 28 21:18 INASPE07_3c0s3rp4_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_3d0s3rp8_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_3e0s3rpc_1_1
+-rw-r--r--. 1 oracle oinstall 1.1M Apr 28 21:18 INASPE07_3f0s3rpd_1_1
+-rw-r--r--. 1 oracle oinstall 1.2M Apr 28 21:18 INASPE07_3g0s3s1d_1_1
+
+Control File: /oradata/INASPE07/backup/ctrl_INASPE07_3h0s3s1e_1_1
+
+oracle@hklvddapp068:/home/oracle [INASPE07]
+> df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+devtmpfs                            63G     0   63G   0% /dev
+tmpfs                               63G     0   63G   0% /dev/shm
+tmpfs                               63G  900K   63G   1% /run
+tmpfs                               63G     0   63G   0% /sys/fs/cgroup
+/dev/mapper/rootvg-rootvol         7.9G  3.3G  4.6G  42% /
+/dev/sda1                         1014M  215M  800M  22% /boot
+/dev/mapper/rootvg-semavol         994M  307M  688M  31% /usr/semasupp
+/dev/mapper/oraclevg-localvol       80G  5.8G   75G   8% /u01/app/oracle
+/dev/mapper/oraredo1vg-oraredo1lv   50G  6.4G   44G  13% /oraredo1
+/dev/mapper/rootvg-ctmvol          3.0G   54M  2.9G   2% /apps/ctmagent
+/dev/mapper/rootvg-varvol          3.9G  992M  3.0G  25% /var
+/dev/mapper/oraredo2vg-oraredo2lv   50G  6.4G   44G  13% /oraredo2
+/dev/mapper/rootvg-homevol         7.9G   94M  7.8G   2% /home
+/dev/mapper/oraclevg-dbvol          50G   12G   39G  23% /u01/app/oracle/product/db
+/dev/mapper/orafravg-orafralv      250G  6.2G  244G   3% /orafra
+/dev/mapper/rootvg-usrgemsvvol     994M   40M  955M   4% /usr/gems
+/dev/mapper/rootvg-auditlv         2.0G  195M  1.9G  10% /var/log/audit
+/dev/mapper/orafravg-oradumplv     250G  1.8G  249G   1% /oradump
+/dev/mapper/rootvg-corevol         3.9G   61M  3.9G   2% /var/crash
+/dev/mapper/oraclevg-agentvol       20G  175M   20G   1% /u01/app/oracle/product/agent
+/dev/mapper/rootvg-optvol          5.9G  346M  5.6G   6% /opt
+/dev/mapper/oradatavg-oradatalv    7.0T  657G  6.4T  10% /oradata
+/dev/mapper/rootvg-taniumlv        3.0G  648M  2.4G  22% /opt/Tanium/TaniumClient
+/dev/mapper/rootvg-tmpvol          5.9G   75M  5.8G   2% /tmp
+/dev/mapper/rootvg-bmcvol          2.0G   47M  1.9G   3% /opt/bmc
+/dev/mapper/rootvg-scbmonlv       1014M  189M  826M  19% /opt/SCBmon
+tmpfs                               13G     0   13G   0% /run/user/555
+
+export ORACLE_SID=INASPE07
+
+shutdown immediate ;
+startup mount exclusive restrict
+drop database ;
+
+oracle@hklpddpsg001:/ora_fra/CRQ000001487371 [INASPE07]
+> date
+Wed Apr 27 15:57:30 HKT 2022
+
+oracle@hklvddapp068:/oradata/INASPE07/backup [INASPE07]
+> free -m
+              total        used        free      shared  buff/cache   available
+Mem:         128661       79209        1495           0       47956       47029
+Swap:         20511           0       20511
+
+oracle@hklvddapp068:/oradata/INASPE07/backup [INASPE07]
+> ps -ef | grep pmon
+oracle    405055       1  0 Apr26 ?        00:00:08 ora_pmon_AFASPE10
+oracle   1962278 1945784  0 15:58 pts/0    00:00:00 grep --color=auto pmon
+
+oracle@hklpddpsg001:/ora_fra/CRQ000001487371 [INASPE07]
+> ps -ef | grep pmon | grep -i INASPE07
+
+oracle@hklvddapp068:/oradata/INASPE07/backup [INASPE07]
+> ps -ef | grep -i tns
+root         122       2  0 Apr26 ?        00:00:00 [netns]
+oracle      2626       1  0 Apr26 ?        00:00:00 /u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/tnslsnr LISTENER -inherit
+oracle    403532       1  0 Apr26 ?        00:00:01 /u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/tnslsnr LISTENER_AFASPE10 -inherit
+oracle   1967957 1945784  0 16:05 pts/0    00:00:00 grep --color=auto -i tns
+
+oracle@hklpddpsg001:/ora_fra/CRQ000001487371 [INASPE07]
+> cd $ORACLE_HOME/dbs
+oracle@hklpddpsg001:/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs [INASPE07]
+> pwd
+/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs
+
+oracle@hklvddapp068:/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs [INASPE07]
+> ls -lrt *.ora
+-rw-r--r--. 1 oracle oinstall 3079 May 14  2015 init.ora
+-rw-r-----. 1 oracle oinstall 5632 Apr 26  2020 spfileRESTOR19.ora
+-rw-r--r--. 1 oracle oinstall 3235 Apr 25 15:53 initINASPE07.ora
+
+
+cp initAFASPE10.ora initINASPE07.ora
+vi initINASPE07.ora
+:%s/AFASPE10/INASPE07/g
+Change *.local_listener PORT.
+*.local_listener='(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.23.229.85)(PORT=1623)))'
+
+oracle@hklvddapp068:/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs [INASPE07]
+> cat initINASPE07.ora
+*._db_fast_obj_truncate=FALSE
+*._gby_hash_aggregation_enabled=false
+*._index_join_enabled=false
+*._kgl_large_heap_warning_threshold=8388608
+*._serial_direct_read='FALSE'
+*._unnest_subquery=TRUE
+*.audit_file_dest='/oradata/INASPE07/audit'
+*.audit_sys_operations=TRUE
+*.audit_trail='DB'
+*.cell_offload_processing=FALSE
+*.common_user_prefix=''
+*.compatible='19.0.0'
+*.control_files='/oradata/INASPE07/control/control01.ctl','/oradata/INASPE07/control/control02.ctl'#Restore Controlfile
+*.db_16k_cache_size=268435456
+*.db_block_checking='TRUE'
+*.db_block_checksum='TRUE'
+*.db_block_size=8192
+*.db_cache_size=5G
+*.db_create_file_dest='/oradata/INASPE07/datafile'
+*.db_create_online_log_dest_1='/oradata/INASPE07/oraredo1'
+*.db_create_online_log_dest_2='/oradata/INASPE07/oraredo2'
+*.db_domain='hk.standardchartered.com'
+*.db_file_multiblock_read_count=128
+*.db_files=1024
+#*.db_name='POHK10PS'
+*.db_name='INASPE07'
+*.db_recovery_file_dest='/oradata/INASPE07/arch'
+*.db_recovery_file_dest_size=4000000m
+*.db_unique_name='INASPE07'
+*.db_writer_processes=4
+*.diagnostic_dest='/oradata/INASPE07/diagnostic'
+*.dml_locks=2000
+*.enable_pluggable_database=true
+#*.event='10422 trace name context forever, level 1'
+#*.fal_client='INASPE07'
+#*.fal_server=''
+*.filesystemio_options='setall'
+*.global_names=FALSE
+*.instance_name='INASPE07'
+*.java_jit_enabled=FALSE
+*.java_pool_size=64M
+*.large_pool_size=128M
+*.local_listener='(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.23.229.85)(PORT=1623)))'
+#*.log_archive_dest_state_2='ENABLE'
+*.log_archive_format='%t_%s_%r.dbf'
+*.log_archive_max_processes=30
+*.log_buffer=20971520# MEDIUM
+*.log_checkpoint_interval=100000
+*.log_checkpoint_timeout=1800
+*.max_dump_file_size='52428800'
+*.nls_date_format='DD-MM-YYYY'
+*.nls_language='AMERICAN'
+*.nls_territory='AMERICA'
+*.open_cursors=1000
+*.optimizer_index_caching=0
+*.optimizer_index_cost_adj=100
+*.os_authent_prefix=''
+*.parallel_force_local=TRUE
+*.parallel_max_servers=50
+*.pga_aggregate_limit=5G
+*.pga_aggregate_target=2G
+*.processes=1000
+*.remote_login_passwordfile='EXCLUSIVE'
+*.result_cache_max_size=26214400
+*.sec_protocol_error_further_action='CONTINUE'
+*.session_cached_cursors=200
+*.session_max_open_files=20
+*.sga_max_size=10G
+*.sga_target=10G
+*.shared_pool_size=3328M
+*.sort_area_size=3145728
+*.sql92_security=TRUE
+#*.standby_file_management='AUTO'
+*.streams_pool_size=512M
+*.timed_statistics=true# if you want timed statistics
+*.undo_management='AUTO'
+*.undo_retention=7200
+*.undo_tablespace='UNDOTBS1'
+#*._allow_resetlogs_corruption=TRUE
+#*.spfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/spfileINASPE07.ora'
+#*.spfile='/u01/app/oracle/local/dbs/spfileINASPE07.ora'
+
+====================================================================================================
+Reduce memory usage for DOHK1PGL database.
+export ORACLE_SID=DOHK1PGL
+22:24:28 SYS @ idle:>show parameter pga_
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+pga_aggregate_limit                  big integer                      30G
+pga_aggregate_target                 big integer                      15G
+
+22:28:04 SYS @ idle:>show parameter sga_
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+sga_max_size                         big integer                      75G
+sga_min_size                         big integer                      0
+sga_target                           big integer                      75G
+unified_audit_sga_queue_size         integer                          1048576
+
+ALTER SYSTEM SET sga_max_size=30G SCOPE=spfile;
+ALTER SYSTEM SET sga_target=30G SCOPE=BOTH;
+
+oracle@hklvddapp068:/home/oracle [DOHK1PGL]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Apr 26 09:19:12 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+09:19:21 SYS @ DOHK1PGL:CDB$ROOT:>ALTER SYSTEM SET sga_target=30G SCOPE=BOTH;
+
+System altered.
+
+09:20:43 SYS @ DOHK1PGL:CDB$ROOT:>ALTER SYSTEM SET sga_max_size=30G SCOPE=spfile;
+
+System altered.
+
+09:21:14 SYS @ DOHK1PGL:CDB$ROOT:>shutdown immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+09:21:56 SYS @ DOHK1PGL:CDB$ROOT:>startup
+ORACLE instance started.
+
+Total System Global Area 3.2212E+10 bytes
+Fixed Size                 23310976 bytes
+Variable Size            9395240960 bytes
+Database Buffers         2.2750E+10 bytes
+Redo Buffers               43794432 bytes
+Database mounted.
+Database opened.
+09:22:33 SYS @ DOHK1PGL:CDB$ROOT:>show parameter pga
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+pga_aggregate_limit                  big integer                      12G
+pga_aggregate_target                 big integer                      6G
+09:22:35 SYS @ DOHK1PGL:CDB$ROOT:>show parameter sga_
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+sga_max_size                         big integer                      30G
+sga_min_size                         big integer                      0
+sga_target                           big integer                      30G
+unified_audit_sga_queue_size         integer                          1048576
+
+====================================================================================================
+oracle@hklvddapp068:/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs [INASPE07]
+> grep / initINASPE07.ora
+*.audit_file_dest='/oradata/INASPE07/audit'
+*.control_files='/oradata/INASPE07/control/control01.ctl','/oradata/INASPE07/control/control02.ctl'#Restore Controlfile
+*.db_create_file_dest='/oradata/INASPE07/datafile'
+*.db_create_online_log_dest_1='/oradata/INASPE07/oraredo1'
+*.db_create_online_log_dest_2='/oradata/INASPE07/oraredo2'
+*.db_recovery_file_dest='/oradata/INASPE07/arch'
+*.diagnostic_dest='/oradata/INASPE07/diagnostic'
+#*.spfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/spfileINASPE07.ora'
+
+Use the following comamnd to check:
+> ls -ld /oradata/INASPE07/audit
+> mkdir -p /oradata/INASPE07/audit
+
+oracle@hklvddapp068:/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs [INASPE07]
+> cd /home/oracle/restoration
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> export ORACLE_SID=INASPE07
+
+Startup nomount with new pfile
+SQL> startup nomount pfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora' ;
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 16:16:22 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+Connected to an idle instance.
+
+16:16:26 SYS @ idle:>startup nomount pfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora' ;
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 18584688 bytes
+Variable Size            4261412864 bytes
+Database Buffers         6408896512 bytes
+Redo Buffers               48521216 bytes
+16:16:45 SYS @ idle:>show parameter name
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+cdb_cluster_name                     string
+
+cell_offloadgroup_name               string
+
+db_file_name_convert                 string
+
+db_name                              string
+INASPE07
+db_unique_name                       string
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+INASPE07
+global_names                         boolean
+FALSE
+instance_name                        string
+INASPE07
+lock_name_space                      string
+
+log_file_name_convert                string
+
+
+NAME                                 TYPE
+------------------------------------ ---------------------------------
+VALUE
+------------------------------
+pdb_file_name_convert                string
+
+processor_group_name                 string
+
+service_names                        string
+INASPE07.hk.standardchartered.
+com
+16:17:16 SYS @ idle:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+Restore control file
+====================
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Thu Apr 28 23:11:32 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: INASPE07 (not mounted)
+
+RMAN> restore controlfile from '/oradata/INASPE07/backup/ctrl_INASPE07_3h0s3s1e_1_1' ;
+
+Starting restore at 28 Apr 2022 23:12:36
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=673 device type=DISK
+
+channel ORA_DISK_1: restoring control file
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+output file name=/oradata/INASPE07/control/control01.ctl
+output file name=/oradata/INASPE07/control/control02.ctl
+Finished restore at 28 Apr 2022 23:12:38
+
+RMAN> exit
+
+
+Recovery Manager complete.
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 16:21:21 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+16:21:25 SYS @ INASPE07:CDB$ROOT:>alter database mount ;
+
+Database altered.
+
+16:21:36 SYS @ INASPE07:CDB$ROOT:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  MOUNTED
+
+16:21:40 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 INASPR07                       MOUNTED
+16:21:49 SYS @ INASPE07:CDB$ROOT:>show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      INASPE07
+db_unique_name                       string      INASPE07
+global_names                         boolean     FALSE
+instance_name                        string      INASPE07
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      INASPE07.hk.standardchartered.
+                                                 com
+16:22:19 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+oracle@hklpddpsg001:/home/oracle/restoration  [INASPE07]
+> cd /home/oracle/restoration 
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> ls -lrt restore_*.sh
+-rwxr--r--. 1 oracle oinstall 204 Apr 25 21:29 restore_AFASPE10_20220425.sh
+
+oracle@hklpddpsg001:/home/oracle/CR1091358 [INASPE07]
+> cp restore_AFASPE10_20220425.sh restore_INASPE07_20220427.sh
+
+vi restore_INASPE07_20220427.sh
+:%s/AFASPE10/INASPE07/g
+:%s/ora_fra/oradata/g
+
+oracle@hklpddpsg001:/home/oracle/CR1091358 [INASPE07]
+> ls -ld /ora_fra/INASPE07/datafile
+drwxr-xr-x 2 oracle oinstall 10 Feb 14 20:07 /ora_fra/INASPE07/datafile
+
+oracle@hklpddpsg001:/home/oracle/CR1091358 [INASPE07]
+> cat restore_INASPE07_20220427.sh
+export ORACLE_SID=INASPE07
+rman target=/ << EOF
+run
+{
+set newname for database to '/oradata/INASPE07/datafile/%b';
+RESTORE DATABASE;
+switch datafile all;
+switch tempfile all;
+recover database;
+}
+EXIT
+EOF
+
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Apr 27 16:25:59 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: INASPE07 (DBID=2111291711, not open)
+
+RMAN> CATALOG START WITH '/oradata/INASPE07/backup';
+
+Starting implicit crosscheck backup at 27 Apr 2022 16:26:18
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=582 device type=DISK
+Crosschecked 37 objects
+Finished implicit crosscheck backup at 27 Apr 2022 16:26:21
+
+Starting implicit crosscheck copy at 27 Apr 2022 16:26:21
+using channel ORA_DISK_1
+Finished implicit crosscheck copy at 27 Apr 2022 16:26:23
+
+searching for all files in the recovery area
+cataloging files...
+no files cataloged
+
+searching for all files that match the pattern /oradata/INASPE07/backup
+
+List of Files Unknown to the Database
+=====================================
+File Name: /oradata/INASPE07/backup/ctrl_INASPE07_q00s0jpk_1_1
+
+Do you really want to catalog the above files (enter YES or NO)? YES
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /oradata/INASPE07/backup/ctrl_INASPE07_q00s0jpk_1_1
+
+RMAN> CONFIGURE DEFAULT DEVICE TYPE TO disk;
+
+new RMAN configuration parameters:
+CONFIGURE DEFAULT DEVICE TYPE TO DISK;
+new RMAN configuration parameters are successfully stored
+released channel: ORA_DISK_1
+
+RMAN> CONFIGURE DEVICE TYPE DISK PARALLELISM 8;
+
+new RMAN configuration parameters:
+CONFIGURE DEVICE TYPE DISK PARALLELISM 8 BACKUP TYPE TO BACKUPSET;
+new RMAN configuration parameters are successfully stored
+
+RMAN> SHOW ALL ;
+
+RMAN configuration parameters for database with db_unique_name INASPE07 are:
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1; # default
+CONFIGURE BACKUP OPTIMIZATION OFF; # default
+CONFIGURE DEFAULT DEVICE TYPE TO DISK;
+CONFIGURE CONTROLFILE AUTOBACKUP ON; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 8 BACKUP TYPE TO BACKUPSET;
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE MAXSETSIZE TO UNLIMITED; # default
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default
+CONFIGURE COMPRESSION ALGORITHM 'BASIC' AS OF RELEASE 'DEFAULT' OPTIMIZE FOR LOAD TRUE ; # default
+CONFIGURE RMAN OUTPUT TO KEEP FOR 7 DAYS; # default
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/u01/app/oracle/local/dbs/snapcf_INASPE07.f'; # default
+
+RMAN> exit
+
+
+Recovery Manager complete.
+
+
+oracle@hklpddpsg001:/home/oracle/CR1091358 []
+nohup ./restore_INASPE07_20220427.sh > restore_INASPE07_20220427.log &
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> nohup ./restore_INASPE07_20220427.sh > restore_INASPE07_20220427.log &
+[1] 284399
+nohup: ignoring input and redirecting stderr to stdout
+
+Started at Mon Apr 25 21:34:52 HKT 2022
+Ended at Mon Apr 25 21:51:36 HKT 2022
+
+tail -f restore_INASPE07_20220427.log
+starting media recovery
+
+channel ORA_DISK_1: starting archived log restore to default destination
+channel ORA_DISK_1: restoring archived log
+archived log thread=1 sequence=2
+channel ORA_DISK_1: reading from backup piece /oradata/INASPE07/backup/INASPE07_3g0s3s1d_1_1
+channel ORA_DISK_1: piece handle=/oradata/INASPE07/backup/INASPE07_3g0s3s1d_1_1 tag=TAG20220428T202933
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+archived log file name=/oradata/INASPE07/arch/INASPE07/archivelog/2022_04_28/o1_mf_1_2_k6ofczjy_.arc thread=1 sequence=2
+channel default: deleting archived log(s)
+archived log file name=/oradata/INASPE07/arch/INASPE07/archivelog/2022_04_28/o1_mf_1_2_k6ofczjy_.arc RECID=3 STAMP=1103240447
+unable to find archived log
+archived log thread=1 sequence=3
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 04/28/2022 23:40:49
+RMAN-06054: media recovery requesting unknown archived log for thread 1 with sequence 3 and starting SCN of 13145548919723
+
+RMAN>
+
+Recovery Manager complete.
+
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 16:55:26 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+16:55:30 SYS @ INASPE07:CDB$ROOT:>recover database using backup controlfile until cancel;
+ORA-00279: change 13144956853509 generated at 04/27/2022 14:50:26 needed for thread 1
+ORA-00289: suggestion : /oradata/INASPE07/arch/INASPE07/archivelog/2022_04_27/o1_mf_1_3_%u_.arc
+ORA-00280: change 13144956853509 for thread 1 is in sequence #3
+
+
+16:55:45 Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+CANCEL
+Media recovery cancelled.
+16:55:57 SYS @ INASPE07:CDB$ROOT:>alter database open resetlogs ;
+
+Database altered.
+
+16:56:50 SYS @ INASPE07:CDB$ROOT:>show parameter name
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+16:59:56 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+17:00:05 SYS @ INASPE07:CDB$ROOT:>show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      INASPE07
+db_unique_name                       string      INASPE07
+global_names                         boolean     FALSE
+instance_name                        string      INASPE07
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      INASPE07.hk.standardchartered.
+                                                 com
+17:00:17 SYS @ INASPE07:CDB$ROOT:>archive log list ;
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     1
+Next log sequence to archive   1
+Current log sequence           1
+17:00:26 SYS @ INASPE07:CDB$ROOT:>shutdown immediate ;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+17:01:02 SYS @ INASPE07:CDB$ROOT:>startup mount pfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora' ;
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 18584688 bytes
+Variable Size            4261412864 bytes
+Database Buffers         6408896512 bytes
+Redo Buffers               48521216 bytes
+Database mounted.
+17:01:23 SYS @ INASPE07:CDB$ROOT:>alter database noarchivelog;
+
+Database altered.
+
+17:01:28 SYS @ INASPE07:CDB$ROOT:>alter database open;
+
+Database altered.
+
+17:01:40 SYS @ INASPE07:CDB$ROOT:>archive log list;
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     1
+Current log sequence           1
+17:01:46 SYS @ INASPE07:CDB$ROOT:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+17:01:54 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+17:02:04 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+==============================================================================================================================
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> cd $TNS_ADMIN or /u01/app/oracle/local/network/admin
+> echo $TNS_ADMIN
+/u01/app/oracle/local/network/admin
+
+Check listener.ora 
+vi /u01/app/oracle/local/network/admin/listener.ora
+
+LISTENER_INASPE07 =
+  (DESCRIPTION_LIST =
+      (DESCRIPTION =
+        (ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.229.85)(PORT = 1623))
+      )
+  )
+
+SID_LIST_LISTENER_INASPE07=
+(SID_LIST =
+  (SID_DESC =
+    (GLOBAL_DBNAME = INASPE07.hk.standardchartered.com)
+    (SID_NAME = INASPE07)
+    (ORACLE_HOME = /u01/app/oracle/product/db/19.14.0.0.Jan2022)
+  )
+)
+
+To Stop:
+/u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/lsnrctl stop LISTENER_INASPE07
+
+To Start Listener:
+/u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/lsnrctl start LISTENER_INASPE07
+
+Add new pdb name to tnsnames.ora file.
+vi /u01/app/oracle/product/db/19.11.0.0.Apr2021/network/admin/tnsnames.ora
+
+To Check Listener Status:
+/u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/lsnrctl status LISTENER_INASPE07
+
+> /u01/app/oracle/product/db/19.14.0.0.Jan2022/bin/lsnrctl status LISTENER_INASPE07
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 26-APR-2022 13:43:25
+
+Copyright (c) 1991, 2021, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.23.229.85)(PORT=1622)))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER_INASPE07
+Version                   TNSLSNR for Linux: Version 19.0.0.0.0 - Production
+Start Date                26-APR-2022 13:36:29
+Uptime                    0 days 0 hr. 6 min. 56 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/oracle/local/network/admin/listener.ora
+Listener Log File         /u01/app/oracle/local/diag/tnslsnr/hklvddapp068/listener_INASPE07/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.23.229.85)(PORT=1622)))
+Services Summary...
+Service "892e5b3d4d484ee9e0530ec7150a5de3.hk.standardchartered.com" has 1 instance(s).
+  Instance "INASPE07", status READY, has 1 handler(s) for this service...
+Service "INASPE07.hk.standardchartered.com" has 2 instance(s).
+  Instance "INASPE07", status UNKNOWN, has 1 handler(s) for this service...
+  Instance "INASPE07", status READY, has 1 handler(s) for this service...
+Service "INASPR07.hk.standardchartered.com" has 1 instance(s).
+  Instance "INASPE07", status READY, has 1 handler(s) for this service...
+The command completed successfully
+
+
+## Edit tnsnames.ora to add the new PDB(UKFRTBDR).
+> echo $TNS_ADMIN
+/u01/app/oracle/local/network/admin
+
+> vi /u01/app/oracle/local/network/admin/tnsnames.ora
+
+INASPR07 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.229.85)(PORT = 1623))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = INASPR07.hk.standardchartered.com)
+    )
+  )
+  
+## Test: 
+> tnsping INASPR07
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 28-APR-2022 23:49:34
+
+Copyright (c) 1997, 2021, Oracle.  All rights reserved.
+
+Used parameter files:
+/u01/app/oracle/local/network/admin/sqlnet.ora
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.229.85)(PORT = 1623))) (CONNECT_DATA = (SERVICE_NAME = INASPR07.hk.standardchartered.com)))
+OK (0 msec)
+
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 17:04:01 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+17:04:05 SYS @ INASPE07:CDB$ROOT:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+17:04:13 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+17:04:20 SYS @ INASPE07:CDB$ROOT:>alter session set container = INASPR07 ;
+
+Session altered.
+
+23:50:28 SYS @ INASPE07:CDB$ROOT:>set pagesize 50 ;
+23:50:38 SYS @ INASPE07:CDB$ROOT:>@/home/oracle/restoration/c_datacut.sql
+
+COUNTRY   BUSINESS_UNIT   AS_OF_DATE                    PROCESS_DATE
+--------- --------------- ----------------------------- -----------------------------
+IND       328             01 Jan 2012 00:00:00          01 Apr 2022 00:00:00
+IND       179             01 Jan 2019 00:00:00          01 Apr 2022 00:00:00
+IND       335             01 Feb 2003 00:00:00          01 Apr 2022 00:00:00
+IND       338             05 Mar 2005 00:00:00          01 Apr 2022 00:00:00
+IND       339             01 Jan 2004 00:00:00          01 Apr 2022 00:00:00
+IND       462             01 Sep 2019 00:00:00          01 Apr 2022 00:00:00
+IND       342             01 Jun 2004 00:00:00          01 Apr 2022 00:00:00
+INC       343             01 Jan 2010 00:00:00          01 Apr 2022 00:00:00
+IND       630             01 Jan 2006 00:00:00          01 Apr 2022 00:00:00
+IND       224             05 Jun 2006 00:00:00          01 Apr 2022 00:00:00
+IND       168             21 Jul 2002 00:00:00          01 Apr 2022 00:00:00
+MUS       250             01 Feb 2003 00:00:00          01 Apr 2022 00:00:00
+
+12 rows selected.
+
+17:04:55 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+
+## Create a test user in PDB(INASPR07).
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 17:05:33 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+17:05:37 SYS @ INASPE07:CDB$ROOT:>select name, open_mode from v$database ;
+
+NAME      OPEN_MODE
+--------- --------------------
+INASPE07  READ WRITE
+
+17:06:02 SYS @ INASPE07:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 INASPR07                       READ WRITE NO
+17:06:11 SYS @ INASPE07:CDB$ROOT:>alter session set container = INASPR07 ;
+
+Session altered.
+
+17:06:19 SYS @ INASPE07:CDB$ROOT:>create user testid_01 identified by Apr_2022 ;
+
+User created.
+
+17:06:38 SYS @ INASPE07:CDB$ROOT:>grant connect to testid_01 ;
+
+Grant succeeded.
+
+17:06:45 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+
+## Test the user connection.
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus testid_01/Apr_2022@INASPR07
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 17:07:35 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+17:07:35 TESTID_01 @ INASPE07:INASPR07:>show con_name
+
+CON_NAME
+------------------------------
+INASPR07
+17:07:40 TESTID_01 @ INASPE07:INASPR07:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Add the following line into pfile, /u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora .
+*.spfile='/u01/app/oracle/local/dbs/spfileINASPE07.ora'
+
+vi /u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 17:09:08 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+17:09:13 SYS @ INASPE07:CDB$ROOT:>create spfile from pfile='/u01/app/oracle/product/db/19.14.0.0.Jan2022/dbs/initINASPE07.ora' ;
+
+File created.
+
+17:09:27 SYS @ INASPE07:CDB$ROOT:>shut immediate ;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+17:10:15 SYS @ INASPE07:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.14.0.0.0
+
+
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Apr 27 17:10:44 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: / as sysdba
+Connected to an idle instance.
+
+17:10:49 SYS @ idle:>startup
+ORACLE instance started.
+
+Total System Global Area 1.0737E+10 bytes
+Fixed Size                 18584688 bytes
+Variable Size            4261412864 bytes
+Database Buffers         6408896512 bytes
+Redo Buffers               48521216 bytes
+Database mounted.
+Database opened.
+17:11:09 SYS @ idle:>show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/local/dbs/spfi
+                                                 leINASPE07.ora
+
+--------------------------------------------------------------------------------------------------------------------------------
+oracle@hklvddapp068:/home/oracle/restoration [INASPE07]
+> ls -lrt /u01/app/oracle/local/dbs
+total 51240
+-rw-r-----. 1 oracle oinstall       24 Apr 13 16:52 lkDOHK1PGL
+-rw-r-----. 1 oracle oinstall       54 Apr 13 17:16 initDOHK1PGL.ora
+-rw-r-----. 1 oracle oinstall     6656 Apr 13 17:21 spfileDOHK1PGL.ora
+-rw-r-----. 1 oracle oinstall     3072 Apr 13 17:22 orapwDOHK1PGL
+-rw-r-----. 1 oracle oinstall 19054592 Apr 13 17:36 snapcf_DOHK1PGL.f
+-rw-rw----. 1 oracle oinstall     1544 Apr 25 21:18 hc_DOHK1PGL.dat
+-rw-r-----. 1 oracle oinstall       24 Apr 25 21:27 lkINASPE07
+-rw-r-----. 1 oracle oinstall 33374208 Apr 25 21:57 snapcf_INASPE07.f
+-rw-rw----. 1 oracle oinstall     1544 Apr 25 22:17 hc_INASPE07.dat
+-rw-r-----. 1 oracle oinstall     6656 Apr 25 22:17 spfileINASPE07.ora
+
+--------------------------------------------------------------------------------------------------------------------------------
+Update /etc/oratab file on hklvddapp068:
+INASPE07:/u01/app/oracle/product/db/19.14.0.0.Jan2022:Y
+--------------------------------------------------------------------------------------------------------------------------------
+
+To startup and shutdown of Oracle instance:
+As oracle id, 
+> export ORACLE_SID=<instance> ( e.g. export ORACLE_SID=INASPE07 )
+> sqlplus "/ as sysdba"
+  sqlplus> startup
+  sqlplus> select name, open_mode from v$database ; # Check container database (CDB) status
+  sqlplus> show pdbs ; # Check pluggable database (PDB) status
+  sqlplus> shutdown immediate 
+  sqlplus> select name, open_mode from v$database ;
+  sqlplus > exit
+  
+To stop, start and check Oracle Listener:
+As oracle id,
+> $ORACLE_HOME/bin/lsnrctl stop LISTENER_<instance> ( e.g. $ORACLE_HOME/bin/lsnrctl stop LISTENER_INASPE07 )
+> $ORACLE_HOME/bin/lsnrctl start LISTENER_<instance> ( e.g. $ORACLE_HOME/bin/lsnrctl start LISTENER_INASPE07 )
+> $ORACLE_HOME/bin/lsnrctl status LISTENER_<instance> ( e.g. $ORACLE_HOME/bin/lsnrctl status LISTENER_INASPE07 )
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------

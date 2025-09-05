@@ -1,0 +1,62 @@
+Sometimes it is required to flush the BAD SQL_PLAN from shared_pool so that new (or old) better execution plan can be picked by SQL_ID
+
+ 
+
+1) FIND ADDRESS AND HASH_VALUE OF SQL_ID
+
+SQL> select ADDRESS, HASH_VALUE from V$SQLAREA where SQL_ID like '7yc%';
+
+ADDRESS          HASH_VALUE
+---------------- ----------
+000000085FD77CF0  808321886
+ 
+
+
+2) PURGE THE PLAN FROM SHARED POOL
+
+SQL> exec DBMS_SHARED_POOL.PURGE ('000000085FD77CF0, 808321886', 'C');
+
+PL/SQL procedure successfully completed.
+ 
+
+3) VERIFY
+
+SQL> select ADDRESS, HASH_VALUE from V$SQLAREA where SQL_ID like '7yc%';
+
+no rows selected
+NOTE:
+
+++++++++++++++++++++++++++++++++++++++++++++
+
+‘C’ (for cursor) or ‘S’ (for SQL)
+In this example, we used the V$ view to find cursor information. If you are in a RAC environment, change your query to use gv$sqlarea just in case the SQL statement you are looking for was executed on an instance other than the one you are currently logged into.
++++++++++++++++++++++++++++++++++++++++++++++
+
+ 
+
+FLUSHING BAD PLAN USING BELOW SCRIPT:
+
+This script will flush one cursor out of the shared pool. Works on 11g and above. It will need SQL_ID as input parameter
+
+SPOOL ON flush_cursor_&&sql_id..txt;
+PRO *** before flush ***
+SELECT inst_id, loaded_versions, invalidations, address, hash_value
+FROM gv$sqlarea WHERE sql_id = '&&sql_id.' ORDER BY 1;
+SELECT inst_id, child_number, plan_hash_value, executions, is_shareable
+FROM gv$sql WHERE sql_id = '&&sql_id.' ORDER BY 1, 2;
+BEGIN
+ FOR i IN (SELECT address, hash_value
+ FROM gv$sqlarea WHERE sql_id = '&&sql_id.')
+ LOOP
+ SYS.DBMS_SHARED_POOL.PURGE(i.address||','||i.hash_value, 'C');
+ END LOOP;
+END;
+/
+
+PRO *** after flush ***
+SELECT inst_id, loaded_versions, invalidations, address, hash_value
+FROM gv$sqlarea WHERE sql_id = '&&sql_id.' ORDER BY 1;
+SELECT inst_id, child_number, plan_hash_value, executions, is_shareable
+FROM gv$sql WHERE sql_id = '&&sql_id.' ORDER BY 1, 2;
+UNDEF sql_id;
+SPOOL OFF;

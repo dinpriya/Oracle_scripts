@@ -1,0 +1,1 @@
+/u01/app/grid/product/11gR2/bin/asmcmd cp $1 $2

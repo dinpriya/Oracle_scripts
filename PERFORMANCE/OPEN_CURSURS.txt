@@ -1,0 +1,32 @@
+set markup html on spool on
+spool open_cursors.html
+set echo on
+select oc.sid,
+count(*) numCur,
+s.username username,
+s.osuser osuser,
+oc.sql_text,
+s.program
+from v$open_cursor oc,
+v$session s
+where s.sid = oc.sid
+group by oc.sid,
+oc.sql_text,
+s.username,
+s.osuser,
+s.program
+having count(*) > 10
+order by oc.sid;
+
+select oc.sql_text, count(*)
+from v$open_cursor oc
+group by oc.sql_text
+having count(*) > 10
+order by count(*) desc;
+
+--To verify if you have set the value of the OPEN_CURSORS parameter high enough, monitor v$sesstat for the maximum opened cursors current, as shown
+
+SELECT max(a.value) as highest_open_cur, p.value as max_open_cur FROM v$sesstat a, v$statname b, v$parameter p WHERE a.statistic# = b.statistic# and b.name = 'opened cursors current' and p.name= 'open_cursors' group by p.value;
+
+spool off
+set markup html off
