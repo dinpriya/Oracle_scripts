@@ -1,0 +1,354 @@
+
+19c October 2022 RU in SCPAY DR servers - HKLPDSNPP001 & HKLPDSNPP002
+==================================================================
+
+
+Patch Number	Description	Applicable Homes
+34419443	    Database Oct 2022 Release Update 19.17.0.0.221018	Only DB Home for non-Oracle RAC setup. Both DB Home and Grid   
+                                                                     Home for Oracle RAC setup.
+34444834	    OCW Oct 2022 Release Update 19.17.0.0.221018	    Both DB Home and Grid Home
+34422617	    JDK BUNDLE PATCH 19.17.0.0.221018	                Both DB Homes and Grid Home
+33912872	    UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32	Both DB Home and Grid Home
+
+34428761	    ACFS Oct 2022 Release Update 19.17.0.0.221018	    Only Grid Home
+33575402	    DBWLM Release Update 19.0.0.0.0	                    Only Grid Home
+34580338	    Tomcat Release Update 19.0.0.0.0	                Only Grid Home
+34411846	    Oracle JavaVM Release Update 19.17.0.0.0	        Only DB Homes
+
+		
+One-Off bug patches FOR 19c GOLD BUILD (ENGG DATABASE)
+
+Patch Number	Description	Applicable Homes
+29613245	    ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2	Only DB HOME
+32727143	    TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES	Only DB HOME
+34100969	    SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]	Only DB HOME
+
+GI Home     		 : /u01/app/grid/product/19c
+ORACLE Home   		 : /u01/app/oracle/product/db/19.14.0.0.Jan2022
+PATCH FILE LOCATION  : /u01/app/oracle/local/software/Oct2022RU
+
+Notes:
+- INC0378852 mountpoint opt is full on HKLPDSNPP002
+  HKLPDSNPP002	AFF3094336
+
+#Ensure space is available from mountpoint as we experienced during patching in DR Env
+df -kh
+df -kh /opt 
+
+
+As the Grid home user:
+
+#Patch extraction 
+cd /u01/app/oracle/local/software/Oct2022RU
+mkdir p01 p02 p03 p04 p05 p06 p07 p08 
+
+cp -p tmp1/p6880880_190000_Linux-x86-64_Oct2022.zip p07/ && cd p07 && unzip p6880880_190000_Linux-x86-64_Oct2022.zip && cd .. && ls -lh && ls -lh p07/ 
+
+cp -p tmp1/p34449117_190000_Linux-x86-64.zip p01/ && cd p01 && unzip p34449117_190000_Linux-x86-64.zip && cd .. && ls -lh && ls -lh p01/ 
+cp -p tmp1/p34422617_190000_Linux-x86-64.zip p02/ && cd p02 && unzip p34422617_190000_Linux-x86-64.zip && cd .. && ls -lh && ls -lh p02/
+cp -p tmp1/p33912872_190000_Linux-x86-64.zip p03/ && cd p03 && unzip p33912872_190000_Linux-x86-64.zip && cd .. && ls -lh && ls -lh p03/
+cp -p tmp1/p29613245_1917000DBRU_Generic.zip p04/ && cd p04 && unzip p29613245_1917000DBRU_Generic.zip && cd .. && ls -lh && ls -lh p04/
+cp -p tmp1/p32727143_1917000DBRU_Linux-x86-64.zip p05/ && cd p05 && unzip p32727143_1917000DBRU_Linux-x86-64.zip && cd .. && ls -lh && ls -lh p05/
+cp -p tmp1/p34100969_1917000DBRU_Linux-x86-64.zip p06/ && cd p06 && unzip p34100969_1917000DBRU_Linux-x86-64.zip && cd .. && ls -lh && ls -lh p06/
+
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34428761
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/33575402
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34580338
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p02/34422617
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p03/33912872
+
+For Oracle home, as home user:
+
+#prereq will failed for 34419443, expected behaviour conflict 3 patches ontop of 19.16, we need to rollback them and patch with 19.17 in later step  
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34411846
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p02/34422617
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p03/33912872
+
+
+PATCH APPLY :
+=============
+---------------
+#2 Change Hostname
+On HKLPDSNPP001
+---------------
+1. As oracle user - stop all database instances
+	
+	$ export ORACLE_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+	$ cd /u01/app/oracle/local/software/Oct2022RU
+	
+	#Stop instance in node level, for each database, in process will create file stop_inst_node1, later will be used to start the instance
+	#this activity will patch19c, but we also have to stop db12c on this node, switch between env accordingly  
+
+	$ cat /etc/oratab 	
+	$ . oraenv 
+	$ $ORACLE_HOME/bin/srvctl stop home -o $ORACLE_HOME -s stop_inst_node1 -n HKLPDSNPP001	
+	$ . oraenv 
+	$ $ORACLE_HOME/bin/srvctl stop home -o $ORACLE_HOME -s stop_inst_node12c -n HKLPDSNPP001
+
+		
+	$ sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch
+
+	Stop EM Agent Processes Prior to Patching on all nodes. Run as oracle
+	
+	$ /u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl status agent
+	$ /u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent
+
+
+2. Run as grid user
+
+	#Create backup of current Opatch and copy latest opatch from p07 folder
+	#some error permission denied on jre folder expected.
+	$ cd /u01/app/grid/product/19c/OPatch/
+	$ cp -pr /u01/app/grid/product/19c/OPatch/* /u01/app/oracle/local/software/Oct2022RU/p08/
+	$ cp -pr /u01/app/oracle/local/software/Oct2022RU/p07/6880880/OPatch/* /u01/app/grid/product/19c/OPatch/
+
+	$ export GI_HOME=/u01/app/grid/product/19c
+	$ export PATH=$GI_HOME/bin:$GI_HOME/OPatch:$PATH
+
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834 
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34428761 
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/33575402
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34580338
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p02/34422617
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Oct2022RU/p03/33912872
+
+
+	#Get the result as patching is completed on grid
+	#Ensure all the patches is applied on this node 
+	$ cd /u01/app/oracle/local/software/Oct2022RU
+	$ $GI_HOME/OPatch/opatch lspatches
+
+	$ $GI_HOME/OPatch/opatch lsinventory > lsinv_grid_HKLPDSNPP001.txt
+	$ cat lsinv_grid_HKLPDSNPP001.txt | egrep -i "34444834|34428761|34419443|33575402|34580338|34422617|33912872"
+
+
+3. As oracle user - apply 19c Oct 2022 RU patch and other one-off patches
+
+
+	$ export ORACLE_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ export PATH=$ORACLE_HOME/OPatch:$ORACLE_HOME/bin:$PATH
+	$ cd /u01/app/oracle/local/software/Oct2022RU
+
+	#rollback for 29613245, 32727143, 34100969 before apply 19.17
+	#below exec will generate confict for these 3 patches
+    $  $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+	$  $ORACLE_HOME/OPatch/opatch rollback -id 29613245 
+	$  $ORACLE_HOME/OPatch/opatch rollback -id 32727143
+	$  $ORACLE_HOME/OPatch/opatch rollback -id 34100969
+	#below exec will not throw any confict, we can proceed to patch for RU
+	 $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+
+	#Create backup of current Opatch and copy latest opatch from p07 folder
+	#some error permission denied on jre folder expected.
+	$ cd /u01/app/oracle/local/software/Oct2022RU/p07/6880880
+	$ ls
+
+	$ cd /u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ mv OPatch OPatch1
+	$ cp -pr /u01/app/oracle/local/software/Oct2022RU/p07/6880880/OPatch .
+
+
+    $ /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834/custom/scripts/prepatch.sh -dbhome $ORACLE_HOME
+    $ $ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834
+    $ $ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34419443
+	$ /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34416665/34444834/custom/scripts/postpatch.sh -dbhome $ORACLE_HOME
+
+  #Apply OJVM PSU Patch
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p01/34449117/34411846
+    $ opatch apply -oh $ORACLE_HOME -local 
+
+  #Patch 34422617 - JDK BUNDLE PATCH 19.17.0.0.221018
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p02/34422617
+    $ opatch apply -oh $ORACLE_HOME -local
+
+  #Patch 33912872 - UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p03/33912872
+    $ opatch apply -oh $ORACLE_HOME -local   
+	
+  #Patch 29613245 - ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p04/29613245
+    $ opatch apply  -oh $ORACLE_HOME -local 
+		
+  #Patch 32727143 - TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p05/32727143
+    $ opatch apply  -oh $ORACLE_HOME -local 
+  
+  #Patch 34100969 - SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]
+    $ cd /u01/app/oracle/local/software/Oct2022RU/p06/34100969
+    $ opatch apply  -oh $ORACLE_HOME -local
+  
+
+	$ cd /u01/app/oracle/local/software/Oct2022RU/p07/
+	$ opatch lsinventory > lsinv_db_HKLPDSNPP001.txt
+	$ cat lsinv_db_HKLPDSNPP001.txt | egrep -i "34444834|34419443|34411846|34422617|33912872|29613245|32727143|34100969"
+	  #vi lsinv_db_HKLPDSNPP001.txt 
+
+4. As oracle user - post patch
+
+	$ sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh
+	$ sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch
+
+	#startup database for both 19c and 12c 
+	$ cd /u01/app/oracle/local/software/Oct2022RU
+	$ . oraenv 
+	$ $ORACLE_HOME/bin/srvctl start home -o $ORACLE_HOME -s stop_inst_node1 -n HKLPDSNPP001
+	$ . oraenv
+	$ $ORACLE_HOME/bin/srvctl start home -o $ORACLE_HOME -s stop_inst_node12c -n HKLPDSNPP001
+
+	$ /u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl start agent
+	
+---------------
+On HKLPDSNPP002
+---------------
+-> DO THE SAME AS ABOVE
+-> Check opatch lsinventory output of 19c GI Home and 19c Oracle Home on each nodes
+
+
+POST PATCH APPLY EXECUTION - DATAPATCH :
+=======================================
+ONLY ON PRIMARY	:
+ONLY ON ONE NODE FOR EACH DATABASES :
+-------------------------------------
+
+As oracle user to perform datapatch -verbose command for each databases:
+
+$ sqlplus / nolog
+SQL> connect as sysdba
+SQL> alter pluggable database all open
+SQL> exit
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+
+$ cd $ORACLE_HOME/OPatch
+$ ./datapatch -verbose -skip_upgrade_check
+
+--Check all databases and its PDBs make sure OPEN READ WRITE without RESTRICTED mode yes
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+
+================================
+Reference : 
+
+#Switch or check current environment
+. oraenv
+cat /etc/oratab
+sudo -u grid -i
+sudo -u oracle -i 
+
+#Node1
+-MGMTDB:/u01/app/grid/product/12cR2:N
+POHK1NPP_DG1:/u01/app/oracle/product/db/12cR2:N
+POHKRCAT_DG1:/u01/app/oracle/product/db/12cR2:N
+POHK1NPP_DG:/u01/app/oracle/product/db/12cR2:N
+POHKRCAT_DG:/u01/app/oracle/product/db/12cR2:N
+-MGMTDB:/u01/app/grid/product/19c:N
+POHK1SCP_DG1:/u01/app/oracle/product/db/19.14.0.0.Jan2022:N
+POHK1SCP_DG2:/u01/app/oracle/product/db/19.14.0.0.Jan2022:N
+
+#Node2
+POHK1NPP_DG2:/u01/app/oracle/product/db/12cR2:N
+POHKRCAT_DG2:/u01/app/oracle/product/db/12cR2:N
+POHK1NPP_DG:/u01/app/oracle/product/db/12cR2:N
+POHKRCAT_DG:/u01/app/oracle/product/db/12cR2:N
+POHK1SCP_DG1:/u01/app/oracle/product/db/19.14.0.0.Jan2022:N
+POHK1SCP_DG2:/u01/app/oracle/product/db/19.14.0.0.Jan2022:N
+
+cd /u01/app/oracle/local/diag/rdbms/pohk1scp_dg/POHK1SCP_DG1/alert
+tail -100f alter_POHK1SCP_DG1.log
+
+#cd /u01/app/oracle/global/diag/rdbms/pohk1npp/POHK1NPP_DG1/trace/
+#tail -100f /u01/app/oracle/global/diag/rdbms/pohk1npp/POHK1NPP_DG1/trace/alert_POHK1NPP_DG1.log
+#/u01/app/grid/local/crsdata/hklpdsnpp002/crsconfig/crs_postpatch_apply_inplace_hklpdsnpp002_2023-01-07_10-19-53PM.log
+
+. oraenv 
+dgmgrl / as sysdba
+DGMGRL>show configuration
+
+DGMGRL>show database POHK1NPP_DG
+DGMGRL>show database POHKRCAT_DG
+
+. oraenv
+dgmgrl / as sysdba
+DGMGRL>show configuration
+
+DGMGRL>show database POHK1SCP_DG
+
+
+#show pdbs
+#sqlplus / as sysdba
+#alter session set container=cdb$root;
+#alter database recover managed standby database disconnect;
+
+
+select name , OPEN_MODE FROM V$DATABASE;
+
+SELECT   a.thread#,  b. last_seq, a.applied_seq, a. last_app_timestamp, b.last_seq-a.applied_seq   ARC_DIFF FROM 
+(SELECT  thread#, MAX(sequence#) applied_seq, MAX(next_time) last_app_timestamp FROM gv$archived_log WHERE applied = 'YES' GROUP BY thread#) a, 
+(SELECT  thread#, MAX (sequence#) last_seq FROM gv$archived_log GROUP BY thread#) b WHERE a.thread# = b.thread#;
+
+
+set lines 200
+set pages 500
+col name for a50 tru
+col value for a90 
+
+select  name, value from v$diag_info;
+
+=======HC Task===========
+
+
+date
+
+GI Home
+
+	$  export GI_HOME=/u01/app/grid/product/19c
+	$  export PATH=$GI_HOME/bin:$GI_HOME/OPatch:$PATH
+
+	$  crsctl check crs
+	$  opatch lspatches
+	$  crsctl query crs releasepatch
+	$  date
+
+Oracle Home
+
+	#12c env 
+	$ . oraenv 
+	$ srvctl status database -db POHK1NPP_DG    -- all databases
+	$ srvctl status database -db POHKRCAT_DG    -- all databases
+
+	$ srvctl status service -db POHK1NPP_DG    -- all databases
+	$ srvctl status service -db POHKRCAT_DG    -- all databases
+
+	#19c env
+	$ . oraenv 
+	$ srvctl status database -db POHK1SCP_DG    -- all databases
+	$ srvctl status service -db POHK1SCP_DG    -- all databases
+
+
+	$  opatch lspatches
+	$  set lines 200 pages 100 long 20000000
+	$  col COMP_NAME for a55 tru
+	$  select COMP_NAME,VERSION,VERSION_FULL,STATUS from dba_registry;
+	$  !date
+
+NOTE: Take screenshot
+
+======================================================================
+
+AFTER APPLY PATCH
+
+DO SAME THING OF ABOVE FOR EVIDENCE
+  
+    

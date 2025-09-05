@@ -1,0 +1,185 @@
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> date
+Thu Sep 29 03:50:15 HKT 2022
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK7CCB
+Service svc_api_gl_dev is running on instance(s) DOHK7CCB3
+Service svc_api_gl_pt is running on instance(s) DOHK7CCB3
+Service svc_api_gl_sit is running on instance(s) DOHK7CCB3
+Service svc_api_gl_uat is running on instance(s) DOHK7CCB3
+Service svc_hkjc_gl_dev is running on instance(s) DOHK7CCB3
+Service svc_hkjc_gl_uat is running on instance(s) DOHK7CCB3
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK2S2B
+Service svc_aic_gl_dev is running on instance(s) DOHK2S2B2
+Service svc_fwb_gl_cit is running on instance(s) DOHK2S2B2
+Service svc_fwb_gl_demo is running on instance(s) DOHK2S2B2
+Service svc_fwb_gl_dev is running on instance(s) DOHK2S2B2
+Service svc_fwb_gl_pt is running on instance(s) DOHK2S2B2
+Service svc_fwb_gl_sit2 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_cit1 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_cit2 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_cit3 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_cui is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_dev is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_drh is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_mig1 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_mig2 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_oat is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_pt is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_sit1 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_sit2 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_sit3 is running on instance(s) DOHK2S2B2
+Service svc_ngo_gl_uat2 is running on instance(s) DOHK2S2B2
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK1NGW
+Service svc_cda_gl_dev is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_cit1 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_cit2 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_cit3 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_cui is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_dev is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_drh is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_mig1 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_mig2 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_oat is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_pt is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_sit1 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_sit2 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_sit3 is running on instance(s) DOHK1NGW3
+Service svc_ngw_gl_uat2 is running on instance(s) DOHK1NGW3
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK1RND
+Service svc_npd_gl_rnd is running on instance(s) DOHK1RND3
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK1SSC
+Service svc_cad_gl_cui is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_dev is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_drh is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_mig1 is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_mig2 is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_pt is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_sit1 is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_sit2 is running on instance(s) DOHK1SSC3
+Service svc_cad_gl_sit3 is running on instance(s) DOHK1SSC3
+Service svc_cop_gl_dev is running on instance(s) DOHK1SSC3
+Service svc_cop_gl_sit1 is running on instance(s) DOHK1SSC3
+Service svc_cop_gl_sit2 is running on instance(s) DOHK1SSC3
+Service svc_srs_gl_dev is running on instance(s) DOHK1SSC3
+Service svc_srs_gl_uat is running on instance(s) DOHK1SSC3
+Service svc_tmx_gl_dev is running on instance(s) DOHK1SSC3
+Service svc_tmx_gl_uat is running on instance(s) DOHK1SSC3
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK3S2B
+Service svc_cas_st_dev is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_cit1 is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_cit2 is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_cui is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_drh is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_mig1 is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_mig2 is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_pt is running on instance(s) DOHK3S2B1
+Service svc_cus_gl_sit1 is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_cus_gl_sit2 is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_tdc_gl_cui is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_tdc_gl_dev is running on instance(s) DOHK3S2B1
+Service svc_tdc_gl_drh is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_tdc_gl_mig1 is running on instance(s) DOHK3S2B1
+Service svc_tdc_gl_mig2 is running on instance(s) DOHK3S2B1
+Service svc_tdc_gl_pt is running on instance(s) DOHK3S2B1
+Service svc_tdc_gl_sit1 is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_tdc_gl_sit3 is running on instance(s) DOHK3S2B1,DOHK3S2B2
+Service svc_tng_gl_cui is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_dev is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_drh is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_mig1 is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_mig2 is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_pt is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_sit1 is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_sit2 is running on instance(s) DOHK3S2B1
+Service svc_tng_gl_sit3 is running on instance(s) DOHK3S2B1
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+> srvctl status service -d DOHK1S2B
+Service svc_b2b_cci_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_cci_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_cci_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_cci_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_cci_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_cci_gl_pt is running on instance(s) DOHK1S2B3
+Service svc_b2b_cci_gl_sit1 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_cci_gl_sit2 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_cci_gl_sit3 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_idc_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_b2b_idc_gl_sit1 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_idc_gl_sit2 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_idc_gl_sit3 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ipc_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_b2b_ipc_gl_sit1 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ipc_gl_sit2 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ipc_gl_sit3 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ldr_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_b2b_ldr_gl_sit1 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ldr_gl_sit2 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_ldr_gl_sit3 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_npc_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_b2b_npc_gl_sit1 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_npc_gl_sit2 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_npc_gl_sit3 is running on instance(s) DOHK1S2B1,DOHK1S2B3
+Service svc_b2b_rta_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_dev2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_dev3 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_sit1 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_sit2 is running on instance(s) DOHK1S2B1
+Service svc_b2b_rta_gl_sit3 is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_mig1 is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_mig2 is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_sit1 is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_sit2 is running on instance(s) DOHK1S2B1
+Service svc_ccs_gl_sit3 is running on instance(s) DOHK1S2B1
+Service svc_cyc_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_cyc_gl_oat is running on instance(s) DOHK1S2B1
+Service svc_pay_gl_cui is running on instance(s) DOHK1S2B1
+Service svc_pay_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_pay_gl_pt is running on instance(s) DOHK1S2B1
+Service svc_pay_gl_sit is running on instance(s) DOHK1S2B1
+Service svc_sav_gl_dev is running on instance(s) DOHK1S2B1
+Service svc_sav_gl_pt is running on instance(s) DOHK1S2B1
+oracle@HKLPDDS2B002:/home/oracle [DOHK1S2B1]
+>

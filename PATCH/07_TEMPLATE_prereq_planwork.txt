@@ -1,0 +1,39 @@
+BEFORE APPLY PATCH
+
+srvctl status database -db <db_name>    -- all databases
+
+srvctl status service -db <db_name>    -- all databases
+
+date
+
+GI Home
+
+-> crsctl check crs
+
+-> opatch lspatches
+
+-> crsctl query crs releasepatch
+
+-> date
+
+Oracle Home
+
+-> opatch lspatches
+
+-> set lines 200 pages 100 long 20000000
+
+-> col COMP_NAME for a55 tru
+
+-> select COMP_NAME,VERSION,VERSION_FULL,STATUS from dba_registry;
+
+-> !date
+
+NOTE: Take screenshot
+
+======================================================================
+
+AFTER APPLY PATCH
+
+DO SAME THING OF ABOVE FOR EVIDENCE
+
+ 

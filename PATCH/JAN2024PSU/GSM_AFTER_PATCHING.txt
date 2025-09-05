@@ -1,0 +1,55 @@
+GDSCTL> set gsm -gsm GSMCCS
+GDSCTL> status gsm
+Alias                     GSMCCS
+Version                   19.0.0.0.0
+Start Date                28-MAR-2024 14:09:23
+Trace Level               off
+Listener Log File         /apps/oracle/diag/gsm/hklvapapp354/gsmccs/alert/log.xml
+Listener Trace File       /apps/oracle/diag/gsm/hklvapapp354/gsmccs/trace/ora_2494431_139633581243456.trc
+Endpoint summary          (ADDRESS=(HOST=hklvapapp354)(PORT=1633)(PROTOCOL=tcp))
+GSMOCI Version            3.0.180702
+Mastership                Y
+Connected to GDS catalog  Y
+Process Id                2494434
+Number of reconnections   2
+Pending tasks.     Total  0
+Tasks in  process. Total  0
+Regional Mastership       FALSE
+Total messages published  0
+Time Zone                 +08:00
+Orphaned Buddy Regions:
+     None
+GDS region                hk
+ 
+GDSCTL> config shard
+Catalog connection is established
+Name                Shard space         Status    State       Region    Availability
+----                -----------         ------    -----       ------    ------------
+pohk1ccd_dg_pdbp_cc glccs               Ok        Deployed    hk        READ ONLY
+s
+pohk1ccd_pdbp_ccs   glccs               Ok        Deployed    hk        ONLINE
+poin1ccd_dg_pdbp_in inccs               Ok        Deployed    in        READ ONLY
+_ccs
+poin1ccd_pdbp_in_cc inccs               Ok        Deployed    in        ONLINE
+s
+
+
+GDSCTL> show ddl
+Catalog connection is established
+id      DDL Text                                 Failed shards
+--      --------                                 -------------
+1471    ALTER USER "CC_PAY_SRD_ADM" IDENTIFIE...
+1472    ALTER USER "CC_CCS_SRD_ADM" IDENTIFIE...
+1473    ALTER USER "CC_PAY_SRD_ADM" IDENTIFIE...
+1474    ALTER USER "S2BPAY_USER_CAT_DR" IDENT...
+1475    ALTER TABLE TB_S2BP_TXN ADD PAYER_VPA...
+1476    ALTER TABLE TB_S2BP_TXN_ARCH ADD PAYE...
+1477    ALTER TABLE "CC_CCS_SRD_ADM"."TB_EBLI...
+1478    ALTER TABLE "CC_CCS_SRD_ADM"."TB_EBLI...
+1479    ALTER TABLE "CC_CCS_SRD_ADM"."TB_EBLI...
+1480    ALTER TABLE "CC_CCS_SRD_ADM"."TB_EBLI...
+ 
+GDSCTL> show ddl -failed_only
+id      DDL Text                                 Failed shards
+--      --------                                 -------------
+ 

@@ -1,0 +1,289 @@
+SQL Patching tool version 19.22.0.0.0 Production on Sun Apr 21 18:10:23 2024
+Copyright (c) 2012, 2024, Oracle.  All rights reserved.
+
+Log file for this invocation: /u01/app/oracle/local/cfgtoollogs/sqlpatch/sqlpatch_114533_2024_04_21_18_10_23/sqlpatch_invocation.log
+
+Connecting to database...OK
+Gathering database info...done
+
+Note:  Datapatch will only apply or rollback SQL fixes for PDBs
+       that are in an open state, no patches will be applied to closed PDBs.
+       Please refer to Note: Datapatch: Database 12c Post Patch SQL Automation
+       (Doc ID 1585822.1)
+
+Bootstrapping registry and package to current versions...done
+Determining current state...done
+
+Current state of interim SQL patches:
+Interim patch 29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 10-DEC-22 20.31.41.832699
+  PDB PDB$SEED: Rolled back successfully on 10-DEC-22 20.31.48.403056
+  PDB PDBP_CAS: Rolled back successfully on 10-DEC-22 20.32.08.108537
+  PDB PDBP_TDC: Rolled back successfully on 10-DEC-22 20.31.54.945134
+  PDB PDBP_TNG: Rolled back successfully on 10-DEC-22 20.32.01.569430
+Interim patch 29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 28-MAY-23 12.54.12.205093
+  PDB PDB$SEED: Rolled back successfully on 28-MAY-23 12.54.18.215383
+  PDB PDBP_CAS: Rolled back successfully on 28-MAY-23 12.54.33.314477
+  PDB PDBP_TDC: Rolled back successfully on 28-MAY-23 12.54.23.211833
+  PDB PDBP_TNG: Rolled back successfully on 28-MAY-23 12.54.28.096092
+Interim patch 29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 05-NOV-23 13.34.53.350791
+  PDB PDB$SEED: Rolled back successfully on 05-NOV-23 13.34.57.964975
+  PDB PDBP_CAS: Rolled back successfully on 05-NOV-23 13.35.12.099442
+  PDB PDBP_TDC: Rolled back successfully on 05-NOV-23 13.35.02.574263
+  PDB PDBP_TNG: Rolled back successfully on 05-NOV-23 13.35.07.248806
+Interim patch 29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Applied successfully on 05-NOV-23 13.34.57.628228
+  PDB PDB$SEED: Applied successfully on 05-NOV-23 13.35.02.217903
+  PDB PDBP_CAS: Applied successfully on 05-NOV-23 13.35.16.381577
+  PDB PDBP_TDC: Applied successfully on 05-NOV-23 13.35.06.904684
+  PDB PDBP_TNG: Applied successfully on 05-NOV-23 13.35.11.654817
+Interim patch 29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2):
+  Binary registry: Installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+Interim patch 29774421 (OJVM RELEASE UPDATE: 19.4.0.0.190716 (29774421)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+Interim patch 30484981 (OJVM RELEASE UPDATE: 19.6.0.0.200114 (30484981)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+Interim patch 30805684 (OJVM RELEASE UPDATE: 19.7.0.0.200414 (30805684)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 07-AUG-21 23.24.45.728520
+  PDB PDB$SEED: Rolled back successfully on 07-AUG-21 23.24.45.813082
+  PDB PDBP_CAS: Rolled back successfully on 07-AUG-21 23.24.46.116148
+  PDB PDBP_TDC: Rolled back successfully on 07-AUG-21 23.24.45.904660
+  PDB PDBP_TNG: Rolled back successfully on 07-AUG-21 23.24.46.017677
+Interim patch 32399816 (OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 15-JAN-22 20.39.23.472935
+  PDB PDB$SEED: Rolled back successfully on 15-JAN-22 20.39.27.025811
+  PDB PDBP_CAS: Rolled back successfully on 15-JAN-22 20.39.41.057429
+  PDB PDBP_TDC: Rolled back successfully on 15-JAN-22 20.39.30.553515
+  PDB PDBP_TNG: Rolled back successfully on 15-JAN-22 20.39.34.035677
+Interim patch 32924796 (FILTER ON AUTO_CAPTURE_PARSING_SCHEMA_NAME NOT WORKING AS EXPECTED):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 16-APR-22 20.08.26.704126
+  PDB PDB$SEED: Rolled back successfully on 16-APR-22 20.08.29.440034
+  PDB PDBP_CAS: Rolled back successfully on 16-APR-22 20.08.37.937016
+  PDB PDBP_TDC: Rolled back successfully on 16-APR-22 20.08.32.247545
+  PDB PDBP_TNG: Rolled back successfully on 16-APR-22 20.08.34.985710
+Interim patch 32924796 (FILTER ON AUTO_CAPTURE_PARSING_SCHEMA_NAME NOT WORKING AS EXPECTED):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 10-DEC-22 20.31.41.852827
+  PDB PDB$SEED: Rolled back successfully on 10-DEC-22 20.31.48.423173
+  PDB PDBP_CAS: Rolled back successfully on 10-DEC-22 20.32.08.128469
+  PDB PDBP_TDC: Rolled back successfully on 10-DEC-22 20.31.54.976393
+  PDB PDBP_TNG: Rolled back successfully on 10-DEC-22 20.32.01.590745
+Interim patch 33192694 (OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 16-APR-22 20.08.26.682894
+  PDB PDB$SEED: Rolled back successfully on 16-APR-22 20.08.29.415170
+  PDB PDBP_CAS: Rolled back successfully on 16-APR-22 20.08.37.909898
+  PDB PDBP_TDC: Rolled back successfully on 16-APR-22 20.08.32.220800
+  PDB PDBP_TNG: Rolled back successfully on 16-APR-22 20.08.34.960180
+Interim patch 33561310 (OJVM RELEASE UPDATE: 19.14.0.0.220118 (33561310)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 10-DEC-22 20.31.40.367840
+  PDB PDB$SEED: Rolled back successfully on 10-DEC-22 20.31.46.929803
+  PDB PDBP_CAS: Rolled back successfully on 10-DEC-22 20.32.06.646063
+  PDB PDBP_TDC: Rolled back successfully on 10-DEC-22 20.31.53.452047
+  PDB PDBP_TNG: Rolled back successfully on 10-DEC-22 20.32.00.018621
+Interim patch 34086870 (OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 28-MAY-23 12.54.12.200757
+  PDB PDB$SEED: Rolled back successfully on 28-MAY-23 12.54.18.204755
+  PDB PDBP_CAS: Rolled back successfully on 28-MAY-23 12.54.33.305664
+  PDB PDBP_TDC: Rolled back successfully on 28-MAY-23 12.54.23.202964
+  PDB PDBP_TNG: Rolled back successfully on 28-MAY-23 12.54.28.088393
+Interim patch 34774667 (TT23.1ASAN  GLOBAL-BUFFER-OVERFLOW IN PGA AT KWQALOCKQTWITHINFO):
+  Binary registry: Installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+Interim patch 34786990 (OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Rolled back successfully on 05-NOV-23 13.34.53.346880
+  PDB PDB$SEED: Rolled back successfully on 05-NOV-23 13.34.57.957044
+  PDB PDBP_CAS: Rolled back successfully on 05-NOV-23 13.35.12.090599
+  PDB PDBP_TDC: Rolled back successfully on 05-NOV-23 13.35.02.567105
+  PDB PDBP_TNG: Rolled back successfully on 05-NOV-23 13.35.07.241640
+Interim patch 35354406 (OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406)):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Applied successfully on 05-NOV-23 13.34.56.151101
+  PDB PDB$SEED: Applied successfully on 05-NOV-23 13.35.00.726568
+  PDB PDBP_CAS: Applied successfully on 05-NOV-23 13.35.14.886964
+  PDB PDBP_TDC: Applied successfully on 05-NOV-23 13.35.05.437156
+  PDB PDBP_TNG: Applied successfully on 05-NOV-23 13.35.10.001044
+Interim patch 35700333 (MERGE ON DATABASE RU 19.20.0.0.0 OF 26749785 32781163):
+  Binary registry: Not installed
+  PDB CDB$ROOT: Applied successfully on 05-NOV-23 13.34.57.895608
+  PDB PDB$SEED: Applied successfully on 05-NOV-23 13.35.02.491712
+  PDB PDBP_CAS: Applied successfully on 05-NOV-23 13.35.16.652376
+  PDB PDBP_TDC: Applied successfully on 05-NOV-23 13.35.07.173168
+  PDB PDBP_TNG: Applied successfully on 05-NOV-23 13.35.12.009526
+Interim patch 35926646 (OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646)):
+  Binary registry: Installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+Interim patch 36131202 (MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781):
+  Binary registry: Installed
+  PDB CDB$ROOT: Not installed
+  PDB PDB$SEED: Not installed
+  PDB PDBP_CAS: Not installed
+  PDB PDBP_TDC: Not installed
+  PDB PDBP_TNG: Not installed
+
+Current state of release update SQL patches:
+  Binary registry:
+    19.22.0.0.0 Release_Update 240104023954: Installed
+  PDB CDB$ROOT:
+    Applied 19.20.0.0.0 Release_Update 230715022800 successfully on 05-NOV-23 13.34.56.145239
+  PDB PDB$SEED:
+    Applied 19.20.0.0.0 Release_Update 230715022800 successfully on 05-NOV-23 13.35.00.720576
+  PDB PDBP_CAS:
+    Applied 19.20.0.0.0 Release_Update 230715022800 successfully on 05-NOV-23 13.35.14.880986
+  PDB PDBP_TDC:
+    Applied 19.20.0.0.0 Release_Update 230715022800 successfully on 05-NOV-23 13.35.05.431320
+  PDB PDBP_TNG:
+    Applied 19.20.0.0.0 Release_Update 230715022800 successfully on 05-NOV-23 13.35.09.995066
+
+Adding patches to installation queue and performing prereq checks...done
+Installation queue:
+  For the following PDBs: CDB$ROOT PDB$SEED PDBP_TDC PDBP_TNG PDBP_CAS
+    The following interim patches will be rolled back:
+      35354406 (OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406))
+      29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2)
+      35700333 (MERGE ON DATABASE RU 19.20.0.0.0 OF 26749785 32781163)
+    Patch 35943157 (Database Release Update : 19.22.0.0.240116 (35943157)):
+      Apply from 19.20.0.0.0 Release_Update 230715022800 to 19.22.0.0.0 Release_Update 240104023954
+    The following interim patches will be applied:
+      35926646 (OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646))
+      29613245 (ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2)
+      34774667 (TT23.1ASAN  GLOBAL-BUFFER-OVERFLOW IN PGA AT KWQALOCKQTWITHINFO)
+      36131202 (MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781)
+
+Installing patches...
+Patch installation complete.  Total patches installed: 40
+
+Validating logfiles...done
+Patch 35354406 rollback (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35354406/25255010/35354406_rollback_POHK3CCD_CDBROOT_2024Apr21_18_12_32.log (no errors)
+Patch 29613245 rollback (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25306573/29613245_rollback_POHK3CCD_CDBROOT_2024Apr21_18_13_34.log (no errors)
+Patch 35700333 rollback (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35700333/25349416/35700333_rollback_POHK3CCD_CDBROOT_2024Apr21_18_13_34.log (no errors)
+Patch 35943157 apply (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35943157/25527362/35943157_apply_POHK3CCD_CDBROOT_2024Apr21_18_13_36.log (no errors)
+Patch 35926646 apply (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35926646/25513953/35926646_apply_POHK3CCD_CDBROOT_2024Apr21_18_13_34.log (no errors)
+Patch 29613245 apply (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25448109/29613245_apply_POHK3CCD_CDBROOT_2024Apr21_18_14_44.log (no errors)
+Patch 34774667 apply (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/34774667/25445264/34774667_apply_POHK3CCD_CDBROOT_2024Apr21_18_22_47.log (no errors)
+Patch 36131202 apply (pdb CDB$ROOT): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_CDBROOT_2024Apr21_18_22_49.log (no errors)
+Patch 35354406 rollback (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35354406/25255010/35354406_rollback_POHK3CCD_PDBSEED_2024Apr21_18_23_28.log (no errors)
+Patch 29613245 rollback (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25306573/29613245_rollback_POHK3CCD_PDBSEED_2024Apr21_18_23_49.log (no errors)
+Patch 35700333 rollback (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35700333/25349416/35700333_rollback_POHK3CCD_PDBSEED_2024Apr21_18_23_49.log (no errors)
+Patch 35943157 apply (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35943157/25527362/35943157_apply_POHK3CCD_PDBSEED_2024Apr21_18_23_51.log (no errors)
+Patch 35926646 apply (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35926646/25513953/35926646_apply_POHK3CCD_PDBSEED_2024Apr21_18_23_49.log (no errors)
+Patch 29613245 apply (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25448109/29613245_apply_POHK3CCD_PDBSEED_2024Apr21_18_24_35.log (no errors)
+Patch 34774667 apply (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/34774667/25445264/34774667_apply_POHK3CCD_PDBSEED_2024Apr21_18_40_07.log (no errors)
+Patch 36131202 apply (pdb PDB$SEED): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_PDBSEED_2024Apr21_18_40_08.log (no errors)
+Patch 35354406 rollback (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35354406/25255010/35354406_rollback_POHK3CCD_PDBP_TDC_2024Apr21_18_23_28.log (no errors)
+Patch 29613245 rollback (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25306573/29613245_rollback_POHK3CCD_PDBP_TDC_2024Apr21_18_23_49.log (no errors)
+Patch 35700333 rollback (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35700333/25349416/35700333_rollback_POHK3CCD_PDBP_TDC_2024Apr21_18_23_49.log (no errors)
+Patch 35943157 apply (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35943157/25527362/35943157_apply_POHK3CCD_PDBP_TDC_2024Apr21_18_23_51.log (no errors)
+Patch 35926646 apply (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35926646/25513953/35926646_apply_POHK3CCD_PDBP_TDC_2024Apr21_18_23_49.log (no errors)
+Patch 29613245 apply (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25448109/29613245_apply_POHK3CCD_PDBP_TDC_2024Apr21_18_24_38.log (no errors)
+Patch 34774667 apply (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/34774667/25445264/34774667_apply_POHK3CCD_PDBP_TDC_2024Apr21_18_34_44.log (no errors)
+Patch 36131202 apply (pdb PDBP_TDC): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_PDBP_TDC_2024Apr21_18_34_44.log (no errors)
+Patch 35354406 rollback (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35354406/25255010/35354406_rollback_POHK3CCD_PDBP_TNG_2024Apr21_18_23_28.log (no errors)
+Patch 29613245 rollback (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25306573/29613245_rollback_POHK3CCD_PDBP_TNG_2024Apr21_18_23_49.log (no errors)
+Patch 35700333 rollback (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35700333/25349416/35700333_rollback_POHK3CCD_PDBP_TNG_2024Apr21_18_23_49.log (no errors)
+Patch 35943157 apply (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35943157/25527362/35943157_apply_POHK3CCD_PDBP_TNG_2024Apr21_18_23_51.log (no errors)
+Patch 35926646 apply (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35926646/25513953/35926646_apply_POHK3CCD_PDBP_TNG_2024Apr21_18_23_49.log (no errors)
+Patch 29613245 apply (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25448109/29613245_apply_POHK3CCD_PDBP_TNG_2024Apr21_18_24_37.log (no errors)
+Patch 34774667 apply (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/34774667/25445264/34774667_apply_POHK3CCD_PDBP_TNG_2024Apr21_18_34_37.log (no errors)
+Patch 36131202 apply (pdb PDBP_TNG): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_PDBP_TNG_2024Apr21_18_34_37.log (no errors)
+Patch 35354406 rollback (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35354406/25255010/35354406_rollback_POHK3CCD_PDBP_CAS_2024Apr21_18_23_28.log (no errors)
+Patch 29613245 rollback (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25306573/29613245_rollback_POHK3CCD_PDBP_CAS_2024Apr21_18_23_49.log (no errors)
+Patch 35700333 rollback (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35700333/25349416/35700333_rollback_POHK3CCD_PDBP_CAS_2024Apr21_18_23_49.log (no errors)
+Patch 35943157 apply (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35943157/25527362/35943157_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_23_51.log (no errors)
+Patch 35926646 apply (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/35926646/25513953/35926646_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_23_49.log (no errors)
+Patch 29613245 apply (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/29613245/25448109/29613245_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_24_37.log (no errors)
+Patch 34774667 apply (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/34774667/25445264/34774667_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_34_31.log (no errors)
+Patch 36131202 apply (pdb PDBP_CAS): WITH ERRORS (RETRYABLE)
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_34_31.log (errors)
+  -> Error at line 6700: script rdbms/admin/dbmsstat.sql
+      - ORA-04021: timeout occurred while waiting to lock object SYS.DBMS_STATS
+
+Adding patches to retry installation queue...done
+Retry installation queue:
+  For the following PDBs: PDBP_CAS
+    No interim patches need to be rolled back
+    No release update patches need to be installed
+    The following interim patches will be applied:
+      36131202 (MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781)
+
+Installing patches...
+Patch installation complete.  Total patches installed: 1
+
+Validating logfiles...done
+Patch 36131202 apply (pdb PDBP_CAS): SUCCESS
+  logfile: /u01/app/oracle/local/cfgtoollogs/sqlpatch/36131202/25503334/36131202_apply_POHK3CCD_PDBP_CAS_2024Apr21_18_58_56.log (no errors)
+SQL Patching tool complete on Sun Apr 21 18:59:08 2024

@@ -1,0 +1,125 @@
+06:15:44 SYS @ DOHK1SSC1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_DEV_SRS                   READ WRITE NO
+         4 PDBD_CAD                       READ WRITE NO
+         5 PDBD_SIT2_CAD                  READ WRITE NO
+         6 PDBD_MIG2_CAD                  READ WRITE NO
+         7 PDBD_SIT1_CAD                  READ WRITE NO
+         8 PDBD_PT_CAD                    READ WRITE NO
+         9 PDBD_DRH_CAD                   READ WRITE NO
+        10 PDBD_SIT3_CAD                  READ WRITE NO
+        11 PDBD_MIG1_CAD                  READ WRITE NO
+        12 PDBD_CUI_CAD                   READ WRITE NO
+        13 PDBD_UAT_SRS                   READ WRITE NO
+        14 PDBD_DEV_TMX                   READ WRITE NO
+        15 PDBD_DEV_COP                   READ WRITE NO
+        16 PDBD_SIT2_COP                  READ WRITE NO
+        17 PDBD_SIT1_COP                  READ WRITE NO
+        18 PDBD_UAT_TMX                   READ WRITE NO
+06:15:49 SYS @ DOHK1SSC1:CDB$ROOT:>set lines 300
+select PATCH_ID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME from DBA_REGISTRY_SQLPATCH order by 5;06:15:57 SYS @ DOHK1SSC1:CDB$ROOT:>
+
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  30869156 RU         APPLY           SUCCESS                   24-SEP-20 16.38.44.436884
+  30805684 INTERIM    APPLY           SUCCESS                   24-SEP-20 16.38.44.440674
+  32545013 RU         APPLY           SUCCESS                   28-JUL-21 11.36.20.353156
+  30805684 INTERIM    ROLLBACK        SUCCESS                   07-AUG-21 00.56.00.150387
+  32399816 INTERIM    APPLY           SUCCESS                   07-AUG-21 00.56.00.159180
+  32399816 INTERIM    ROLLBACK        SUCCESS                   27-NOV-21 07.46.13.144351
+  33192793 RU         APPLY           SUCCESS                   27-NOV-21 07.46.16.643273
+  33192694 INTERIM    APPLY           SUCCESS                   27-NOV-21 07.46.16.651737
+  32924796 INTERIM    APPLY           SUCCESS                   27-NOV-21 07.46.16.673972
+  33192694 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 18.15.25.377904
+  32924796 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 18.15.25.400312
+  33515361 RU         APPLY           SUCCESS                   01-APR-22 18.15.26.589160
+  33561310 INTERIM    APPLY           SUCCESS                   01-APR-22 18.15.26.593591
+  29613245 INTERIM    APPLY           SUCCESS                   01-APR-22 18.15.28.093559
+  32924796 INTERIM    APPLY           SUCCESS                   01-APR-22 18.15.28.114844
+  33561310 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 05.39.26.741828
+  29613245 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 05.39.28.204264
+  32924796 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 05.39.28.223876
+  34133642 RU         APPLY           SUCCESS                   29-SEP-22 05.39.31.750290
+  34086870 INTERIM    APPLY           SUCCESS                   29-SEP-22 05.39.31.754977
+  29613245 INTERIM    APPLY           SUCCESS                   29-SEP-22 05.39.33.210042
+
+21 rows selected.
+
+06:15:57 SYS @ DOHK1SSC1:CDB$ROOT:>col COMP_NAME for a60
+set lines 300
+select comp_name,version,status from dba_registry;06:16:02 SYS @ DOHK1SSC1:CDB$ROOT:>06:16:02 SYS @ DOHK1SSC1:CDB$ROOT:>
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Oracle Database Catalog Views                                19.0.0.0.0                     VALID
+Oracle Database Packages and Types                           19.0.0.0.0                     VALID
+Oracle Real Application Clusters                             19.0.0.0.0                     VALID
+JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID
+Oracle XDK                                                   19.0.0.0.0                     VALID
+Oracle Database Java Packages                                19.0.0.0.0                     VALID
+OLAP Analytic Workspace                                      19.0.0.0.0                     VALID
+Oracle XML Database                                          19.0.0.0.0                     VALID
+Oracle Workspace Manager                                     19.0.0.0.0                     VALID
+Oracle Text                                                  19.0.0.0.0                     VALID
+Oracle Multimedia                                            19.0.0.0.0                     VALID
+Spatial                                                      19.0.0.0.0                     VALID
+Oracle OLAP API                                              19.0.0.0.0                     VALID
+Oracle Label Security                                        19.0.0.0.0                     VALID
+Oracle Database Vault                                        19.0.0.0.0                     VALID
+
+15 rows selected.
+
+
+
+06:17:08 SYS @ DOHK1SSC3:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_DEV_SRS                   READ WRITE NO
+         4 PDBD_CAD                       READ WRITE NO
+         5 PDBD_SIT2_CAD                  READ WRITE NO
+         6 PDBD_MIG2_CAD                  READ WRITE NO
+         7 PDBD_SIT1_CAD                  READ WRITE NO
+         8 PDBD_PT_CAD                    READ WRITE NO
+         9 PDBD_DRH_CAD                   READ WRITE NO
+        10 PDBD_SIT3_CAD                  READ WRITE NO
+        11 PDBD_MIG1_CAD                  READ WRITE NO
+        12 PDBD_CUI_CAD                   READ WRITE NO
+        13 PDBD_UAT_SRS                   READ WRITE NO
+        14 PDBD_DEV_TMX                   READ WRITE NO
+        15 PDBD_DEV_COP                   READ WRITE NO
+        16 PDBD_SIT2_COP                  READ WRITE NO
+        17 PDBD_SIT1_COP                  READ WRITE NO
+        18 PDBD_UAT_TMX                   READ WRITE NO
+06:17:11 SYS @ DOHK1SSC3:CDB$ROOT:>
+
+
+
+
+06:18:33 SYS @ DOHK1SSC2:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_DEV_SRS                   READ WRITE NO
+         4 PDBD_CAD                       READ WRITE NO
+         5 PDBD_SIT2_CAD                  READ WRITE NO
+         6 PDBD_MIG2_CAD                  READ WRITE NO
+         7 PDBD_SIT1_CAD                  READ WRITE NO
+         8 PDBD_PT_CAD                    READ WRITE NO
+         9 PDBD_DRH_CAD                   READ WRITE NO
+        10 PDBD_SIT3_CAD                  READ WRITE NO
+        11 PDBD_MIG1_CAD                  READ WRITE NO
+        12 PDBD_CUI_CAD                   READ WRITE NO
+        13 PDBD_UAT_SRS                   READ WRITE NO
+        14 PDBD_DEV_TMX                   READ WRITE NO
+        15 PDBD_DEV_COP                   READ WRITE NO
+        16 PDBD_SIT2_COP                  READ WRITE NO
+        17 PDBD_SIT1_COP                  READ WRITE NO
+        18 PDBD_UAT_TMX                   READ WRITE NO
+06:18:36 SYS @ DOHK1SSC2:CDB$ROOT:>
+

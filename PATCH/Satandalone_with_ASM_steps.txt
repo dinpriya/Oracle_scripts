@@ -1,0 +1,271 @@
+STAND ALONE WITH ASM JAN 2025 PSU PATCHING STEPS
+====================================================
+
+
+1. Download following patches
+
+vi wget.sh
+
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37262208_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37260974_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37213431_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37102264_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p32132362_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34774667_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37470729_1926000DBRU_Generic.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p30972802_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37524794_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37525327_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p32177397_1926000DBRU_Linux-x86-64.zip
+
+
+
+
+ Binary cloning:
+
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/SCB_OracleDB_19c_Jan2025_Linux_x86_64.zip
+
+
+
+2. Take prechecks
+
+3. stop HAS (run below prepatch command to stop ASM and DB,listener services)
+
+sudo /u01/app/grid/product/19c/crs/install/roothas.sh -prepatch
+
+grid@HKLPDDPTC001:/home/grid [+ASM]
+> echo $ORACLE_HOME
+/u01/app/grid/product/19c
+
+
+oracle@HKLPDDPTC001:/home/oracle [DOHK1RPC]
+> echo $ORACLE_HOME
+/u01/app/oracle/product/db/19.11.0.0.Apr2021
+oracle@HKLPDDPTC001:/home/oracle [DOHK1RPC]
+>
+
+4. Take Oracle home and grid home backup.
+
+Grid Home Backup:
+hklpdppsg001:
+cd /u01/app/grid/product/
+nohup tar -cvf - 19c | gzip -c > /u01/app/oracle/local/Grid19c_bkp_05032025.tar.gz &
+
+
+
+
+Oracle_Home backup:
+====================
+hklpdppsg002:
+cd /u01/app/oracle/product/db
+nohup tar -cvf - 19.11.0.0.Apr2021 | gzip -c > /u01/app/oracle/local/19cOraHomeBkp_05032025.tar.gz &
+
+
+
+7. on oracle home and grid home delete inactive patches
+================================================
+connect to oracle user and apply patch
+
+a.	Check the RETAIN_INACTIVE_PATCHES value in the below file. Make it 1 or 2 to retain last one or two inactive patches. 
+ cat $ORACLE_HOME/OPatch/config/opatch.properties
+ 
+b.	List the inactive patches using below command. You will get below output
+$ORACLE_HOME/OPatch/opatch util listorderedinactivepatches
+
+c.	Delete the Inactive patches using below command.
+$ORACLE_HOME/OPatch/opatch util deleteinactivepatches
+
+d. Move OPatch for both grid and db home
+cd $ORACLE_HOME
+mv OPatch OPatch_bkp_ddmmyyyy
+
+unzip opatch to ORACLE_HOME
+
+
+6. GRID HOME Patching
+============================
+COnnect to grid user and apply patch
+
+export PATH=$PATH:$ORACLE_HOME/OPatch/
+export loc=/u01/app/oracle/globalconfig/PSUJAN2025
+
+
+1)      cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37260974
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+2)      cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37268031
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+3)     cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37266638
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+4)      cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/36758186
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+5)     cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37461387
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+6)      cd /u01/app/oracle/local/PSUJAN2025/37213431
+       $ORACLE_HOME/OPatch/opatch apply  -silent
+
+
+
+7. oracle home pathing from oracle user:
+=============================================================================
+export PATH=$PATH:$ORACLE_HOME/OPatch/
+export loc=/u01/app/oracle/local/PSUJAN2025
+
+conflict check
+=============
+cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37260974   -- 5 patch rollback
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+ cd /u01/app/oracle/local/PSUJAN2025/37262208/37257886/37268031
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+
+Following patches have conflicts. Please contact Oracle Support and get the merged patch of the patches :
+
+if you find any conflict rollback using below
+$ORACLE_HOME/OPatch/opatch rollback -id 32132362
+$ORACLE_HOME/OPatch/opatch rollback -id 34774667
+$ORACLE_HOME/OPatch/opatch rollback -id 37056207 
+$ORACLE_HOME/OPatch/opatch rollback -id 37125371
+$ORACLE_HOME/OPatch/opatch rollback -id 37187504
+
+
+###Apply the patches
+
+1)      cd /u01/app/oracle/globalconfig/PSUJAN2025/37262208/37257886/37268031/custom/scripts
+        ./prepatch.sh
+		
+2)      cd /u01/app/oracle/globalconfig/PSUJAN2025/37262208/37257886/37260974
+        $ORACLE_HOME/OPatch/opatch apply  -silent
+		
+3)      cd /u01/app/oracle/globalconfig/PSUJAN2025/37262208/37257886/37268031
+        $ORACLE_HOME/OPatch/opatch apply  -silent
+		
+4)      cd /u01/app/oracle/globalconfig/PSUJAN2025/37262208/37257886/37268031/custom/scripts
+        ./postpatch.sh
+		
+5)     cd /u01/app/oracle/local/PSUJAN2025/37262208/37102264	 
+	$ORACLE_HOME/OPatch/opatch apply  -silent
+	  
+6)     cd /u01/app/oracle/local/PSUJAN2025/37213431	
+	$ORACLE_HOME/OPatch/opatch apply  -silent 
+	          
+7)     cd /u01/app/oracle/local/PSUJAN2025/32132362	
+	$ORACLE_HOME/OPatch/opatch apply  -silent 
+	          
+8)     cd /u01/app/oracle/local/PSUJAN2025/34774667	
+	$ORACLE_HOME/OPatch/opatch apply  -silent 
+	          
+9)     cd /u01/app/oracle/local/PSUJAN2025/37470729
+	$ORACLE_HOME/OPatch/opatch apply  -silent	
+ 	 
+10)	cd /u01/app/oracle/local/PSUJAN2025/30972802	
+	$ORACLE_HOME/OPatch/opatch apply  -silent 
+	 
+11)	cd /u01/app/oracle/local/PSUJAN2025/37524794	
+	$ORACLE_HOME/OPatch/opatch apply  -silent 
+	 
+12)     cd /u01/app/oracle/local/PSUJAN2025/37525327
+	$ORACLE_HOME/OPatch/opatch apply  -silent
+	 	 
+13)     cd /u01/app/oracle/local/PSUJAN2025/32177397
+	$ORACLE_HOME/OPatch/opatch apply  -silent
+
+		
+
+
+=========================================
+
+ 8. $ORACLE_HOME/OPatch/opatch lspatches
+
+## run post patch
+  from oracle sudo
+##<GI_HOME>/rdbms/install/rootadd_rdbms.sh
+##sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh
+
+sudo /u01/app/grid/product/19c/crs/install/roothas.sh -postpatch
+
+ 
+show pdbs;
+
+alter trigger LLSTS_GRANT enable; 
+alter trigger LLSTS_GRANTS enable; 
+alter trigger RESTRICT_CREATE_USER enable; 
+alter trigger sys.llsts_grant enable;
+alter trigger sys.RESTRICT_CREATE_USER enable;
+
+alter session set container=PDBD_STR;  
+
+alter trigger LLSTS_GRANT disable; 
+alter trigger LLSTS_GRANTS disable; 
+alter trigger RESTRICT_CREATE_USER disable; 
+alter trigger sys.llsts_grant disable;
+alter trigger sys.RESTRICT_CREATE_USER disable;
+
+cd $ORACLE_HOME/OPatch
+
+./datapatch -verbose
+nohup ./datapatch -verbose > datapatch_DOHK1MST_04032025.log 2>&1 &
+
+$ORACLE_HOME/OPatch/opatch lspatches
+
+incase pdb came in restricted after datapatch close and open pdb
+----------------
+06:03:37 SYS @ UOHK1PFM:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBU_PFMS                      READ WRITE YES
+06:03:41 SYS @ UOHK1PFM:CDB$ROOT:>alter pluggable database PDBU_PFMS close immediate;
+
+Pluggable database altered.
+
+06:06:10 SYS @ UOHK1PFM:CDB$ROOT:>alter pluggable database PDBU_PFMS open;
+
+Pluggable database altered.
+
+06:07:57 SYS @ UOHK1PFM:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBU_PFMS                      READ WRITE NO
+
+
+alter pluggable database PDBT_TR05 close immediate;
+alter pluggable database PDBT_TR05 open;
+
+
+
+
+
+col DESCRIPTION for a50
+col ACTION_TIME for a27
+col ACTION for a10
+set lines 1000
+col STATUS for a10
+select ACTION_TIME,PATCH_ID,ACTION,DESCRIPTION,status from registry$sqlpatch order by 1 desc;
+
+set pages 300
+set lines 180
+col COMP_NAME for a50
+col status for a15
+col VERSION for a15
+SELECT COMP_ID,COMP_NAME,  VERSION, STATUS FROM SYS.DBA_REGISTRY;
+
+
+set pages 300
+set lines 180
+col COMP_ID for a25
+col COMP_NAME for a40
+col status for a15
+col VERSION for a15
+SELECT con_id,COMP_ID,COMP_NAME,  VERSION, STATUS FROM SYS.CDB_REGISTRY where status<>'VALID' order by 1;
+
+
+select OWNER,count(*) from DBA_OBJECTS where STATUS='INVALID' group by OWNER order by 1;
+
+select count(*) from dba_objects where status='INVALID';
+
+$ORACLE_HOME/OPatch/opatch lspatches
+
+

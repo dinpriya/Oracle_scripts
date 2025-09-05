@@ -1,0 +1,409 @@
+19c JAN 2024 RU PATCH APPLY PROCESS - NON-PROD
+=======================================================
+35943157	Database Jan 2024 Release Update 19.22.0.0.240116	Only DB Home for non-Oracle RAC setup. Both DB Home and Grid Home for Oracle RAC setup.
+35967489	OCW Jan 2024 Release Update 19.22.0.0.240116	Both DB Home and Grid Home
+35956421	ACFS Jan 2024 Release Update 19.22.0.0.240116	Only Grid Home
+33575402	DBWLM Release Update 19.0.0.0.0	Only Grid Home
+36115038	Tomcat Release Update 19.0.0.0.0	Only Grid Home
+35926646	Oracle JavaVM Release Update 19.22.0.0.0	Only DB Homes
+35949090	JDK BUNDLE PATCH 19.22.0.0.240116	Both DB Homes and Grid Home
+
+
+35988503	OL8U9 : BUILD OL8.9 RHCK COMPATIBLE ACFS, AFD MODULES (4.18.0-513.EL8.X86_64)	GI HOME only
+29613245	ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2	Only DB HOME
+34304965	TRACKING BUG FOR KQR FIXES FOR 19C RU	Only DB HOME
+34774667	TT23.1ASAN  GLOBAL-BUFFER-OVERFLOW IN PGA AT KWQALOCKQTWITHINFO	Only DB HOME
+36131202	MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781	Only DB HOME
+
+
+
+================================================================================================================================================
+BLACKOUT IN OEM --> it is not needed
+===============
+
+## Run as oracle
+## Configure the agent environment and create the blackout
+
+oracle@uklpddpoc04a:/home/oracle [DUK31BLD1]
+> which agenthome
+agenthome='export ORACLE_HOME=$AGENT_HOME;export LD_LIBRARY_PATH=$ORACLE_HOME/lib;export PATH=$ORACLE_HOME/bin:$PATH'
+
+oracle@uklpddpoc04a:/home/oracle [DUK31BLD1]
+> env | grep -i agent
+AGENT_HOME/u01/app/oracle/product/agent/agent13c/agent_inst
+
+oracle@uklpddpoc04a:/u01/app/oracle/local/patch/log [DUK31BLD1]
+> cd $AGENT_HOME/bin
+oracle@uklpddpoc04a: /u01/app/oracle/product/agent/agent13c/agent_inst/bin [DUK31BLD1]
+> emctl start blackout psuApr2023
+Oracle Enterprise Manager Cloud Control 13c Release 5
+Copyright (c) 1996, 2015 Oracle Corporation.  All rights reserved.
+Blackout psuApr2023 added successfully
+EMD reload completed successfully
+oracle@uklpddpoc04a: /u01/app/oracle/product/agent/agent13c/agent_inst/bin [DUK31BLD1]
+
+========================================================================================================================================================
+OEM AGENT STOP:
+===============
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/JUL2023RU
+
+
+
+>env | grep -i agent
+
+Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent
+
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl start agent
+
+=================================================================================================================================================================
+
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Jan2024.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36031453_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35949090_190000_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p29613245_1922000DBRU_Generic.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34304965_1922000DBRU_Linux-x86-64.zip  
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34774667_1922000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36131202_1922000DBRU_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35926646_190000_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35926646_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35940989_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36031453_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35943157_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35988503_1922000ACFSRU_Linux-x86-64.zip 
+
+
+PREREQUISITES :
+
+## Run as oracle
+## Install the latest opatch into the DB_HOME/GI HOME (minimum version of 12.2.0.1.40 is required)
+
+cd $ORACLE_HOME
+rm -rf OPatch/*
+unzip /u01/app/oracle/local/software/Jan2024RU/p6880880_190000_Linux-x86-64_Jan2024.zip -d /u01/app/oracle/product/db/19c
+
+oracle@uklpddpoc04a:/u01/app/oracle/product/db/19c [DUK31BLD1]
+> opatch version
+OPatch Version: 12.2.0.1.41
+
+OPatch succeeded.
+oracle@uklpddpoc04a:/u01/app/oracle/product/db/19c [DUK31BLD1]
+
+## Run as grid
+## Install the latest opatch into the GRID_HOME (minimum version of 12.2.0.1.40 is required)
+
+gridhome
+cd $GRID_HOME
+rm -rf OPatch/*
+
+unzip /u01/app/oracle/local/software/Jan2024RU/p6880880_190000_Linux-x86-64_Jan2024.zip -d /u01/app/grid/product/19c
+
+grid@uklpddpoc04a:/home/grid [+ASM1]
+> opatch version
+OPatch Version: 12.2.0.1.41
+
+OPatch succeeded.
+
+
+
+Grid
+=====
+
+sudo su – grid 
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=”/u01/app/oracle/local/software/Jan2024RU”
+--DB PSU 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/35943157
+--OCW 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/35967489
+--ACFS
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/35956421
+--DBWLM
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/33575402
+--Tomcat
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/36115038
+## Conflicting patches should be rolled back before attempting to apply the PSU
+
+
+Add below entries in /u01/app/oracle/local/software/Jan2024RU/log/patch_list_gihome.txt
+
+/u01/app/oracle/local/software/Jan2024RU/36031453/32895426/35943157
+/u01/app/oracle/local/software/Jan2024RU/36031453/32895426/35967489
+/u01/app/oracle/local/software/Jan2024RU/36031453/32895426/35956421
+/u01/app/oracle/local/software/Jan2024RU/36031453/32895426/33575402
+/u01/app/oracle/local/software/Jan2024RU/36031453/32895426/36115038
+
+	$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /u01/app/oracle/local/software/Jan2024RU/log/patch_list_gihome.txt
+
+ORACLE
+======
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/Jan2024RU
+--OCW 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/32895426/35967489
+--DB PSU
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}36031453/32895426/35943157
+
+## Conflicting patches should be rolled back before attempting to apply the PSU
+
+Add below entries in /u01/app/oracle/local/software/Jan2024RU/log/patch_list_dbhome.txt
+
+/u01/app/oracle/local/software/Jan2024RU/35940989/35967489
+/u01/app/oracle/local/software/Jan2024RU/35940989/35943157
+
+	$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /u01/app/oracle/local/software/Jan2024RU/log/patch_list_dbhome.txt
+
+
+==============================================================================================================================================================
+Rollback the conflicting patches:
+================================
+
+## Run as Oracle
+## log the output
+## Based on the opatch prereq output (Refer Appendix -1) – 1 patch were conflicting
+## We will later apply the 12.2.0.1 180116 version of these patch to RDBMS Home only as
+## These are applicable only to RDBMS Home 
+
+script /u01/app/oracle/local/patch/log/oracle_step8_`date '+%Y%m%d%H%M%S'`.log
+
+## Stop all database instances running from this $ORACLE_HOME 
+
+/u01/app/oracle/product/db/12cR2/bin/srvctl stop home -o /u01/app/oracle/product/db/11gR2 -s /u01/app/oracle/local/patch/120201/psu_180116/log/`hostname`.dbhome -n `hostname`
+
+## Rollback 17805316
+export PATH=$ORACLE_HOME/OPatch:$PATH
+opatch rollback -id 17805316 -local
+
+## The commands are provided below BUT this was not run as there were no conflicting patches in GI for this PSU.
+## GI PSU apply will anyway unlock the GRID binaries and lock them after applying the patch
+
+## Run as root
+
+## log the output
+script /u01/app/oracle/local/patch/log/root_step9a_`date '+%Y%m%d%H%M%S'`.log
+
+===============================================================
+
+Stop ACFS – unlock the Grid binaries and then rollback the conflicting patches from GI Home. 
+
+## Unlock the Grid binaries to rollback conflicting patches 
+$GRID_HOME/crs/install/rootcrs.sh -prepatch
+
+Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent ->ok2-> ok1
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch -> ok2-> ok1
+
+================================================================
+PATCH APPLY:
+============
+## Run as grid user
+
+## log the output
+script /u01/app/oracle/local/patch/log/grid_step10_`date '+%Y%m%d%H%M%S'`.log
+export PATCH_LOC=/u01/app/oracle/local/software/Jan2024RU
+
+## source the grid profile and extend the path with opatch
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35967489 -local 
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35956421 -local 
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35943157 -local 
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/33575402 -local 
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/36115038 -local 
+
+JDK
+
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/35949090 -local 
+
+
+Apply GI HOME one-off
+	cd /u01/app/oracle/local/software/Jan2024RU/35988503/35988503
+	/u01/app/grid/product/19c/OPatch/opatch apply -oh /u01/app/grid/product/19c  -local -silent
+
+As oracle user – (Prepatch for Oracle Home)
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/Jan2024RU		
+
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35967489/custom/scripts/prepatch.sh  -dbhome $ORACLE_HOME
+
+opatch apply ${PATCH_LOC}/36031453/35940989/35967489 -oh ${ORACLE_HOME} -local 
+opatch rollback -id 29613245 -oh ${ORACLE_HOME} -local 
+opatch rollback -id 34150264 -oh ${ORACLE_HOME} -local 
+opatch rollback -id 35700333 -oh ${ORACLE_HOME} -local 
+opatch apply ${PATCH_LOC}/36031453/35940989/35943157 -oh ${ORACLE_HOME} -local 
+
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35967489/custom/scripts/postpatch.sh -dbhome $ORACLE_HOME
+
+--Jdk
+
+opatch apply /u01/app/oracle/local/software/JAN2024RU/35949090 -oh ${ORACLE_HOME} -local 
+
+
+
+sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh 
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch 
+sudo /u01/app/grid/product/19c/bin/crsctl stop crs 
+
+11.	Apply the one-off (interim) patches to the DB home
+##Run as Oracle
+
+
+## log the output
+script /u01/app/oracle/local/patch/log/oracle_step12_`date '+%Y%m%d%H%M%S'`.log
+
+## one off patches to be applied 
+NA
+
+
+	export PATH=$PATH:$ORACLE_HOME/OPatch:$PATH
+	cd /u01/app/oracle/local/software/JUL2023RU/<patch_id>
+	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+	/u01/app/oracle/product/db/19c/OPatch/opatch apply -oh /u01/app/oracle/product/db/19c  -local -silent
+
+
+Apply DB HOME oneoff
+opatch apply ${PATCH_LOC}/29613245 -oh ${ORACLE_HOME} -local 
+opatch apply ${PATCH_LOC}/34304965 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/34774667 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/36131202 -oh ${ORACLE_HOME} -local
+opatch apply $PATCH_LOC/35926646 -oh $ORACLE_HOME -local
+
+
+
+opatch apply /u01/app/oracle/local/software/JUL2023RU/35700334 -oh ${ORACLE_HOME} -local  -- Not needed
+
+## exit from script logging command
+exit
+
+Apply the OJVM PSU for the RDBMS Home – Do the opatch apply on all on database nodes one at a time. 
+## Run as Oracle and apply the patch on all nodes.
+
+script /u01/app/oracle/local/patch/log/oracle_step16_`date '+%Y%m%d%H%M%S'`.log
+
+## Apply OJVM PSU Patch
+export PATCH_LOC=/u01/app/oracle/local/software/JUL2023RU
+cd /u01/app/oracle/product/db/19c/OPatch
+
+opatch apply /u01/app/oracle/local/software/JUL2023RU/35354406 -oh $ORACLE_HOME -local
+
+==========================================================================================================================================================
+
+Start EM Agent Processes after applying the patch on both RDBMS Home and GI Home
+
+## Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl start agent
+Oracle Enterprise Manager Cloud Control 13c Release 5
+Copyright (c) 1996, 2015 Oracle Corporation.  All rights reserved.
+Starting agent .............................................. started.
+*Repeat the steps 1 to 14 for each node in the cluster before moving to next step
+
+===============================================================================================================================================
+Remove OEM blackout for all database hosts involved on patching.  --> Not needed
+## Run as oracle
+
+## Configure the agent environment and stop the blackout
+agenthome
+emctl stop blackout psuApr2023
+
+======================================================================================================================================================
+
+INVENTORY VERIFICTION
+## Run as grid
+
+$ORACLE_HOME/OPatch/opatch lsinv
+
+$ORACLE_HOME/OPatch/opatch lsinv |grep -i applied | sort -n
+
+It should return
+
+33575402
+35943157
+35949090
+35967489
+35988503
+36115038
+
+## Run as oracle
+
+$ORACLE_HOME/OPatch/opatch lsinv
+$ORACLE_HOME/OPatch/opatch lsinv |grep -i applied | sort -n
+
+It should return
+
+29613245
+34304965
+34774667
+35926646
+35943157
+35949090
+35967489
+36131202
+
+
+============================================================================================================================================================
+
+Run the datapatch into the database. 
+
+
+## Run as oracle
+
+   cd $ORACLE_HOME/rdbms/admin
+   sqlplus /nolog
+   SQL> CONNECT / AS SYSDBA
+   SQL> startup
+   SQL> QUIT
+
+Note: Datapatch will not get applied to offline pdbs, hence its strongly suggested to bring the pdbs online before starting datapatch.
+      
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+$ cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -e -b utlrp -d $ORACLE_HOME/rdbms/admin utlrp.sql
+
+$ORACLE_HOME/OPatch/datapatch -prereq
+
+$ORACLE_HOME/OPatch/datapatch -sanity_checks
+
+cd $ORACLE_HOME/OPatch
+
+nohup ./datapatch -verbose > /tmp/DOHK3S2B_datapatch.log & ok ---
+
+DOHK2S2B1
+
+nohup ./datapatch -verbose > /tmp/POHK1RCT_datapatch_8APR2024.log & ok ---
+
+nohup ./datapatch -verbose > /tmp/DOHK1SSC_datapatch.log & ok ---
+
+nohup ./datapatch -verbose > /tmp/DOHK7CCB_datapatch.log & ok ---
+
+nohup ./datapatch -verbose > /tmp/DOHK1NGW_datapatch.log & ok---
+
+nohup ./datapatch -verbose > /tmp/DOHK1S2B_datapatch.log & ok ---
+
+nohup ./datapatch -verbose > /tmp/DOHK1RND_datapatch.log & ok ---
+
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+## use .oraenv to switch to any remaining DB instances and run the datapatch 
+
+Recreate DATA_PUMP_DIR directory path to its original location. ( It should not be in ORACLE_HOME path).
+Col owner for a30
+Col directory_name for a30
+Col directory_path for a120
+select * from dba_directories  where DIRECTORY_NAME='DATA_PUMP_DIR';
+
+create or replace directory DATA_PUMP_DIR as 'original path';
+
+=======================================================================================================================================================================

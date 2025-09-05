@@ -1,0 +1,265 @@
+For Oracle home, as home user: --- hklvdpapp068
+
+export ORACLE_SID=POHK1RCT
+export ORACLE_HOME=/u01/app/oracle/product/db/19.9.0.0.Oct2020
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch lspatches
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch version
+
+export PATCH_LOC=/u01/app/oracle/local/software/patches/Jan2023
+
+download the patches :-
+
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34765931_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34786990_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34777391_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Apr2023.zip
+
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p29613245_1918000DBRU_Generic.zip -- ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p32727143_1918000DBRU_Linux-x86-64.zip -- TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34100969_1918000DBRU_Linux-x86-64.zip -- SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p31335142_190000_Generic.zip -- DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX
+
+export ORACLE_SID=POHK1RCT
+SQL> Connect / as sysdba
+SQL> shut immediate;
+SQL> exit
+
+export ORACLE_SID=POHK1CCA
+SQL> Connect / as sysdba
+SQL> shut immediate;
+SQL> exit
+
+lsnrctl stop LISTENER
+lsnrctl stop LISTENER_DG
+
+Opatch Version upgrade :
+----------------------
+cp p6880880_190000_Linux-x86-64_Apr2023.zip /u01/app/oracle/product/db/19.9.0.0.Oct2020/
+mv Opatch Opatch_220723
+unzip -q p6880880_190000_Linux-x86-64_Apr2023.zip
+
+PSU PATCH APPLY :
+---------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34765931
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+opatch rollback -id 33197296
+opatch rollback -id 30822078
+
+cd /u01/app/oracle/local/software/patches/Jan2023/34765931
+opatch apply
+
+OJVM PATCH APPLY :
+----------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34786990
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34786990
+opatch apply
+
+JDK PATCH APPLY :
+----------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34777391
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34777391
+opatch apply
+
+########
+unzip p32727143_1918000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/32727143
+opatch apply
+
+unzip p34100969_1918000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34100969
+opatch apply
+
+unzip p29613245_1918000DBRU_Generic.zip
+cd /u01/app/oracle/local/software/Jan2023/29613245
+opatch apply
+
+unzip p34953532_1919000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34953532
+opatch apply
+########
+
+export ORACLE_SID=POHK1RCT
+SQL> Connect / as sysdba
+SQL> startup
+SQL> alter pluggable database all open;
+SQL> quit
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+cd $ORACLE_HOME/OPatch
+./datapatch -verbose
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+export ORACLE_SID=POHK1CCA
+SQL> Connect / as sysdba
+SQL> startup
+SQL> alter pluggable database all open;
+SQL> quit
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+cd $ORACLE_HOME/OPatch
+./datapatch -verbose
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+lsnrctl start LISTENER
+lsnrctl start LISTENER_DG
+
+###################################################################################################
+
+For Oracle home, as home user: --- hklvdsapp068
+
+export ORACLE_SID=POHK1RCT_DG
+export ORACLE_HOME=/u01/app/oracle/product/db/19.9.0.0.Oct2020
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch lspatches
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch version
+
+export PATCH_LOC=/u01/app/oracle/local/software/patches/Jan2023
+
+download the patches :-
+
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34765931_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34786990_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34777391_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Apr2023.zip
+
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p29613245_1918000DBRU_Generic.zip -- ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p32727143_1918000DBRU_Linux-x86-64.zip -- TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34100969_1918000DBRU_Linux-x86-64.zip -- SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p31335142_190000_Generic.zip -- DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX
+
+export ORACLE_SID=POHK1RCT_DG
+SQL> Connect / as sysdba
+SQL> shut immediate;
+SQL> exit
+
+export ORACLE_SID=POHK1CCA_DG
+SQL> Connect / as sysdba
+SQL> shut immediate;
+SQL> exit
+
+lsnrctl stop LISTENER
+lsnrctl stop LISTENER_DG
+
+Opatch Version upgrade :
+----------------------
+cp p6880880_190000_Linux-x86-64_Apr2023.zip /u01/app/oracle/product/db/19.9.0.0.Oct2020/
+mv Opatch Opatch_220723
+unzip -q p6880880_190000_Linux-x86-64_Apr2023.zip
+
+PSU PATCH APPLY :
+---------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34765931
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+opatch rollback -id 33197296
+opatch rollback -id 30822078
+
+cd /u01/app/oracle/local/software/Jan2023/34765931
+opatch apply
+
+OJVM PATCH APPLY :
+----------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34786990
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34786990
+opatch apply
+
+JDK PATCH APPLY :
+----------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/patches/Jan2023/34777391
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34777391
+opatch apply
+
+########
+unzip p32727143_1918000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/32727143
+opatch apply
+
+unzip p34100969_1918000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34100969
+opatch apply
+
+unzip p29613245_1918000DBRU_Generic.zip
+cd /u01/app/oracle/local/software/Jan2023/29613245
+opatch apply
+
+unzip p34953532_1919000DBRU_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34953532
+opatch apply
+########
+
+--- After apply the patch in prod ---
+
+lsnrctl start LISTENER
+lsnrctl start LISTENER_DG
+
+export ORACLE_SID=POHK1RCT_DG
+SQL> Connect / as sysdba
+SQL> startup mount;
+SQL> alter database recover managed standby database disconnect from session;
+SQL> exit
+
+export ORACLE_SID=POHK1CCA_DG
+SQL> Connect / as sysdba
+SQL> startup mount;
+SQL> alter database recover managed standby database disconnect from session;
+SQL> exit
+
+###################################################################################################
+
+Check the invalid objects and components status:- (Before patch and After patch)
+
+set line 3000
+set pages 3000
+col DESCRIPTION for a60
+col STATUS for a10
+col ACTION_TIME for a30
+col version for a10
+col ACTION for a10
+select INSTALL_ID,PATCH_ID,PATCH_UID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME,DESCRIPTION from dba_registry_sqlpatch;
+
+SET PAGESIZE 60
+SET LINESIZE 300
+SET VERIFY OFF
+COL comp_name FOR a44 HEA 'Component'
+COL version FOR a17 HEA 'Version'
+COL status FOR a17 HEA 'Status'
+SELECT comp_id, comp_name, version, status, MODIFIED FROM dba_registry;
+
+col object_name for a30
+col object_type for a25
+col owner for a30
+select owner, object_name, object_type from dba_objects where status='INVALID';
+
+@?/rdbms/admin/utlrp.sql
+
+###################################################################################################

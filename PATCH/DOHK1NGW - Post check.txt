@@ -1,0 +1,136 @@
+07:33:08 SYS @ DOHK1NGW1:CDB$ROOT:>show pdbs;
+set lines 300
+select PATCH_ID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME from DBA_REGISTRY_SQLPATCH order by 5;
+
+
+col COMP_NAME for a60
+set lines 300
+select comp_name,version,status from dba_registry;
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_NGW                       READ WRITE NO
+         4 PDBD_SIT3_NGW                  READ WRITE NO
+         5 PDBD_SIT1_NGW                  READ WRITE NO
+         6 PDBD_PT_NGW                    READ WRITE NO
+         7 PDBD_DEV_CDA                   READ WRITE NO
+         9 PDBD_DRH_NGW                   READ WRITE NO
+        10 PDBD_OAT_NGW                   READ WRITE NO
+        11 PDBD_CUI_NGW                   READ WRITE NO
+        12 PDBD_UAT2_NGW                  READ WRITE NO
+        13 PDBD_SIT2_NGW                  READ WRITE NO
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+        14 PDBD_CIT1_NGW                  READ WRITE NO
+        15 PDBD_CIT2_NGW                  READ WRITE NO
+        16 PDBD_CIT3_NGW                  READ WRITE NO
+        17 PDBD_MIG1_NGW                  READ WRITE NO
+        18 PDBD_MIG2_NGW                  READ WRITE NO
+07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  30869156 RU         APPLY           SUCCESS                   24-SEP-20 17.21.15.637535
+  30805684 INTERIM    APPLY           SUCCESS                   24-SEP-20 17.21.15.641550
+  32545013 RU         APPLY           SUCCESS                   27-JUL-21 21.42.57.707489
+  30805684 INTERIM    ROLLBACK        SUCCESS                   07-AUG-21 01.31.09.559211
+  32399816 INTERIM    APPLY           SUCCESS                   07-AUG-21 01.31.09.601525
+  32399816 INTERIM    ROLLBACK        SUCCESS                   27-NOV-21 06.19.29.025360
+  33192793 RU         APPLY           SUCCESS                   27-NOV-21 06.19.32.474889
+  33192694 INTERIM    APPLY           SUCCESS                   27-NOV-21 06.19.32.482396
+  32924796 INTERIM    APPLY           SUCCESS                   27-NOV-21 06.19.32.503949
+  33192694 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 17.32.19.584267
+  32924796 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 17.32.19.604270
+
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  33515361 RU         APPLY           SUCCESS                   01-APR-22 17.32.20.853670
+  33561310 INTERIM    APPLY           SUCCESS                   01-APR-22 17.32.20.858050
+  29613245 INTERIM    APPLY           SUCCESS                   01-APR-22 17.32.22.358325
+  32924796 INTERIM    APPLY           SUCCESS                   01-APR-22 17.32.22.379135
+  33561310 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 07.29.38.006780
+  29613245 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 07.29.39.456969
+  32924796 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 07.29.39.476130
+  34133642 RU         APPLY           SUCCESS                   29-SEP-22 07.29.42.979593
+  34086870 INTERIM    APPLY           SUCCESS                   29-SEP-22 07.29.42.984339
+  29613245 INTERIM    APPLY           SUCCESS                   29-SEP-22 07.29.44.430629
+
+21 rows selected.
+
+07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>07:33:19 SYS @ DOHK1NGW1:CDB$ROOT:>
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Oracle Database Catalog Views                                19.0.0.0.0                     VALID
+Oracle Database Packages and Types                           19.0.0.0.0                     VALID
+Oracle Real Application Clusters                             19.0.0.0.0                     VALID
+JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID
+Oracle XDK                                                   19.0.0.0.0                     VALID
+Oracle Database Java Packages                                19.0.0.0.0                     VALID
+OLAP Analytic Workspace                                      19.0.0.0.0                     VALID
+Oracle XML Database                                          19.0.0.0.0                     VALID
+Oracle Workspace Manager                                     19.0.0.0.0                     VALID
+Oracle Text                                                  19.0.0.0.0                     VALID
+Oracle Multimedia                                            19.0.0.0.0                     VALID
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Spatial                                                      19.0.0.0.0                     VALID
+Oracle OLAP API                                              19.0.0.0.0                     VALID
+Oracle Label Security                                        19.0.0.0.0                     VALID
+Oracle Database Vault                                        19.0.0.0.0                     VALID
+
+15 rows selected.
+
+
+
+07:36:50 SYS @ DOHK1NGW3:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_NGW                       READ WRITE NO
+         4 PDBD_SIT3_NGW                  READ WRITE NO
+         5 PDBD_SIT1_NGW                  READ WRITE NO
+         6 PDBD_PT_NGW                    READ WRITE NO
+         7 PDBD_DEV_CDA                   READ WRITE NO
+         9 PDBD_DRH_NGW                   READ WRITE NO
+        10 PDBD_OAT_NGW                   READ WRITE NO
+        11 PDBD_CUI_NGW                   READ WRITE NO
+        12 PDBD_UAT2_NGW                  READ WRITE NO
+        13 PDBD_SIT2_NGW                  READ WRITE NO
+        14 PDBD_CIT1_NGW                  READ WRITE NO
+        15 PDBD_CIT2_NGW                  READ WRITE NO
+        16 PDBD_CIT3_NGW                  READ WRITE NO
+        17 PDBD_MIG1_NGW                  READ WRITE NO
+        18 PDBD_MIG2_NGW                  READ WRITE NO
+07:36:56 SYS @ DOHK1NGW3:CDB$ROOT:>
+
+
+
+
+07:38:31 SYS @ DOHK1NGW2:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_NGW                       READ WRITE NO
+         4 PDBD_SIT3_NGW                  READ WRITE NO
+         5 PDBD_SIT1_NGW                  READ WRITE NO
+         6 PDBD_PT_NGW                    READ WRITE NO
+         7 PDBD_DEV_CDA                   READ WRITE NO
+         9 PDBD_DRH_NGW                   READ WRITE NO
+        10 PDBD_OAT_NGW                   READ WRITE NO
+        11 PDBD_CUI_NGW                   READ WRITE NO
+        12 PDBD_UAT2_NGW                  READ WRITE NO
+        13 PDBD_SIT2_NGW                  READ WRITE NO
+        14 PDBD_CIT1_NGW                  READ WRITE NO
+        15 PDBD_CIT2_NGW                  READ WRITE NO
+        16 PDBD_CIT3_NGW                  READ WRITE NO
+        17 PDBD_MIG1_NGW                  READ WRITE NO
+        18 PDBD_MIG2_NGW                  READ WRITE NO
+07:38:36 SYS @ DOHK1NGW2:CDB$ROOT:>
+
+
+
+

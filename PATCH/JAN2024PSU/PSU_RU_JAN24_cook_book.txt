@@ -1,0 +1,220 @@
+STEP to Apply PSU JAN24 RAC (Grid and RDBMS)
+prepared by indra aka romeo aka babaero :)
+
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Jan2024.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36031453_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35949090_190000_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p29613245_1922000DBRU_Generic.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34304965_1922000DBRU_Linux-x86-64.zip  
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34774667_1922000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36131202_1922000DBRU_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35926646_190000_Linux-x86-64.zip 
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35926646_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35940989_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36031453_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35943157_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p35988503_1922000ACFSRU_Linux-x86-64.zip 
+
+35956421	ACFS Jan 2024 Release Update 19.22.0.0.240116									Only Grid Home
+33575402	DBWLM Release Update 19.0.0.0.0													Only Grid Home
+36115038	Tomcat Release Update 19.0.0.0.0												Only Grid Home
+35988503	OL8U9 : BUILD OL8.9 RHCK COMPATIBLE ACFS, AFD MODULES (4.18.0-513.EL8.X86_64)	GI HOME only
+35943157	Database Jan 2024 Release Update 19.22.0.0.240116								Only DB Home for non-Oracle RAC setup. Both DB Home and Grid Home for Oracle RAC setup.
+35967489	OCW Jan 2024 Release Update 19.22.0.0.240116									Both DB Home and Grid Home
+35949090	JDK BUNDLE PATCH 19.22.0.0.240116												Both DB Homes and Grid Home
+35926646	Oracle JavaVM Release Update 19.22.0.0.0										Only DB Homes
+29613245	ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2							Only DB HOME
+34304965	TRACKING BUG FOR KQR FIXES FOR 19C RU											Only DB HOME
+34774667	TT23.1ASAN  GLOBAL-BUFFER-OVERFLOW IN PGA AT KWQALOCKQTWITHINFO					Only DB HOME
+36131202	MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781									Only DB HOME
+
+START from HERE :
+
+Unzip All ZIP File :)
+
+Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent ->ok2
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch -> ok2
+
+Run as GRID :
+grid@HKLPDDS2B003:/u01/app/oracle/local/software/JAN2024RU [+ASM2]cp p6880880_190000_Linux-x86-64_Jan2024.zip $ORACLE_HOME
+grid@HKLPDDS2B003:/u01/app/oracle/local/software/JAN2024RU [+ASM2]cd $ORACLE_HOME
+grid@HKLPDDS2B003:/u01/app/grid/product/19c [+ASM2]mv OPatch/ OPatch_wak
+grid@HKLPDDS2B003:/u01/app/grid/product/19c [+ASM2]unzip p6880880_190000_Linux-x86-64_Jan2024.zip -> ok2
+opatch version should be version 41 : OPatch Version: 12.2.0.1.41
+
+Check Conflict GRID :
+export PATCH_LOC=/u01/app/oracle/local/software/JAN2024RU
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/35943157 -> ok2
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/35967489 -> ok2 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/35956421 -> ok2
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/33575402 -> ok2
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/36115038 -> ok2
+
+Add below entries in /u01/app/oracle/local/software/JAN2024RU/log/patch_list_gihome.txt -> ok2
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35943157
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35967489
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35956421
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/33575402
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/36115038
+
+$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /u01/app/oracle/local/software/JAN2024RU/log/patch_list_gihome.txt -> ok2
+
+Apply Grid Patch :
+## source the grid profile and extend the path with opatch
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35967489 -local -> ok2
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35956421 -local -> ok2
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/35943157 -local -> ok2
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/33575402 -local -> ok2
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/36031453/35940989/36115038 -local -> ok2
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/35949090 -local -> ok2
+
+cd /u01/app/oracle/local/software/JAN2024RU/35988503/35988503
+/u01/app/grid/product/19c/OPatch/opatch apply -oh /u01/app/grid/product/19c  -local -silent -> ok2
+
+Results Grid should be like this :
+33575402
+35943157
+35949090
+35967489
+35988503
+36115038
+
+opatch lspatches
+35988503;ACFS Interim patch for 35988503 -> ok2
+35949090;JDK BUNDLE PATCH 19.0.0.0.240116 -> ok2
+36115038;TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038) -> ok2
+35943157;Database Release Update : 19.22.0.0.240116 (35943157) -> ok2
+35967489;OCW RELEASE UPDATE 19.22.0.0.0 (35967489) -> ok2
+33575402;DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402) -> ok2
+
+PRAISE to GOD, GRID installation completed.
+
+
+Run as oracle :
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/JAN2024RU
+
+Check Conflict RDBMS :
+--OCW 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/35967489 -> ok2
+--DB PSU
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/36031453/35940989/35943157 | grep -i conflict -> ok2
+
+There is conflict :
+Conflicts/Supersets for each patch are:
+        Conflict with 34150264
+        Conflict details:
+        Conflict with 35700333
+        Conflict details:
+        Conflict with 29613245
+        Conflict details:
+Following patches have conflicts. Please contact Oracle Support and get the merged patch of the patches :
+29613245, 34150264, 35700333, 35943157
+
+As Oracle user 
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/Jan2024RU		
+
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35967489/custom/scripts/prepatch.sh  -dbhome $ORACLE_HOME -> ok2
+
+dont forget uprade opatch version on ORACLE_HOME rdbms
+
+oracle@HKLPDDS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020 []
+> mv OPatch/ OPatch_wak
+oracle@HKLPDDS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020 []
+> unzip p6880880_190000_Linux-x86-64_Jan2024.zip  -> ok2
+opatch version should be version 41 : OPatch Version: 12.2.0.1.41
+
+opatch apply ${PATCH_LOC}/36031453/35940989/35967489 -oh ${ORACLE_HOME} -local -> ok2 
+opatch rollback -id 29613245 -oh ${ORACLE_HOME} -local -> ok2
+opatch rollback -id 34150264 -oh ${ORACLE_HOME} -local -> ok2
+opatch rollback -id 35700333 -oh ${ORACLE_HOME} -local -> ok2
+opatch apply ${PATCH_LOC}/36031453/35940989/35943157 -oh ${ORACLE_HOME} -local -> ok2
+
+/u01/app/oracle/local/software/JAN2024RU/36031453/35940989/35967489/custom/scripts/postpatch.sh -dbhome $ORACLE_HOME -> ok2
+
+opatch apply /u01/app/oracle/local/software/JAN2024RU/35949090 -oh ${ORACLE_HOME} -local -> ok2
+
+sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh -> ok2
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch -> ok2 
+sudo /u01/app/grid/product/19c/bin/crsctl stop crs -> ok2 
+
+opatch apply ${PATCH_LOC}/29613245 -oh ${ORACLE_HOME} -local -> ok2
+opatch apply ${PATCH_LOC}/34304965 -oh ${ORACLE_HOME} -local -> ok2
+opatch apply ${PATCH_LOC}/34774667 -oh ${ORACLE_HOME} -local -> ok2
+opatch apply ${PATCH_LOC}/36131202 -oh ${ORACLE_HOME} -local -> ok2
+opatch apply $PATCH_LOC/35926646 -oh $ORACLE_HOME -local -> ok2
+
+Results RDBMS should be like this :
+29613245
+34304965
+34774667
+35926646
+35943157
+35949090
+35967489
+36131202
+
+> opatch lspatches
+35926646;OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646) -> ok2
+36131202;MERGE ON DATABASE RU 19.22.0.0.0 OF 35857781 -> ok2
+34774667;TT23.1ASAN  GLOBAL-BUFFER-OVERFLOW IN PGA AT KWQALOCKQTWITHINFO -> ok2
+34304965;TRACKING BUG FOR KQR FIXES FOR 19C RU -> ok2
+29613245;ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2 -> ok2
+35949090;JDK BUNDLE PATCH 19.0.0.0.240116 -> ok2
+35943157;Database Release Update : 19.22.0.0.240116 (35943157) -> ok2
+35967489;OCW RELEASE UPDATE 19.22.0.0.0 (35967489) -> ok2
+31335142;DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX -> ok2 (rolling patch part earlier incidnet)
+
+
+sudo /u01/app/grid/product/19c/bin/crsctl start crs -> ok2
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl start agent -> ok2
+
+
+PRAISE GOD rdbms patch also done :)
+END HERE
+
+
+grid@HKLPDDS2B003:/home/grid [+ASM2]ps -ef | grep pmon
+grid      83204      1  0 01:48 ?        00:00:00 asm_pmon_+ASM2
+grid      83794      1  0 01:48 ?        00:00:00 apx_pmon_+APX2
+oracle    84903      1  0 01:48 ?        00:00:00 ora_pmon_DOHK3S2B2
+oracle    84933      1  0 01:48 ?        00:00:00 ora_pmon_DOHK2S2B2
+oracle    94011      1  0 01:50 ?        00:00:00 ora_pmon_OMSDB2
+oracle    96027      1  0 01:50 ?        00:00:00 ora_pmon_DOHK1RND2
+oracle    96112      1  0 01:50 ?        00:00:00 ora_pmon_DOHK7CCB2
+oracle    96141      1  0 01:50 ?        00:00:00 ora_pmon_DOHK1SSC2
+oracle    96218      1  0 01:50 ?        00:00:00 ora_pmon_DOHK1NGW2
+oracle    96240      1  0 01:50 ?        00:00:00 ora_pmon_DOHK1S2B2
+grid     114606  81592  0 01:52 pts/1    00:00:00 grep --color=auto pmon
+grid@HKLPDDS2B003:/home/grid [+ASM2]
+grid@HKLPDDS2B003:/home/grid [+ASM2]crsctl stat res -t | grep -i OFFLINE
+               OFFLINE OFFLINE      hklpdds2b002             STABLE
+               OFFLINE OFFLINE      hklpdds2b003             STABLE
+               OFFLINE OFFLINE      hklpdds2b004             STABLE
+               OFFLINE OFFLINE      hklpdds2b002             STABLE
+               OFFLINE OFFLINE      hklpdds2b003             STABLE
+               OFFLINE OFFLINE      hklpdds2b004             STABLE
+               OFFLINE OFFLINE      hklpdds2b002             IDLE,STABLE
+               OFFLINE OFFLINE      hklpdds2b003             IDLE,STABLE
+               OFFLINE OFFLINE      hklpdds2b004             IDLE,STABLE
+      1        OFFLINE OFFLINE                               STABLE
+      1        OFFLINE OFFLINE                               STABLE
+      1        OFFLINE OFFLINE                               STABLE
+      1        OFFLINE OFFLINE                               STABLE
+
+> sqlplus "/as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Thu Mar 28 01:56:38 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2023, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.22.0.0.0

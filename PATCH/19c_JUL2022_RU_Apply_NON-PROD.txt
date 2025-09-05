@@ -1,0 +1,198 @@
+SCPAY - 19c JULY 2022 RU PATCH APPLY PROCESS - NON-PROD
+=======================================================
+Patch Number	Description	Applicable Homes
+
+34133642	Database Jul 2022 Release Update 19.16.0.0.220719	Only DB Home for non-Oracle RAC setup. Both DB Home and Grid Home for Oracle RAC setup.
+34160635	OCW Jul 2022 Release Update 19.16.0.0.220719	Both DB Home and Grid Home
+34139601	ACFS Jul 2022 Release Update 19.16.0.0.220719	Only Grid Home
+33575402	DBWLM Release Update 19.0.0.0.0	Only Grid Home
+34318175	Tomcat Release Update 19.0.0.0.0	Only Grid Home
+
+34086870	Oracle JavaVM Release Update 19.16.0.0.0	Only DB Homes
+34113634	JDK BUNDLE PATCH 19.16.0.0.220719	Both DB Homes and Grid Home
+33912872	UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32	Both DB Home and Grid Home
+29613245	ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2	Only DB HOME
+31429809	SR21.1PX_FORCE - TRC - QERGHRELEASE - ORA-7445 [__INTEL_SSSE3_REP_MEMMOVE()]	Only DB HOME
+32727143	TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES	Only DB HOME
+34100969	SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]	Only DB HOME
+31335037	RDBMS - DSTV35 UPDATE - TZDATA2020A	Only DB HOME ( Not required for all DB. only for the database/application  that need DSTV35. Need to follow DST upgrade steps manually)
+31335142	DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX	Only DB HOME ( Not required for all DB. only for the database/application  that need DSTV35. Need to follow DST upgrade steps manually)
+
+================================================================================================================================================
+
+19c GRID HOME 	: /u01/app/grid/product/19c
+19c ORACLE HOME : /u01/app/oracle/product/db/19.14.0.0.Jan2022
+
+
+PREREQUISITES :
+===============
+- Update the OPatch to 12.2.0.1.30 or later on each GI Home and Oracle Home
+- Do patch precheck prerequisites for space and patch conflict
+
+As the Grid home user:
+
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34133642
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34139601
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34318175
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/33575402
+
+For Oracle home, as home user:
+
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34133642
+opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635
+
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+PATCH APPLY :
+=============
+---------------
+On HKLPDTNPP001
+---------------
+
+1. As oracle user - stop all database instances
+	
+	$ export ORACLE_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+	$ cd /u01/app/oracle/local/software/Jul2022RU
+	
+	$ $ORACLE_HOME/bin/srvctl stop home -o $ORACLE_HOME -s stop_inst_node1 -n HKLPDTNPP001 | 002
+	
+	$ sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch
+	
+2. As grid user - apply 19c July 2022 RU patch
+
+	$ export GI_HOME=/u01/app/grid/product/19c
+	$ export PATH=$GI_HOME/bin:$GI_HOME/OPatch:$PATH
+
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34139601
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/33575402
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34133642
+	$ $GI_HOME/OPatch/opatch apply -oh $GI_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34318175
+	
+	#Patch 34113634 - UPDATE 19.0.0.0.0 DATABASE CLIENT JDK IN ORACLE HOME TO JDK8u341#
+	
+	$ chmod -R 755 $GI_HOME/jdk
+	$ cd /u01/app/oracle/local/software/Jul2022RU/34113634
+	$ opatch apply
+	
+	#Patch 33912872 - DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE)#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/33912872
+	$ opatch apply
+	
+3. As oracle user - apply 19c July 2022 RU patch and other one-off patches
+	
+	$ export ORACLE_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ export PATH=$ORACLE_HOME/OPatch:$ORACLE_HOME/bin:$PATH
+	$ cd /u01/app/oracle/local/software/Jul2022RU
+	
+	NEED TO ROLLBACK THIS FIRST :
+	-----------------------------
+	$ opatch rollback -id 29613245
+	$ opatch rollback -id 30664385
+	$ opatch rollback -id 31429809
+	$ opatch rollback -id 34044565
+	$ opatch rollback -id 34083677
+
+
+	$ /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635/custom/scripts/prepatch.sh -dbhome $ORACLE_HOME
+	$ $ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635
+	$ $ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34133642
+	$ /u01/app/oracle/local/software/Jul2022RU/34160854/34130714/34160635/custom/scripts/postpatch.sh -dbhome $ORACLE_HOME
+	
+	
+	#Patch 34086870 - Oracle JavaVM Component Release Update 19.16.0.0.220719
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/34086870
+	$ opatch apply
+	
+	#Patch 34113634 - UPDATE 19.0.0.0.0 DATABASE CLIENT JDK IN ORACLE HOME TO JDK8u341#
+	
+	$ chmod -R 755 $ORACLE_HOME/jdk
+	$ cd /u01/app/oracle/local/software/Jul2022RU/34113634
+	$ opatch apply
+	
+	#Patch 33912872 - DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE)#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/33912872
+	$ opatch apply
+	
+	#Patch 29613245: ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/29613245
+	$ opatch apply
+	
+	#Patch 31429809: SR21.1PX_FORCE - TRC - QERGHRELEASE - ORA-7445 [__INTEL_SSSE3_REP_MEMMOVE()]#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/31429809
+	$ opatch apply
+	
+	#Patch 32727143: TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/32727143
+	$ opatch apply
+	
+	#Patch 34100969: SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/34100969
+	$ opatch apply
+	
+	#Patch 31335037: RDBMS - DSTV35 UPDATE - TZDATA2020A#
+	
+	SELECT version FROM v$timezone_file;
+	SELECT PROPERTY_NAME, SUBSTR(property_value, 1, 30) value FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME LIKE 'DST_%' ORDER BY PROPERTY_NAME;
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/31335037
+	$ opatch apply
+	
+	#Patch 31335142: DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX#
+	
+	$ cd /u01/app/oracle/local/software/Jul2022RU/31335142
+	$ opatch apply
+
+4. As oracle user - post patch
+
+	$ export ORACLE_HOME=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+	$ export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/bin/OPatch:$PATH
+	$ cd /u01/app/oracle/local/software/Jul2022RU
+	
+	$ sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh
+	$ sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch
+	
+	$ $ORACLE_HOME/bin/srvctl start home -o $ORACLE_HOME -s stop_inst_node1 -n HKLPDTNPP001 | 002
+	
+---------------
+On HKLPDTNPP002
+---------------
+-> DO THE SAME AS ABOVE
+-> Check opatch lsinventory output of 19c GI Home and 19c Oracle Home on each nodes
+
+
+POST PATCH APPLY EXECUTION - DATAPATCH :
+========================================
+ONLY ON ONE NODE FOR EACH DATABASES :
+-------------------------------------
+
+As oracle user to perform datapatch -verbose command for each databases:
+
+$ sqlplus / nolog
+SQL> connect as sysdba
+SQL> alter pluggable database all open
+SQL> exit
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+$ cd $ORACLE_HOME/OPatch
+$ ./datapatch -verbose
+
+--Check all databases and its PDBs make sure OPEN READ WRITE without RESTRICTED mode yes
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+####################################################################################################################################################################################

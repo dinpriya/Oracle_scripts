@@ -1,0 +1,198 @@
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> ps -ef | grep pmon
+grid      97399      1  0 Mar31 ?        00:03:28 asm_pmon_+ASM1
+grid      99183      1  0 Mar31 ?        00:02:37 apx_pmon_+APX1
+oracle   100609      1  0 Mar31 ?        00:05:55 ora_pmon_POHK1API_DG1
+oracle   100777      1  0 Mar31 ?        00:06:31 ora_pmon_POHK1CCD_DG1
+oracle   103351      1  0 Mar31 ?        00:04:55 ora_pmon_POHK1RCT_DG1
+oracle   103864      1  0 Mar31 ?        00:05:44 ora_pmon_POHK3CCD_DG1
+oracle   106006      1  0 Mar31 ?        00:05:51 ora_pmon_POHK5CCD_DG1
+oracle   107611      1  0 Mar31 ?        00:05:58 ora_pmon_POHK2CCD_DG1
+oracle   109456      1  0 Mar31 ?        00:04:50 ora_pmon_POHK4CCD_DG1
+oracle   196107 195756  0 17:18 pts/0    00:00:00 grep --color=auto pmon
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+
+> ps -ef | grep tns
+root        492      2  0 Jan26 ?        00:00:00 [netns]
+grid      96334      1  0 Mar31 ?        00:11:29 /u01/app/grid/product/19c/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      96353      1  0 Mar31 ?        00:03:35 /u01/app/grid/product/19c/bin/tnslsnr LISTENER_DG -no_crs_notify -inherit
+grid      96553      1  0 Mar31 ?        00:19:32 /u01/app/grid/product/19c/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
+grid     203152      1  0 Mar31 ?        00:04:07 /u01/app/grid/product/19c/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+oracle   205251 195756  0 17:20 pts/0    00:00:00 grep --color=auto tns
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> ps -ef | grep -i mrp
+oracle   199381      1  0 Mar31 ?        00:02:56 ora_mrp0_POHK2CCD_DG1
+oracle   199403      1  0 Mar31 ?        00:02:51 ora_mrp0_POHK1RCT_DG1
+oracle   200919      1  0 Mar31 ?        00:02:50 ora_mrp0_POHK1API_DG1
+oracle   200986      1  0 Mar31 ?        00:02:57 ora_mrp0_POHK1CCD_DG1
+oracle   205418 195756  0 17:20 pts/0    00:00:00 grep --color=auto -i mrp
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> srvctl status service -d POHK2CCD_DG
+Service svc_pohk2ccd_aic_gl_onl is not running.
+Service svc_pohk2ccd_fwb_gl_bat is not running.
+Service svc_pohk2ccd_fwb_gl_onl is not running.
+Service svc_pohk2ccd_ngo_gl_bat is not running.
+Service svc_pohk2ccd_ngo_gl_onl is not running.
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> srvctl status service -d POHK1RCT_DG
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> srvctl status service -d POHK1API_DG
+Service svc_pohk1api_api_gl_bat is not running.
+Service svc_pohk1api_api_gl_onl is not running.
+Service svc_pohk1api_hkjc_gl_bat is not running.
+Service svc_pohk1api_hkjc_gl_onl is not running.
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+>
+oracle@HKLPDSS2B001:/home/oracle [POHK1RCT_DG1]
+> srvctl status service -d POHK1CCD_DG
+Service svc_pohk1ccd_cci_gl_onl is not running.
+Service svc_pohk1ccd_cci_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_cci_jmb_gl_onl is not running.
+Service svc_pohk1ccd_cci_meg2_gl_onl is not running.
+Service svc_pohk1ccd_cci_meg_gl_onl is not running.
+Service svc_pohk1ccd_ccs_gl_bat is not running.
+Service svc_pohk1ccd_ccs_gl_onl is not running.
+Service svc_pohk1ccd_cyc_gl_bat is not running.
+Service svc_pohk1ccd_cyc_gl_onl is not running.
+Service svc_pohk1ccd_etl_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_etl_jmb_gl_onl is not running.
+Service svc_pohk1ccd_etl_meg2_gl_onl is not running.
+Service svc_pohk1ccd_etl_meg_gl_onl is not running.
+Service svc_pohk1ccd_idc_gl_onl is not running.
+Service svc_pohk1ccd_idc_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_idc_jmb_gl_onl is not running.
+Service svc_pohk1ccd_idc_meg2_gl_onl is not running.
+Service svc_pohk1ccd_idc_meg_gl_onl is not running.
+Service svc_pohk1ccd_ipc_gl_onl is not running.
+Service svc_pohk1ccd_ipc_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_ipc_jmb_gl_onl is not running.
+Service svc_pohk1ccd_ipc_meg2_gl_onl is not running.
+Service svc_pohk1ccd_ipc_meg_gl_onl is not running.
+Service svc_pohk1ccd_ldr_gl_onl is not running.
+Service svc_pohk1ccd_ldr_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_ldr_jmb_gl_onl is not running.
+Service svc_pohk1ccd_ldr_meg2_gl_onl is not running.
+Service svc_pohk1ccd_ldr_meg_gl_onl is not running.
+Service svc_pohk1ccd_npc_gl_onl is not running.
+Service svc_pohk1ccd_npc_jmb2_gl_onl is not running.
+Service svc_pohk1ccd_npc_jmb_gl_onl is not running.
+Service svc_pohk1ccd_npc_meg2_gl_onl is not running.
+Service svc_pohk1ccd_npc_meg_gl_onl is not running.
+Service svc_pohk1ccd_pay_gl_bat is not running.
+Service svc_pohk1ccd_pay_gl_onl is not running.
+Service svc_pohk1ccd_rta_gl_onl is not running.
+Service svc_pohk1ccd_rta_jmb_gl_onl is not running.
+Service svc_pohk1ccd_rta_meg_gl_onl is not running.
+Service svc_pohk1ccd_sav_gl_onl is not running.
+
+Step execution :
+1. sudo /u01/app/grid/product/19c/bin/crsctl stop crs
+2. sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh  -prepatch -rollback
+3. export PATH=$PATH:$ORACLE_HOME/OPatch
+4. rollback patches :
+opatch rollback -id 34100969  ## done132
+opatch rollback -id 32727143  ## done132
+opatch rollback -id 29613245  ## done132
+opatch rollback -id 34777391  ## done132
+opatch rollback -id 34953532  ## done132
+opatch rollback -id 34765931  ## done132
+opatch rollback -id 34786990  ## done132
+opatch rollback -id 34768559  ## done132
+5. Apply all small patch on : 
+/u01/app/oracle/local/software/Jul22_oneoff/ (except folder 29613245)
+6. sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch -rollback
+7. sudo /u01/app/grid/product/19c/bin/crsctl start crs
+
+Compare DR and Prod :
+
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 []
+> opatch lspatches
+29613245;ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2
+31429809;SR21.1PX_FORCE - TRC - QERGHRELEASE - ORA-7445 [__INTEL_SSSE3_REP_MEMMOVE()]
+32727143;TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES
+34100969;SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]
+31335037;RDBMS - DSTV35 UPDATE - TZDATA2020A
+31335142;DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX
+34294118;MERGE ON DATABASE RU 19.16.0.0.0 OF 34283119
+34544675;ORA-7445 [KWQIDIDQX()+14992] [SIGSEGV]
+34086870;OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870)
+33912872;DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE)
+34113634;JDK BUNDLE PATCH 19.0.0.0.220719
+34133642;Database Release Update : 19.16.0.0.220719 (34133642)
+34160635;OCW RELEASE UPDATE 19.16.0.0.0 (34160635)
+
+
+Prod 2:
+34544675;ORA-7445 [KWQIDIDQX()+14992] [SIGSEGV]
+34294118;MERGE ON DATABASE RU 19.16.0.0.0 OF 34283119 
+31335142;DSTV35 UPDATE - TZDATA2020A - NEED OJVM FIX 
+31335037;RDBMS - DSTV35 UPDATE - TZDATA2020A 
+34100969;SHRINK LIMIT_SIZE IN QMXX.C TEST CAUSES CRASH [QMXFREEXVMRESOURCES]
+32727143;TRANSACTION-LEVEL CONTENT ISOLATION FOR TRANSACTION-DURATION GLOBAL TEMPORARY TABLES 
+31429809;SR21.1PX_FORCE - TRC - QERGHRELEASE - ORA-7445 [__INTEL_SSSE3_REP_MEMMOVE()] 
+29613245;ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2 
+33912872;DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE)
+34113634;JDK BUNDLE PATCH 19.0.0.0.220719
+34086870;OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870)
+34133642;Database Release Update : 19.16.0.0.220719 (34133642)
+34160635;OCW RELEASE UPDATE 19.16.0.0.0 (34160635)
+
+After Actiity :
+> sudo /u01/app/grid/product/19c/bin/crsctl start crs
+CRS-4123: Oracle High Availability Services has been started.
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 []
+> ps -ef | grep pmon
+grid     146833      1  0 08:34 ?        00:00:00 asm_pmon_+ASM2
+grid     148306      1  0 08:35 ?        00:00:00 apx_pmon_+APX2
+oracle   150209      1  0 08:35 ?        00:00:00 ora_pmon_POHK1CCD_DG2
+oracle   151018      1  0 08:35 ?        00:00:00 ora_pmon_POHK1API_DG2
+oracle   153214      1  0 08:35 ?        00:00:00 ora_pmon_POHK1RCT_DG2
+oracle   153637      1  0 08:35 ?        00:00:00 ora_pmon_POHK3CCD_DG2
+oracle   155910      1  0 08:36 ?        00:00:00 ora_pmon_POHK5CCD_DG2
+oracle   157234      1  0 08:36 ?        00:00:00 ora_pmon_POHK2CCD_DG2
+oracle   158672  84503  0 08:36 pts/0    00:00:00 grep --color=auto pmon
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 []
+>
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 []
+> . oraenv
+ORACLE_SID = [oracle] ? POHK2CCD_DG2
+The Oracle base remains unchanged with value /u01/app/oracle/local
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 [POHK2CCD_DG2]
+> sqlplus "/ as sysdba"
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue May 9 08:37:17 2023
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.16.0.0.0
+
+08:37:17 SYS @ POHK2CCD_DG2:CDB$ROOT:>show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 PDBP_FWB                       MOUNTED
+         4 PDBP_NGO                       MOUNTED
+         6 PDBP_AIC                       MOUNTED
+08:37:20 SYS @ POHK2CCD_DG2:CDB$ROOT:>
+08:37:22 SYS @ POHK2CCD_DG2:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.16.0.0.0
+oracle@HKLPDSS2B002:/u01/app/oracle/local/software/Jul22_oneoff/29613245 [POHK2CCD_DG2]

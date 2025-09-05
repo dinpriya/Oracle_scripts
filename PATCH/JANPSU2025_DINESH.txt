@@ -1,0 +1,323 @@
+OCT Standalone patches total 11 patches
+=============
+> cat wget.sh
+
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37262208_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37260974_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37213431_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37102264_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p32132362_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p34774667_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37470729_1926000DBRU_Generic.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p30972802_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37524794_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p37525327_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p32177397_1926000DBRU_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Jan2025.zip
+
+Gold image for cloning method
+--------------
+wget https://artifactory.global.standardchartered.com/artifactory/vendor-generic-production-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/SCB_OracleDB_19c_Oct2024_Linux_x86_64.zip
+
+unzip p34774667_1926000DBRU_Linux-x86-64.zip
+unzip p32177397_1926000DBRU_Linux-x86-64.zip
+unzip p32132362_1926000DBRU_Linux-x86-64.zip
+unzip p30972802_1926000DBRU_Linux-x86-64.zip
+unzip p37102264_190000_Linux-x86-64.zip
+unzip p37213431_190000_Linux-x86-64.zip
+unzip p37260974_190000_Linux-x86-64.zip
+unzip p37262208_190000_Linux-x86-64.zip
+unzip p37525327_1926000DBRU_Linux-x86-64.zip
+unzip p37524794_1926000DBRU_Linux-x86-64.zip
+unzip p37470729_1926000DBRU_Generic.zip
+
+p6880880_190000_Linux-x86-64_Jan2025.zip
+
+
+GGSCI (hklpdpsec001) 1> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+EXTRACT     RUNNING     EXT_SCCR    00:00:02      00:00:04
+REPLICAT    RUNNING     REP_STRM    00:00:04      00:00:04
+REPLICAT    RUNNING     RSTRM_ID    00:00:00      00:00:05
+
+
+make sure ahf rename and dam stopped <== done
+
+
+Stop gg process 
+
+----------------- 
+
+1. cd /u01/app/oracle/product/ogg/19c 
+2. ./ggsci 
+3. info all 
+4. stop extract EXT_SCCR 
+5. stop replicat REP_STRM 
+6. Stop replicat RSTRM_ID 
+7. stop MANAGER 
+   info all 
+
+export PATH=$ORACLE_HOME/bin:$PATH
+export PATCH_LOC=”/u01/app/oracle/local/JANPSU2025”
+
+>env | grep -i agent
+
+Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl status agent
+
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent
+
+1. Take prechecks and run prepatch from oracle/root
+
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch
+
+oracle restart
+
+sudo /u01/app/grid/product/19c/crs/install/roothas.sh -prepatch
+
+2. Take Oracle Home and grid home Backup
+
+connect to grid  and take grid home backup
+echo $ORACLE_HOME (Grid home)
+/u01/app/grid/product/19c
+
+
+cd $ORACLE_HOME
+cd ..
+pwd
+/u01/app/grid/product
+
+nohup tar -zcvf /u01/app/oracle/local/GRID_19c_bkp_new_03032025.tar 19c &
+
+
+
+connect to oracle user and take oracle home backup
+cd $ORACLE_HOME
+cd ..
+pwd
+/u01/app/oracle/product/db/19.20.0.0.Jul2023
+
+/u01/app/oracle/product/db/19.15.0.0.Apr2022
+cd ..
+
+nohup tar -zcvf /u01/app/oracle/local/OHome19.15.0.0.Apr2022.tar 19.15.0.0.Apr2022 &
+
+
+3. on grid home
+
+a.	Check the RETAIN_INACTIVE_PATCHES value in the below file. Make it 1 or 2 to retain last one or two inactive patches. 
+ cat $ORACLE_HOME/OPatch/config/opatch.properties
+ 
+b.	List the inactive patches using below command. You will get below output
+$ORACLE_HOME/OPatch/opatch util listorderedinactivepatches
+
+c.	Delete the Inactive patches using below command.
+$ORACLE_HOME/OPatch/opatch util deleteinactivepatches
+
+4. Move OPatch for both grid and db home
+cd $ORACLE_HOME
+mv OPatch OPatch_bkp_20112024
+
+unzip opatch to ORACLE_HOME
+
+5.
+grid pathing from grid user:
+==============
+export PATH=$PATH:$ORACLE_HOME/OPatch/
+export PATCH_LOC=/u01/app/oracle/local/JANPSU2025
+
+
+1) cd /u01/app/oracle/local/JANPSU2025/37262208/32895426/37260974
+   $ORACLE_HOME/OPatch/opatch apply  -local
+2) cd /u01/app/oracle/local/JANPSU2025/37262208/32895426/37268031
+   $ORACLE_HOME/OPatch/opatch apply  -local
+3) cd /u01/app/oracle/local/JANPSU2025/37262208/32895426/37266638
+    $ORACLE_HOME/OPatch/opatch apply  -local
+4) cd /u01/app/oracle/local/JANPSU2025/37262208/32895426/36758186
+    $ORACLE_HOME/OPatch/opatch apply  -local
+5) cd /u01/app/oracle/local/JANPSU2025/37262208/32895426/37461387
+    $ORACLE_HOME/OPatch/opatch apply  -local
+6) cd /u01/app/oracle/local/JANPSU2025/37213431 
+  $ORACLE_HOME/OPatch/opatch apply  -local
+ 
+$ORACLE_HOME/OPatch/opatch lsinv
+
+$ORACLE_HOME/OPatch/opatch lsinv |grep -i applied | sort -n
+
+It should return
+
+36758186
+37213431
+37260974
+37266638
+37268031
+37461387
+
+
+6.
+oracle home pathing from oracle user:
+==============
+export PATH=$PATH:$ORACLE_HOME/OPatch/
+export PATCH_LOC=/u01/app/oracle/local/JANPSU2025
+
+
+6. on oracle home
+
+a.	Check the RETAIN_INACTIVE_PATCHES value in the below file. Make it 1 or 2 to retain last one or two inactive patches. 
+ cat $ORACLE_HOME/OPatch/config/opatch.properties
+ 
+b.	List the inactive patches using below command. You will get below output
+$ORACLE_HOME/OPatch/opatch util listorderedinactivepatches
+
+c.	Delete the Inactive patches using below command.
+$ORACLE_HOME/OPatch/opatch util deleteinactivepatches
+
+conflict check
+=============
+--OCW 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/37262208/32895426/37268031
+--DB PSU
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}37262208/32895426/37260974
+
+
+opatch rollback -id 32132362
+opatch rollback -id 34774667
+opatch rollback -id 37056207
+opatch rollback -id 37125371
+opatch rollback -id 37187504
+
+
+/u01/app/oracle/local/JANPSU2025/37262208/37257886/37268031/custom/scripts/prepatch.sh -dbhome /u01/app/oracle/product/db/19c
+
+Oracle_home Patching
+======================
+
+export PATH=$PATH:$ORACLE_HOME/OPatch/
+export PATCH_LOC=/u01/app/oracle/local/JANPSU2025
+
+opatch apply ${PATCH_LOC}/37262208/37257886/37268031 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/37262208/37257886/37260974 -oh ${ORACLE_HOME} -local
+
+
+/u01/app/oracle/local/JANPSU2025/37262208/37257886/37268031/custom/scripts/postpatch.sh -dbhome /u01/app/oracle/product/db/19c
+
+
+opatch apply ${PATCH_LOC}/32132362 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/34774667 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/37470729 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/30972802 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/37524794 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/37525327 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/32177397 -oh ${ORACLE_HOME} -local
+
+
+--Jdk
+$ORACLE_HOME/OPatch/opatch apply ${PATCH_LOC}/37213431 –oh ${ORACLE_HOME} -local 
+
+
+/u01/app/oracle/local/JANPSU2025/37262208/37257886/37268031/custom/scripts/postpatch.sh -dbhome /u01/app/oracle/product/db/19.15.0.0.Apr2022
+
+
+## Apply OJVM PSU Patch
+export PATCH_LOC=/u01/app/oracle/local/JANPSU2025
+
+cd /u01/app/oracle/product/db/19c/OPatch
+
+opatch apply $PATCH_LOC/37102264 -oh $ORACLE_HOME -local
+
+Troubleshoot steps:  --> Dont try unless needed
+=====================
+
+sudo /u01/app/grid/product/19c/bin/crsctl stop crs
+sudo /u01/app/grid/product/19c/bin/crsctl start crs
+sudo /u01/app/grid/product/19c/bin/crsctl check crs
+
+sudo /u01/app/grid/product/19c/bin/rootcrs.sh config crs
+
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.pl -unlock
+======================================================================
+
+## Run as oracle
+
+$ORACLE_HOME/OPatch/opatch lsinv
+$ORACLE_HOME/OPatch/opatch lsinv |grep -i applied | sort -n
+
+It should return
+
+30972802
+32132362
+32177397
+34774667
+37102264
+37213431
+37260974
+37268031
+37470729
+37524794
+37525327
+
+sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch
+
+
+=========================================
+
+ 7. $ORACLE_HOME/OPatch/opatch lspatches
+ 
+ 
+ cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -e -b utlrp -d $ORACLE_HOME/rdbms/admin utlrp.sql
+
+
+cd $ORACLE_HOME/OPatch
+nohup ./datapatch -verbose > /home/oracle/datapatch_ICM074_05012025.log 2>&1 &
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+8. disable triggers in cdb and pdb 
+
+alter trigger LLSTS_GRANT disable; 
+alter trigger LLSTS_GRANTS disable; 
+alter trigger RESTRICT_CREATE_USER disable; 
+
+
+
+9. Run datapatch
+cd $ORACLE_HOME/OPatch
+nohup ./datapatch -verbose > datapatch_DOUK9BLD.log 2>&1 &
+
+10. Enable triggers in cdb & pdb
+
+alter trigger LLSTS_GRANT enable; 
+alter trigger LLSTS_GRANTS enable; 
+alter trigger RESTRICT_CREATE_USER enable; 
+
+
+11. Verify patches applied or not
+
+col DESCRIPTION for a50
+col ACTION_TIME for a27
+col ACTION for a10
+set lines 1000
+col STATUS for a10
+select ACTION_TIME,PATCH_ID,ACTION,DESCRIPTION from registry$sqlpatch order by 1 desc;
+
+ 
+
+set pages 300
+set lines 180
+col COMP_ID for a25
+col COMP_NAME for a40
+col status for a15
+col VERSION for a15
+SELECT con_id,COMP_ID,COMP_NAME,  VERSION, STATUS FROM SYS.CDB_REGISTRY where status<>'VALID' order by 1;
+

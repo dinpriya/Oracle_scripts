@@ -1,0 +1,32 @@
+> /u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent
+
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -prepatch -rollback
+
+/u01/app/oracle/local/software/JUL2023RU/35370167/35319490/35320149/custom/scripts/prepatch.sh -dbhome /u01/app/oracle/product/db/19.7.0.0.Apr2020
+
+/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch/opatch nrollback -local -id 35336174,29613245,34150264,35120120,35395648,35617844,35700333,35700334 -oh /u01/app/oracle/product/db/19.7.0.0.Apr2020
+
+/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch/opatch nrollback -local -id 35320149,35320081 -oh /u01/app/oracle/product/db/19.7.0.0.Apr2020
+
+/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch/opatch rollback -local -id 35354406 -oh /u01/app/oracle/product/db/19.7.0.0.Apr2020
+
+ $ORACLE_HOME/OPatch/opatch apply /u01/app/oracle/local/software/Jan2023RU/29613245 -oh ${ORACLE_HOME} -local
+ 
+ $ORACLE_HOME/OPatch/opatch apply /u01/app/oracle/local/software/34969678 -oh ${ORACLE_HOME} -local
+  
+  29613245   34969678
+  
+/u01/app/oracle/local/software/JUL2023RU/35370167/35319490/35320149/custom/scripts/postpatch.sh -dbhome /u01/app/oracle/product/db/19.7.0.0.Apr2020
+
+## Run as grid
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+/u01/app/grid/product/19c/OPatch/opatch nrollback -local -id 35320081,35320149,35332537,35553096,35617844,35395648,35336174
+
+Run as oracle.
+
+sudo /u01/app/grid/product/19c/rdbms/install/rootadd_rdbms.sh
+sudo /u01/app/grid/product/19c/crs/install/rootcrs.sh -postpatch -rollback
+
+

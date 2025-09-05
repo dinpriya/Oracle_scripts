@@ -1,0 +1,78 @@
+select comp_name,version,status from dba_registry;
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDB1                           READ WRITE NO
+06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  30869156 RU         APPLY           SUCCESS                   02-MAR-21 16.19.57.301771
+  30805684 INTERIM    APPLY           SUCCESS                   02-MAR-21 16.19.57.305209
+  32545013 RU         APPLY           WITH ERRORS               27-JUL-21 20.01.00.262185
+  32545013 RU         APPLY           SUCCESS                   27-JUL-21 20.22.00.009578
+  30805684 INTERIM    ROLLBACK        SUCCESS                   06-AUG-21 23.16.07.170897
+  32399816 INTERIM    APPLY           SUCCESS                   06-AUG-21 23.16.07.181088
+  32399816 INTERIM    ROLLBACK        SUCCESS                   27-NOV-21 04.37.16.535803
+  33192793 RU         APPLY           SUCCESS                   27-NOV-21 04.37.19.976212
+  33192694 INTERIM    APPLY           SUCCESS                   27-NOV-21 04.37.19.983684
+  32924796 INTERIM    APPLY           SUCCESS                   27-NOV-21 04.37.20.005319
+  33192694 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 16.10.55.802360
+  32924796 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 16.10.55.826892
+  33515361 RU         APPLY           WITH ERRORS               01-APR-22 16.10.57.029012
+  33561310 INTERIM    APPLY           SUCCESS                   01-APR-22 16.10.57.033405
+  29613245 INTERIM    APPLY           SUCCESS                   01-APR-22 16.10.58.515602
+  32924796 INTERIM    APPLY           SUCCESS                   01-APR-22 16.10.58.537046
+  33515361 RU         APPLY           SUCCESS                   01-APR-22 16.15.34.668947
+  33561310 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 06.37.34.617592
+  29613245 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 06.37.36.085254
+  32924796 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 06.37.36.105640
+  34133642 RU         APPLY           SUCCESS                   29-SEP-22 06.37.39.598531
+  34086870 INTERIM    APPLY           SUCCESS                   29-SEP-22 06.37.39.603357
+  29613245 INTERIM    APPLY           SUCCESS                   29-SEP-22 06.37.41.047144
+
+23 rows selected.
+
+06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>06:40:03 SYS @ DOHK1RND1:CDB$ROOT:>
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Oracle Database Catalog Views                                19.0.0.0.0                     VALID
+Oracle Database Packages and Types                           19.0.0.0.0                     VALID
+Oracle Real Application Clusters                             19.0.0.0.0                     VALID
+JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID
+Oracle XDK                                                   19.0.0.0.0                     VALID
+Oracle Database Java Packages                                19.0.0.0.0                     VALID
+OLAP Analytic Workspace                                      19.0.0.0.0                     VALID
+Oracle XML Database                                          19.0.0.0.0                     VALID
+Oracle Workspace Manager                                     19.0.0.0.0                     VALID
+Oracle Text                                                  19.0.0.0.0                     VALID
+Oracle Multimedia                                            19.0.0.0.0                     VALID
+Spatial                                                      19.0.0.0.0                     VALID
+Oracle OLAP API                                              19.0.0.0.0                     VALID
+Oracle Label Security                                        19.0.0.0.0                     VALID
+Oracle Database Vault                                        19.0.0.0.0                     VALID
+
+15 rows selected.
+
+06:40:11 SYS @ DOHK1RND1:CDB$ROOT:>
+
+
+06:48:05 SYS @ DOHK1RND3:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDB1                           READ WRITE NO
+
+
+
+06:49:06 SYS @ DOHK1RND2:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDB1                           READ WRITE NO
+
+
+
+

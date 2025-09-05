@@ -1,0 +1,68 @@
+For Oracle home, as home user:
+
+export ORACLE_SID=POHK5CCD
+export ORACLE_HOME=/u01/app/oracle/product/db/19.9.0.0.Oct2020
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$PATH
+
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch lspatches
+/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch/opatch version
+
+export PATCH_LOC=/u01/app/oracle/local/software/Jan2023
+
+download the patches :-
+
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34765931_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34786990_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p34777391_190000_Linux-x86-64.zip
+wget https://artifactory.global.standardchartered.com/artifactory/generic-production/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Apr2023.zip
+
+Opatch Version upgrade :
+----------------------
+cp p6880880_190000_Linux-x86-64_Apr2023.zip /u01/app/oracle/product/db/19.9.0.0.Oct2020/
+mv Opatch Opatch_220723
+unzip -q p6880880_190000_Linux-x86-64_Apr2023.zip
+
+export ORACLE_SID=POHK5CCD
+SQL> Connect / as sysdba
+SQL> shut immediate;
+SQL> exit
+
+lsnrctl stop LISTENER
+lsnrctl stop LISTENER_DG
+
+PSU PATCH APPLY :
+---------------
+unzip p34765931_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34765931
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34765931
+opatch apply
+
+OJVM PATCH APPLY :
+----------------
+unzip p34786990_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34786990
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34786990
+opatch apply
+
+JDK PATCH APPLY :
+----------------
+unzip p34777391_190000_Linux-x86-64.zip
+cd /u01/app/oracle/local/software/Jan2023/34777391
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+cd /u01/app/oracle/local/software/Jan2023/34777391
+opatch apply
+
+export ORACLE_SID=POHK5CCD
+SQL> Connect / as sysdba
+SQL> startup;
+SQL> exit
+
+lsnrctl start LISTENER
+lsnrctl start LISTENER_DG
+
+################################################################################################

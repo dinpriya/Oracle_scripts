@@ -1,0 +1,30 @@
+#Below can be used to identify the agent version
+
+rpm -qa | grep ragent
+ 
+#if agent version is >=14.8 then you can use below commands
+
+To Stop,
+
+systemctl stop rainit
+systemctl stop rainstallerinit
+
+To Start,
+systemctl start rainit
+systemctl start rainstallerinit
+
+
+#if agent version is <14.8 then you can use below commands
+
+To Stop,
+
+# /opt/imperva/installer/bin/rainstallerinit stop && /opt/imperva/ragent/bin/rainit stop
+
+To Start,
+
+# /opt/imperva/installer/bin/rainstallerinit start && /opt/imperva/ragent/bin/rainit start
+
+agent will come up if you reboot, just make note of the same.
+ 
+replace "stop" with "status " , you will get the status
+ 

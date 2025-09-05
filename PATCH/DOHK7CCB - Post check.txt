@@ -1,0 +1,104 @@
+09:36:37 SYS @ DOHK7CCB1:CDB$ROOT:>show pdbs;
+set lines 300
+select PATCH_ID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME from DBA_REGISTRY_SQLPATCH order by 5;
+
+
+col COMP_NAME for a60
+set lines 300
+select comp_name,version,status from dba_registry;
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_SIT_API                   READ WRITE NO
+         4 PDBD_UAT_API                   READ WRITE NO
+         5 PDBD_DEV_API                   READ WRITE NO
+         6 PDBD_PT_API                    READ WRITE NO
+         7 PDBD_DEV_HKJC                  READ WRITE NO
+         9 PDBD_UAT_HKJC                  READ WRITE NO
+09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  30869156 RU         APPLY           SUCCESS                   11-JAN-21 14.07.26.439955
+  30805684 INTERIM    APPLY           SUCCESS                   11-JAN-21 14.07.26.443402
+  32545013 RU         APPLY           SUCCESS                   28-JUL-21 15.21.28.549700
+  30805684 INTERIM    ROLLBACK        SUCCESS                   07-AUG-21 01.27.41.264299
+  32399816 INTERIM    APPLY           SUCCESS                   07-AUG-21 01.27.41.298523
+  33192793 RU         APPLY           SUCCESS                   26-NOV-21 19.27.14.967332
+  32924796 INTERIM    APPLY           SUCCESS                   26-NOV-21 19.27.14.991136
+  32399816 INTERIM    ROLLBACK        SUCCESS                   27-NOV-21 04.07.39.010857
+  33192694 INTERIM    APPLY           SUCCESS                   27-NOV-21 04.07.39.015551
+  33192694 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 16.57.07.105322
+  32924796 INTERIM    ROLLBACK        SUCCESS                   01-APR-22 16.57.07.128727
+
+  PATCH_ID PATCH_TYPE ACTION          STATUS                    ACTION_TIME
+---------- ---------- --------------- ------------------------- ---------------------------------------------------------------------------
+  33515361 RU         APPLY           SUCCESS                   01-APR-22 16.57.08.321421
+  33561310 INTERIM    APPLY           SUCCESS                   01-APR-22 16.57.08.326670
+  29613245 INTERIM    APPLY           SUCCESS                   01-APR-22 16.57.09.846233
+  32924796 INTERIM    APPLY           SUCCESS                   01-APR-22 16.57.09.867602
+  33561310 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 09.24.48.147277
+  29613245 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 09.24.49.606409
+  32924796 INTERIM    ROLLBACK        SUCCESS                   29-SEP-22 09.24.49.630764
+  34133642 RU         APPLY           SUCCESS                   29-SEP-22 09.24.53.161636
+  34086870 INTERIM    APPLY           SUCCESS                   29-SEP-22 09.24.53.166056
+  29613245 INTERIM    APPLY           SUCCESS                   29-SEP-22 09.24.54.618756
+
+21 rows selected.
+
+09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>09:36:53 SYS @ DOHK7CCB1:CDB$ROOT:>
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Oracle Database Catalog Views                                19.0.0.0.0                     VALID
+Oracle Database Packages and Types                           19.0.0.0.0                     VALID
+Oracle Real Application Clusters                             19.0.0.0.0                     VALID
+JServer JAVA Virtual Machine                                 19.0.0.0.0                     VALID
+Oracle XDK                                                   19.0.0.0.0                     VALID
+Oracle Database Java Packages                                19.0.0.0.0                     VALID
+OLAP Analytic Workspace                                      19.0.0.0.0                     VALID
+Oracle XML Database                                          19.0.0.0.0                     VALID
+Oracle Workspace Manager                                     19.0.0.0.0                     VALID
+Oracle Text                                                  19.0.0.0.0                     VALID
+Oracle Multimedia                                            19.0.0.0.0                     VALID
+
+COMP_NAME                                                    VERSION                        STATUS
+------------------------------------------------------------ ------------------------------ --------------------------------------------
+Spatial                                                      19.0.0.0.0                     VALID
+Oracle OLAP API                                              19.0.0.0.0                     VALID
+Oracle Label Security                                        19.0.0.0.0                     VALID
+Oracle Database Vault                                        19.0.0.0.0                     VALID
+
+15 rows selected.
+
+09:36:54 SYS @ DOHK7CCB1:CDB$ROOT:>
+
+
+
+09:38:53 SYS @ DOHK7CCB2:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_SIT_API                   READ WRITE NO
+         4 PDBD_UAT_API                   READ WRITE NO
+         5 PDBD_DEV_API                   READ WRITE NO
+         6 PDBD_PT_API                    READ WRITE NO
+         7 PDBD_DEV_HKJC                  READ WRITE NO
+         9 PDBD_UAT_HKJC                  READ WRITE NO
+09:38:57 SYS @ DOHK7CCB2:CDB$ROOT:>
+
+
+
+
+09:38:31 SYS @ DOHK7CCB3:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBD_SIT_API                   READ WRITE NO
+         4 PDBD_UAT_API                   READ WRITE NO
+         5 PDBD_DEV_API                   READ WRITE NO
+         6 PDBD_PT_API                    READ WRITE NO
+         7 PDBD_DEV_HKJC                  READ WRITE NO
+         9 PDBD_UAT_HKJC                  READ WRITE NO
+09:38:36 SYS @ DOHK7CCB3:CDB$ROOT:>

@@ -1,0 +1,57 @@
+Stop OGG
+
+cd /u01/app/oracle/product/ogg/19c
+
+---STOP GG
+
+ $XAG_HOME/bin/agctl status goldengate ogg_19c
+
+ $XAG_HOME/bin/agctl stop goldengate ogg_19c
+
+ /u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+ /u01/app/grid/product/19c/bin/crsctl stop resource xag.hklpdps2b-ogg.vip
+
+ ps -eaf|grep -i PARAM
+
+ for i in `/u01/app/grid/product/19c/bin/olsnodes`
+do
+echo -e "\n\n------------$i--------------\n\n"
+ssh -q $i "ps -eaf|grep -i PARAMFILE|grep -v grep|grep -v log"
+done
+
+ 
+-- Confirm none of the GG process are running.
+
+./ggsci
+
+GGSCI >  info all
+
+======================================================================================================
+
+Start OGG
+
+/u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+
+/u01/app/grid/product/19c/bin/crsctl start resource xag.hklpdps2b-ogg.vip -n HKLPDPS2B001
+
+ 
+/u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+ 
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+ 
+$XAG_HOME/bin/agctl start goldengate ogg_19c --node HKLPDPS2B001
+
+ 
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+ 
+./ggsci
+
+
+info all
+
+-- Ensure all process are running 

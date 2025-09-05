@@ -1,0 +1,216 @@
+19c OCT 2023 RU PATCH APPLY PROCESS
+=======================================================
+Patch Number	Description	Applicable Homes
+35643107	Database Oct 2023 Release Update 19.21.0.0.231017	Only DB Home for non-Oracle RAC setup. Both DB Home and Grid Home for Oracle RAC setup.
+35655527	OCW Oct 2023 Release Update 19.21.0.0.231017	Both DB Home and Grid Home
+35652062	ACFS Oct 2023 Release Update 19.21.0.0.231017	Only Grid Home
+33575402	DBWLM Release Update 19.0.0.0.0	Only Grid Home
+35553096	Tomcat Release Update 19.0.0.0.0	Only Grid Home
+35648110	Oracle JavaVM Release Update 19.21.0.0.0	Only DB Homes
+35638318	JDK BUNDLE PATCH 19.21.0.0.231017	Both DB Homes and Grid Home
+
+29613245	ORA-31684 ORA-39112 WITH FIX 28539085 AND VERSION=11.2	Only DB HOME
+34150264	AIM ORA-29771  PROCESS RECO (OSID XX) BLOCKS LGWR (OSID XX) FOR MORE THAN XX SECONDS - KJFMHEALTH_WAITCHAIN_ADRREPORT	Only DB HOME
+34969678	ORA-03146  INVALID BUFFER LENGTH WHEN USING DEFAULT SHARDING DB LINK (ORA_MULTI_TARGET)	Only DB HOME
+35857781	MERGE ON DATABASE RU 19.21.0.0.0 OF 35700333	Only DB HOME
+================================================================================================================================================
+DAM AGENT
+=========
+
+Stop DAM agent before starting the agent with help of DAM team and start the same after patching task
+
+========================================================================================================================================================
+OEM AGENT STOP:
+===============
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=”/u01/app/oracle/local/software/OCT2023RU”
+
+>env | grep -i agent
+
+Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl stop agent
+
+stop database
+stop listener
+
+ps -ef|grep oracle
+=================================================================================================================================================================
+PREREQUISITES :
+===============
+- Update the OPatch to 12.2.0.1.37 or later on each GI Home and Oracle Home
+- Do patch precheck prerequisites for space and patch conflict
+
+ORACLE
+======
+
+1. Download the Binaries and save it to /u01/app/oracle/local/software/OCT2023RU. Unzip the files using oracle user.
+
+2. Stop the database and listener. GG should be stop if it exists. Make sure no oracle process on server.
+
+## Run as oracle (Ensure binaries are unzipped as Oracle user)
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/OCT2023RU
+--OCW 
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/35742441/35642822/35655527
+--DB PSU
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir ${PATCH_LOC}/35742441/35642822/35643107
+
+## Conflicting patches should be rolled back before attempting to apply the PSU
+
+Add below entries in /u01/app/oracle/local/software/OCT2023RU/log/patch_list_dbhome.txt
+
+/u01/app/oracle/local/software/OCT2023RU/35742441/35642822/35655527
+/u01/app/oracle/local/software/OCT2023RU/35742441/35642822/35643107
+
+	$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /u01/app/oracle/local/software/OCT2023RU/log/patch_list_dbhome.txt
+
+==============================================================================================================================================================
+PATCH APPLY:
+============
+
+As oracle user – (Prepatch for Oracle Home)
+
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/OCT2023RU
+
+/u01/app/oracle/local/software/OCT2023RU/35742441/35642822/35655527/custom/scripts/prepatch.sh -dbhome /u01/app/oracle/product/db/19.16.0.0.Jul2022
+
+As Oracle user 
+export PATH=$ORACLE_HOME/OPatch:$PATH
+export PATCH_LOC=/u01/app/oracle/local/software/OCT2023RU
+
+opatch apply ${PATCH_LOC}/35742441/35642822/35655527 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/35742441/35642822/35643107 -oh ${ORACLE_HOME} -local
+
+If any conflict found for 35643107, then those patches need to rollback.
+
+ex:
+
+opatch rollback -id 35700333 -oh ${ORACLE_HOME} -local
+opatch rollback -id 29613245 -oh ${ORACLE_HOME} -local
+opatch rollback -id 34150264 -oh ${ORACLE_HOME} -local
+opatch rollback -id 35700334 -oh ${ORACLE_HOME} -local
+ 
+/u01/app/oracle/local/software/OCT2023RU/35742441/35642822/35655527/custom/scripts/postpatch.sh -dbhome /u01/app/oracle/product/db/19.16.0.0.Jul2022
+
+--Jdk
+
+opatch apply /u01/app/oracle/local/software/OCT2023RU/35638318  -oh ${ORACLE_HOME} -local
+
+=============================================================================================================================================
+
+Apply the one-off (interim) patches to the DB home
+
+##Run as Oracle
+
+### log the output
+script /u01/app/oracle/local/patch/log/oracle_step12_`date '+%Y%m%d%H%M%S'`.log
+
+## one off patches to be applied 
+NA
+
+	export PATH=$PATH:$ORACLE_HOME/OPatch:.
+	cd /u01/app/oracle/local/software/OCT2023RU/<patch_id>
+	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+Apply DB HOME oneoff
+
+opatch apply ${PATCH_LOC}/29613245 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/34150264 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/34969678 -oh ${ORACLE_HOME} -local
+opatch apply ${PATCH_LOC}/35857781 -oh ${ORACLE_HOME} -local
+
+## exit from script logging command
+exit
+
+Apply the OJVM PSU for the RDBMS Home – Do the opatch apply on all on database nodes one at a time. 
+## Run as Oracle and apply the patch on all nodes.
+
+script /u01/app/oracle/local/patch/log/oracle_step16_`date '+%Y%m%d%H%M%S'`.log
+
+## Apply OJVM PSU Patch
+export PATCH_LOC=/u01/app/oracle/local/software/OCT2023RU
+cd /u01/app/oracle/product/db/19c/OPatch
+
+opatch apply $PATCH_LOC/35648110 -oh $ORACLE_HOME -local
+
+==========================================================================================================================================================
+Start EM Agent Processes after applying the patch on both RDBMS Home and GI Home
+
+## Run as oracle
+/u01/app/oracle/product/agent/agent13c/agent_inst/bin/emctl start agent
+Oracle Enterprise Manager Cloud Control 13c Release 5
+Copyright (c) 1996, 2015 Oracle Corporation.  All rights reserved.
+Starting agent .............................................. started.
+*Repeat the steps 1 to 14 for each node in the cluster before moving to next step
+
+start thge listener
+start the database
+
+===============================================================================================================================================
+INVENTORY VERIFICTION
+
+## Run as oracle
+
+$ORACLE_HOME/OPatch/opatch lsinv
+$ORACLE_HOME/OPatch/opatch lsinv |grep -i applied | sort -n
+
+It should return
+
+29613245
+34150264
+34969678
+35638318
+35643107
+35648110
+35655527
+35857781
+============================================================================================================================================================
+
+Run the datapatch into the database. 
+
+Disable maintenance job before running data patch jobs
+
+## Run as oracle
+
+   cd $ORACLE_HOME/rdbms/admin
+   sqlplus /nolog
+   SQL> CONNECT / AS SYSDBA
+   SQL> startup
+   SQL> QUIT
+
+Note: Datapatch will not get applied to offline pdbs, hence its strongly suggested to bring the pdbs online before starting datapatch.
+      
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant disable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER disable"
+
+$ORACLE_HOME/OPatch/datapatch -prereq
+
+$ORACLE_HOME/OPatch/datapatch -sanity_checks
+
+cd $ORACLE_HOME/OPatch
+nohup ./datapatch -verbose & (45 -1 hour)
+
+cd $ORACLE_HOME/rdbms/admin
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_llsts -- --x"alter trigger sys.llsts_grant enable"
+$ORACLE_HOME/perl/bin/perl catcon.pl -e -l /tmp/mtest -b disable_RESTRICT_CREATE_USER -- --x"alter trigger sys.RESTRICT_CREATE_USER enable"
+
+## use .oraenv to switch to any remaining DB instances and run the datapatch 
+
+Recreate DATA_PUMP_DIR directory path to its original location. ( It should not be in ORACLE_HOME path).
+Col owner for a30
+Col directory_name for a30
+Col directory_path for a120
+select * from dba_directories  where DIRECTORY_NAME='DATA_PUMP_DIR';
+
+create or replace directory DATA_PUMP_DIR as 'original path'; - ignored
+
+=======================================================================================================================================================================
+DAM AGENT START
+===============
+
+inform DAM team, to start the agent.
+
+=======================================================================================================================================================================

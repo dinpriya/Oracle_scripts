@@ -1,0 +1,155 @@
+POHK1API
+
+srvctl status service -d pohk1api
+Service svc_pohk1api_api_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_api_gl_onl is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_onl is running on instance(s) POHK1API3
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         3 svc_pohk1api_api_gl_onl                                                1485 12 May 2024 03:37:08 12 May 2024 08:56:30
+         3 svc_pohk1api_hkjc_gl_onl                                                281 12 May 2024 08:27:38 12 May 2024 08:56:21
+
+POHK1CCD
+
+srvctl status service -d pohk1ccd
+Service svc_pohk1ccd_cci_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ccs_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ccs_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb3_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg3_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_pay_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_pay_gl_onl is running on instance(s) POHK1CCD1,POHK1CCD3
+Service svc_pohk1ccd_rta_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_meg_gl_onl is running on instance(s) POHK1CCD1
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         1 svc_pohk1ccd_cci_jmb_gl_onl                                             176 11 May 2024 23:20:15 12 May 2024 08:53:52
+         1 svc_pohk1ccd_cci_meg_gl_onl                                             204 11 May 2024 23:23:09 12 May 2024 08:55:31
+         1 svc_pohk1ccd_ccs_gl_onl                                                1826 11 May 2024 22:08:28 12 May 2024 08:57:31
+         1 svc_pohk1ccd_cyc_gl_onl                                                 127 11 May 2024 23:27:12 12 May 2024 08:56:35
+         1 svc_pohk1ccd_etl_jmb2_gl_onl                                            164 11 May 2024 23:47:52 12 May 2024 08:52:25
+         1 svc_pohk1ccd_etl_jmb3_gl_onl                                            176 11 May 2024 23:33:47 12 May 2024 08:52:03
+         1 svc_pohk1ccd_etl_jmb_gl_onl                                             173 11 May 2024 23:50:04 12 May 2024 08:57:20
+         1 svc_pohk1ccd_etl_meg2_gl_onl                                            171 11 May 2024 23:52:37 12 May 2024 08:50:17
+         1 svc_pohk1ccd_etl_meg3_gl_onl                                            157 11 May 2024 23:35:37 12 May 2024 08:54:17
+         1 svc_pohk1ccd_etl_meg_gl_onl                                             174 11 May 2024 23:54:33 12 May 2024 08:57:31
+         1 svc_pohk1ccd_idc_jmb2_gl_onl                                            161 12 May 2024 05:45:53 12 May 2024 08:51:06
+         1 svc_pohk1ccd_idc_jmb_gl_onl                                             164 12 May 2024 05:45:18 12 May 2024 08:50:40
+         1 svc_pohk1ccd_idc_meg2_gl_onl                                            163 12 May 2024 05:56:54 12 May 2024 08:51:44
+         1 svc_pohk1ccd_idc_meg_gl_onl                                             175 12 May 2024 06:08:33 12 May 2024 08:53:21
+         1 svc_pohk1ccd_ipc_jmb2_gl_onl                                            208 12 May 2024 00:05:06 12 May 2024 08:54:10
+         1 svc_pohk1ccd_ipc_jmb_gl_onl                                             175 12 May 2024 00:06:10 12 May 2024 08:54:39
+         1 svc_pohk1ccd_ipc_meg2_gl_onl                                            155 12 May 2024 00:07:43 12 May 2024 08:54:38
+         1 svc_pohk1ccd_ipc_meg_gl_onl                                             203 12 May 2024 00:08:38 12 May 2024 08:54:41
+         1 svc_pohk1ccd_ldr_jmb2_gl_onl                                            172 12 May 2024 00:10:47 12 May 2024 08:51:23
+         1 svc_pohk1ccd_ldr_jmb_gl_onl                                             174 11 May 2024 23:28:08 12 May 2024 08:49:36
+         1 svc_pohk1ccd_ldr_meg2_gl_onl                                            175 12 May 2024 00:12:22 12 May 2024 08:55:40
+         1 svc_pohk1ccd_ldr_meg_gl_onl                                             193 12 May 2024 05:22:03 12 May 2024 08:54:47
+         1 svc_pohk1ccd_npc_jmb2_gl_onl                                            210 12 May 2024 00:14:38 12 May 2024 08:55:32
+         1 svc_pohk1ccd_npc_jmb_gl_onl                                             206 12 May 2024 00:16:38 12 May 2024 08:56:35
+         1 svc_pohk1ccd_npc_meg2_gl_onl                                            183 12 May 2024 00:18:21 12 May 2024 08:50:37
+         1 svc_pohk1ccd_npc_meg_gl_onl                                             186 12 May 2024 00:20:24 12 May 2024 08:57:26
+         1 svc_pohk1ccd_pay_gl_onl                                                 464 11 May 2024 23:17:00 12 May 2024 08:57:29
+         3 svc_pohk1ccd_pay_gl_onl                                                 462 12 May 2024 03:36:32 12 May 2024 08:56:45
+
+POHK2CCD
+
+srvctl status service -d pohk2ccd
+Service svc_pohk2ccd_aic_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_bat is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_ngo_gl_bat is running on instance(s) POHK2CCD2
+Service svc_pohk2ccd_ngo_gl_onl is running on instance(s) POHK2CCD2
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         1 svc_pohk2ccd_fwb_gl_onl                                                 280 12 May 2024 08:27:32 12 May 2024 08:55:57
+         2 svc_pohk2ccd_ngo_gl_onl                                                1912 12 May 2024 07:37:50 12 May 2024 08:55:57
+
+POHK3CCD
+
+srvctl status service -d pohk3ccd
+Service svc_pohk3ccd_cas_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_cas_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tdc_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tdc_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tng_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tng_gl_onl is running on instance(s) POHK3CCD1
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         1 svc_pohk3ccd_cas_gl_onl                                                 473 11 May 2024 22:34:21 12 May 2024 09:01:59
+         1 svc_pohk3ccd_tdc_gl_onl                                                 336 11 May 2024 22:34:05 12 May 2024 09:01:56
+         1 svc_pohk3ccd_tng_gl_onl                                                 178 11 May 2024 22:34:15 12 May 2024 09:01:58
+
+POHK4CCD
+
+srvctl status service -d pohk4ccd
+Service svc_pohk4ccd_cad_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cad_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cop_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cop_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_onl is running on instance(s) POHK4CCD3
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         3 svc_pohk4ccd_cad_gl_onl                                                 111 12 May 2024 03:31:05 12 May 2024 09:01:33
+         3 svc_pohk4ccd_cop_gl_onl                                                 259 12 May 2024 08:29:25 12 May 2024 09:02:24
+         3 svc_pohk4ccd_srs_gl_onl                                                 323 12 May 2024 03:49:26 12 May 2024 09:02:15
+
+POHK5CCD
+
+srvctl status service -d pohk5ccd
+Service svc_pohk5ccd_inf_gl_onl is running on instance(s) POHK5CCD1
+Service svc_pohk5ccd_ngw_gl_bat is running on instance(s) POHK5CCD3
+Service svc_pohk5ccd_ngw_gl_onl is running on instance(s) POHK5CCD3
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         1 svc_pohk5ccd_inf_gl_onl                                                 575 11 May 2024 22:23:24 12 May 2024 09:02:34
+         3 svc_pohk5ccd_ngw_gl_onl                                                1525 12 May 2024 03:30:41 12 May 2024 09:02:44
+
+POHK1CAT
+
+ srvctl status service -d pohk1cat
+Service svc_pohk1cat_api_gl_onl is running on instance(s) POHK1CAT3
+Service svc_pohk1cat_ccs_gl_onl is running on instance(s) POHK1CAT1
+
+   INST_ID SERVICE_NAME                                                       COUNT(*) MINT                 MAXT
+---------- ---------------------------------------------------------------- ---------- -------------------- --------------------
+         1 svc_pohk1cat_ccs_gl_onl                                                 445 11 May 2024 22:06:49 12 May 2024 09:03:07

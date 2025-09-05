@@ -1,0 +1,687 @@
+/ora_dump/patch/19c_autoupgrade		<<<<<<<<<< THIS IS THE LOG FILE LOCATION FOR AUTOUPGRADE.JAR
+
+/u01/app/oracle/product/db/19.14.0.0.Jan2022/rdbms/admin	<<<<<<<<<< THE LOCATION OF AUTOUPGRADE.JAR FILE
+
+======================================================================================================================================================
+Config File : TOHK1_PDBT_NPP.cfg			<<<<<<<<<< EXAMPLE OF CONFIG FILE FOR AUTOUPGRADE.JAR
+------------------------------------
+
+global.autoupg_log_dir=/ora_dump/patch/19c_autoupgrade
+
+upg1.source_home=/u01/app/oracle/product/db/12cR2
+upg1.target_home=/u01/app/oracle/product/db/19.14.0.0.Jan2022
+upg1.sid=TOHK1NPP1
+upg1.pdbs=PDBT_NPP
+upg1.target_cdb=TOHK1SCP1
+upg1.log_dir=/ora_dump/patch/19c_autoupgrade
+
+
+======================================================================================================================================================
+ANALYZE COMMAND
+---------------
+java -jar /u01/app/oracle/product/db/19.14.0.0.Jan2022/rdbms/admin/autoupgrade.jar -mode analyze -config TOHK1_PDBT_NPP.cfg
+
+DEPLOY / UPGRADE COMMAND
+------------------------
+java -jar /u01/app/oracle/product/db/19.14.0.0.Jan2022/rdbms/admin/autoupgrade.jar -mode deploy -config TOHK1_PDBT_NPP.cfg
+
+======================================================================================================================================================
+
+ANALYZE RESULT
+##############
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1NPP1]
+> java -jar /u01/app/oracle/product/db/19.14.0.0.Jan2022/rdbms/admin/autoupgrade.jar -mode analyze -config TOHK1_PDBT_NPP.cfg
+AutoUpgrade 21.2.210721 launched with default options
+Processing config file ...
++--------------------------------+
+| Starting AutoUpgrade execution |
++--------------------------------+
+1 databases will be analyzed
+Type 'help' to list console commands
+upg> lsj
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+|Job#|  DB_NAME|    STAGE|OPERATION| STATUS|    START_TIME| UPDATED|                     MESSAGE|
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+| 105|TOHK1NPP1|PRECHECKS|PREPARING|RUNNING|22/03/15 08:21|08:21:55|Loading database information|
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+Total jobs 1
+
+upg> status -job 105
+Progress
+-----------------------------------
+Start time:      22/03/15 08:21
+Elapsed (min):   1
+End time:        N/A
+Last update:     2022-03-15T08:21:55.616
+Stage:           PRECHECKS
+Operation:       PREPARING
+Status:          RUNNING
+Pending stages:  1
+Stage summary:
+    SETUP             <1 min
+    PRECHECKS         <1 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/105
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/105/prechecks
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
+Checks
+
+Error Details:
+None
+
+upg> Job 105 completed
+------------------- Final Summary --------------------
+Number of databases            [ 1 ]
+
+Jobs finished                  [1]
+Jobs failed                    [0]
+Jobs pending                   [0]
+
+Please check the summary report at:
+/ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.html
+/ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.log
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1NPP1]
+
+> date
+Tue Mar 15 08:22:19 HKT 2022
+
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1NPP1]
+> more /ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.log
+==========================================
+          Autoupgrade Summary Report
+==========================================
+[Date]           Tue Mar 15 08:22:08 HKT 2022
+[Number of Jobs] 1
+==========================================
+[Job ID] 105
+==========================================
+[DB Name]                TOHK1NPP
+[Version Before Upgrade] 12.2.0.1.0
+[Version After Upgrade]  19.14.0.0.0
+------------------------------------------
+[Stage Name]    PRECHECKS
+[Status]        SUCCESS
+[Start Time]    2022-03-15 08:21:55
+[Duration]      0:00:12
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/105/prechecks
+[Detail]        /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/105/prechecks/tohk1npp_preupgrade.log
+                Precheck passed and no manual intervention needed
+------------------------------------------
+
+
+##############################################################################################################################################################################################
+
+UPGRADE PROCESS STARTED AT 09:03AM HKT
+--------------------------------------
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1SCP1]
+> date
+Tue Mar 15 09:03:16 HKT 2022
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1SCP1]
+> java -jar /u01/app/oracle/product/db/19.14.0.0.Jan2022/rdbms/admin/autoupgrade.jar -mode deploy -config TOHK1_PDBT_NPP.cfg
+AutoUpgrade 21.2.210721 launched with default options
+Processing config file ...
++--------------------------------+
+| Starting AutoUpgrade execution |
++--------------------------------+
+1 databases will be processed
+Type 'help' to list console commands
+upg> lsj
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+|Job#|  DB_NAME|    STAGE|OPERATION| STATUS|    START_TIME| UPDATED|                     MESSAGE|
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+| 106|TOHK1NPP1|PREFIXUPS|EXECUTING|RUNNING|22/03/15 09:03|09:03:55|Loading database information|
++----+---------+---------+---------+-------+--------------+--------+----------------------------+
+Total jobs 1
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   1
+End time:        N/A
+Last update:     2022-03-15T09:03:59.488
+Stage:           PREFIXUPS
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  9
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         <1 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/prefixups
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
++---------+----------------------+--------+
+|CONTAINER|                 FIXUP|  STATUS|
++---------+----------------------+--------+
+| PDBT_NPP|UNIAUD_RECORDS_IN_FILE|FINISHED|
+| PDBT_NPP| INVALID_OBJECTS_EXIST| STARTED|
++---------+----------------------+--------+
+
+Error Details:
+None
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+09:10:35 SYS @ TOHK1SCP1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBT_NPP                       MIGRATE    YES
+09:10:39 SYS @ TOHK1SCP1:CDB$ROOT:>!date
+Tue Mar 15 09:10:44 HKT 2022
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   8
+End time:        N/A
+Last update:     2022-03-15T09:09:48.122
+Stage:           DBUPGRADE
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  7
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         3 min
+    DRAIN             1 min
+    DBUPGRADE         1 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/dbupgrade
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
+[Upgrading] is [0%] completed for [tohk1npp-pdbt_npp]
+                 +---------+------------+
+                 |CONTAINER|  PERCENTAGE|
+                 +---------+------------+
+                 | PDBT_NPP|UPGRADE [0%]|
+                 +---------+------------+
+
+Error Details:
+None
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+09:20:15 SYS @ TOHK1SCP1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBT_NPP                       MOUNTED
+09:23:57 SYS @ TOHK1SCP1:CDB$ROOT:>!date
+Tue Mar 15 09:24:03 HKT 2022
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   21
+End time:        N/A
+Last update:     2022-03-15T09:24:10.142
+Stage:           POSTFIXUPS
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  4
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         3 min
+    DRAIN             1 min
+    DBUPGRADE         14 min
+    NONCDBTOPDBXY     <1 min
+    POSTCHECKS        <1 min
+    POSTFIXUPS        <1 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postfixups
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
++---------+----------+-------+
+|CONTAINER|     FIXUP| STATUS|
++---------+----------+-------+
+| PDBT_NPP|POST_UTLRP|STARTED|
++---------+----------+-------+
+
+Error Details:
+None
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+09:24:03 SYS @ TOHK1SCP1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBT_NPP                       READ WRITE YES
+09:25:51 SYS @ TOHK1SCP1:CDB$ROOT:>!date
+Tue Mar 15 09:26:04 HKT 2022
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   23
+End time:        N/A
+Last update:     2022-03-15T09:26:31.150
+Stage:           POSTFIXUPS
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  4
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         3 min
+    DRAIN             1 min
+    DBUPGRADE         14 min
+    NONCDBTOPDBXY     <1 min
+    POSTCHECKS        <1 min
+    POSTFIXUPS        2 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postfixups
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
++---------+------------------+--------+
+|CONTAINER|             FIXUP|  STATUS|
++---------+------------------+--------+
+| PDBT_NPP|        POST_UTLRP|FINISHED|
+| PDBT_NPP|TIMESTAMP_MISMATCH|FINISHED|
+| PDBT_NPP|   POST_DICTIONARY| STARTED|
++---------+------------------+--------+
+
+Error Details:
+None
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   25
+End time:        N/A
+Last update:     2022-03-15T09:27:19.156
+Stage:           POSTFIXUPS
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  4
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         3 min
+    DRAIN             1 min
+    DBUPGRADE         14 min
+    NONCDBTOPDBXY     <1 min
+    POSTCHECKS        <1 min
+    POSTFIXUPS        4 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postfixups
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
++---------+--------------------+--------+
+|CONTAINER|               FIXUP|  STATUS|
++---------+--------------------+--------+
+| PDBT_NPP|          POST_UTLRP|FINISHED|
+| PDBT_NPP|  TIMESTAMP_MISMATCH|FINISHED|
+| PDBT_NPP|     POST_DICTIONARY|FINISHED|
+| PDBT_NPP|OLD_TIME_ZONES_EXIST| STARTED|
++---------+--------------------+--------+
+
+Error Details:
+None
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+09:28:54 SYS @ TOHK1SCP1:CDB$ROOT:>show pdbs;
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBT_NPP                       READ WRITE NO
+09:28:56 SYS @ TOHK1SCP1:CDB$ROOT:>!date
+Tue Mar 15 09:29:00 HKT 2022
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+upg> status -job 106
+Progress
+-----------------------------------
+Start time:      22/03/15 09:03
+Elapsed (min):   26
+End time:        N/A
+Last update:     2022-03-15T09:29:19.444
+Stage:           POSTUPGRADE
+Operation:       EXECUTING
+Status:          RUNNING
+Pending stages:  3
+Stage summary:
+    SETUP             <1 min
+    PREUPGRADE        <1 min
+    PRECHECKS         <1 min
+    PREFIXUPS         3 min
+    DRAIN             1 min
+    DBUPGRADE         14 min
+    NONCDBTOPDBXY     <1 min
+    POSTCHECKS        <1 min
+    POSTFIXUPS        5 min
+    POSTUPGRADE       <1 min (IN PROGRESS)
+
+Job Logs Locations
+-----------------------------------
+Logs Base:    /ora_dump/patch/19c_autoupgrade/TOHK1NPP1
+Job logs:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106
+Stage logs:   /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postupgrade
+TimeZone:     /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/temp
+
+Additional information
+-----------------------------------
+Details:
+Database State
+        Resetting the database's state: [SUCCESS] [None]
+
+Restart of pdb(s) created in database [TOHK1NPP]
+        [PENDING] [None]
+
+Validting PDB [PDBT_NPP]
+        [PENDING] [None]
+
+
+
+Error Details:
+None
+
+upg> Job 106 completed
+------------------- Final Summary --------------------
+Number of databases            [ 1 ]
+
+Jobs finished                  [1]
+Jobs failed                    [0]
+Jobs pending                   [0]
+
+
+
+Please check the summary report at:
+/ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.html
+/ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.log
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1SCP1]
+> more /ora_dump/patch/19c_autoupgrade/cfgtoollogs/upgrade/auto/status/status.log
+==========================================
+          Autoupgrade Summary Report
+==========================================
+[Date]           Tue Mar 15 09:29:27 HKT 2022
+[Number of Jobs] 1
+==========================================
+[Job ID] 106
+==========================================
+[DB Name]                TOHK1NPP
+[Version Before Upgrade] 12.2.0.1.0
+[Version After Upgrade]  19.14.0.0.0
+------------------------------------------
+[Stage Name]    PREUPGRADE
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:03:47
+[Duration]      0:00:00
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/preupgrade
+------------------------------------------
+[Stage Name]    PRECHECKS
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:03:47
+[Duration]      0:00:08
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/prechecks
+[Detail]        /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/prechecks/tohk1npp_preupgrade.log
+                Precheck passed and no manual intervention needed
+------------------------------------------
+[Stage Name]    PREFIXUPS
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:03:55
+[Duration]      0:03:57
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/prefixups
+------------------------------------------
+[Stage Name]    DRAIN
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:07:53
+[Duration]      0:01:49
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/drain
+------------------------------------------
+[Stage Name]    DBUPGRADE
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:09:42
+[Duration]      0:14:21
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/dbupgrade
+------------------------------------------
+[Stage Name]    NONCDBTOPDBXY
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:24:03
+[Duration]      0:00:00
+------------------------------------------
+[Stage Name]    POSTCHECKS
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:24:03
+[Duration]      0:00:05
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postchecks
+[Detail]        /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postchecks/tohk1npp_postupgrade.log
+------------------------------------------
+[Stage Name]    POSTFIXUPS
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:24:09
+[Duration]      0:05:10
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postfixups
+------------------------------------------
+[Stage Name]    POSTUPGRADE
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:29:19
+[Duration]      0:00:07
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/postupgrade
+------------------------------------------
+[Stage Name]    SYSUPDATES
+[Status]        SUCCESS
+[Start Time]    2022-03-15 09:29:27
+[Duration]      0:00:00
+[Log Directory] /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/sysupdates
+------------------------------------------
+Upgrade Summary: /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/dbupgrade/upg_summary.log
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+oracle@HKLPDTNPP001:/ora_dump/patch/19c_autoupgrade [TOHK1SCP1]
+> more /ora_dump/patch/19c_autoupgrade/TOHK1NPP1/106/dbupgrade/upg_summary.log
+
+Oracle Database Release 19 Post-Upgrade Status Tool    03-15-2022 09:23:3
+Container Database: TOHK1SCP
+[CON_ID: 3 => PDBT_NPP]
+
+Component                               Current         Full     Elapsed Time
+Name                                    Status          Version  HH:MM:SS
+
+Oracle Server                          UPGRADED     19.14.0.0.0  00:07:53
+JServer JAVA Virtual Machine           UPGRADED     19.14.0.0.0  00:00:44
+Oracle XDK                             UPGRADED     19.14.0.0.0  00:00:29
+Oracle Database Java Packages          UPGRADED     19.14.0.0.0  00:00:04
+OLAP Analytic Workspace                UPGRADED     19.14.0.0.0  00:00:05
+Oracle Label Security                  UPGRADED     19.14.0.0.0  00:00:02
+Oracle Database Vault                  UPGRADED     19.14.0.0.0  00:00:19
+Oracle Text                            UPGRADED     19.14.0.0.0  00:00:12
+Oracle Workspace Manager               UPGRADED     19.14.0.0.0  00:00:18
+Oracle Real Application Clusters       UPGRADED     19.14.0.0.0  00:00:00
+Oracle XML Database                    UPGRADED     19.14.0.0.0  00:00:46
+Oracle Multimedia                      UPGRADED     19.14.0.0.0  00:00:06
+Spatial                                UPGRADED     19.14.0.0.0  00:01:49
+Oracle OLAP API                        UPGRADED     19.14.0.0.0  00:00:06
+Datapatch                                                        00:00:25
+Final Actions                                                    00:00:30
+Post Upgrade                                                     00:00:00
+
+Total Upgrade Time: 00:13:38 [CON_ID: 3 => PDBT_NPP]
+
+Database time zone version is 26. It is older than current release time
+zone version 32. Time zone upgrade is needed using the DBMS_DST package.
+
+Grand Total Upgrade Time:    [0d:0h:14m:11s]
+
+
+TIME ZONE ACTUALLY UPGRADED TO 32 ON CDB AND PDB
+================================================
+PROPERTY_NAME                                 VALUE
+--------------------------------------------- ---------------
+DST_PRIMARY_TT_VERSION                        32	<<<<<<<<<<<<<<<<<<<<<<
+DST_SECONDARY_TT_VERSION                      0
+DST_UPGRADE_STATE                             NONE
+
+3 rows selected.
+
+09:40:50 SYS @ TOHK1SCP1:CDB$ROOT:>show con_name
+
+CON_NAME
+------------------------------
+PDBT_NPP
+
+
+
+
+
+
+
+------------------------------------------
+
+REMEMBER THIS EMAIL FORWARDED -> FW: Open items for this month - Aug 2021
+
+======================================================================================================================================================
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 PDBT_NPP_BD                    READ WRITE NO
+         4 PDBT_NPP                       READ WRITE NO		<<<<< THIS ONE FIRST TO UPGRADE IN THIS NOTE
+         5 PDBT_NPP_HK                    READ WRITE NO
+         6 PDBT_NPP_TST                   READ WRITE NO
+         7 PDBT_NPP_DEV                   READ WRITE NO
+         8 PDBT_NPP_SIT                   READ WRITE NO
+         9 PDBT_NPP_PTR                   READ WRITE NO
+
+
+=======================================================================================================================================================
+IMPORTANT !!!!
+
+MANUALLY RESET PASSWORD FOR users “SNAS_APP” and “SNAS_APP_DEV”
+FIX THE TNSNAMES.ORA FILE
+DATABASE SERVICES RECREATE FOR PDBT_NPP
+---------------------------------------
+
+select NAME,NETWORK_NAME,CREATION_DATE,ENABLED,PDB from cdb_services;
+
+ON NEW 19c CDB
+==============
+NAME                                                    NETWORK_NAME                                            CREATION_DATE        ENA PDB
+------------------------------------------------------- ------------------------------------------------------- -------------------- --- ---------------
+SYS$BACKGROUND                                                                                                  17 Apr 2019 00:57:03 NO  CDB$ROOT
+SYS$USERS                                                                                                       17 Apr 2019 00:57:03 NO  CDB$ROOT
+TOHK1SCPXDB                                             TOHK1SCPXDB                                             10 Mar 2022 16:55:17 NO  CDB$ROOT
+TOHK1SCP.hk.standardchartered.com                       TOHK1SCP.hk.standardchartered.com                       10 Mar 2022 16:55:17 NO  CDB$ROOT
+PDBT_SCPAY_SVC.hk.standardchartered.com                 PDBT_SCPAY_SVC.hk.standardchartered.com                 22 Apr 2019 16:36:59 NO  PDBT_NPP
+PDBT_SNAS_SCPAY_SVC.hk.standardchartered.com            PDBT_SNAS_SCPAY_SVC.hk.standardchartered.com            04 Mar 2020 22:28:33 NO  PDBT_NPP
+pdbt_npp                                                pdbt_npp                                                15 Mar 2022 09:09:42 NO  PDBT_NPP
+
+7 rows selected.
+
+
+IN OLD 12c
+----------
+srvctl remove service -db TOHK1NPP -service PDBT_SCPAY_SVC.hk.standardchartered.com
+srvctl remove service -db TOHK1NPP -service PPDBT_SNAS_SCPAY_SVC.hk.standardchartered.com
+
+IN NEW 19c
+----------
+oracle@HKLPDTNPP001:/home/oracle [TOHK1SCP1]
+> srvctl add service -db TOHK1SCP -service PDBT_SCPAY_SVC.hk.standardchartered.com -pdb PDBT_NPP -role PRIMARY -preferred "TOHK1SCP1,TOHK1SCP2"
+> srvctl add service -db TOHK1SCP -service PDBT_SNAS_SCPAY_SVC.hk.standardchartered.com -pdb PDBT_NPP -role PRIMARY -preferred "TOHK1SCP1,TOHK1SCP2"
+
+srvctl start service -db TOHK1SCP -service PDBT_SCPAY_SVC.hk.standardchartered.com
+srvctl start service -db TOHK1SCP -service PDBT_SNAS_SCPAY_SVC.hk.standardchartered.com
+
+
+
+ON EXISTING 12c CDB
+===================
+NAME                                                    NETWORK_NAME                                            CREATION_DATE        ENA PDB
+------------------------------------------------------- ------------------------------------------------------- -------------------- --- --------------------
+SYS$BACKGROUND                                                                                                  26 Jan 2017 13:54:44 NO  CDB$ROOT
+SYS$USERS                                                                                                       26 Jan 2017 13:54:44 NO  CDB$ROOT
+TOHK1NPPXDB                                             TOHK1NPPXDB                                             22 Apr 2019 12:13:38 NO  CDB$ROOT
+TOHK1NPP.hk.standardchartered.com                       TOHK1NPP.hk.standardchartered.com                       22 Apr 2019 12:13:38 NO  CDB$ROOT
+pdbt_npp_bd.hk.standardchartered.com                    pdbt_npp_bd.hk.standardchartered.com                    07 May 2019 14:38:15 NO  PDBT_NPP_BD
+PDBT_BD_SCPAY_SVC.hk.standardchartered.com              PDBT_BD_SCPAY_SVC.hk.standardchartered.com              07 May 2019 14:40:39 NO  PDBT_NPP_BD
+pdbt_npp_hk.hk.standardchartered.com                    pdbt_npp_hk.hk.standardchartered.com                    07 May 2019 14:48:17 NO  PDBT_NPP_HK
+PDBT_HK_SCPAY_SVC.hk.standardchartered.com              PDBT_HK_SCPAY_SVC.hk.standardchartered.com              07 May 2019 14:49:45 NO  PDBT_NPP_HK
+PDBT_SG_SCPAY_SVC.hk.standardchartered.com              PDBT_SG_SCPAY_SVC.hk.standardchartered.com              18 Mar 2020 21:12:19 NO  PDBT_NPP_HK
+pdbt_npp_tst.hk.standardchartered.com                   pdbt_npp_tst.hk.standardchartered.com                   20 Nov 2019 21:48:11 NO  PDBT_NPP_TST
+PDBT_NPP_TST_SCPAY_SVC.hk.standardchartered.com         PDBT_NPP_TST_SCPAY_SVC.hk.standardchartered.com         20 Nov 2019 22:09:27 NO  PDBT_NPP_TST
+pdbt_npp_dev.hk.standardchartered.com                   pdbt_npp_dev.hk.standardchartered.com                   20 Nov 2019 21:48:34 NO  PDBT_NPP_DEV
+PDBT_NPP_DEV_SCPAY_SVC.hk.standardchartered.com         PDBT_NPP_DEV_SCPAY_SVC.hk.standardchartered.com         20 Nov 2019 22:22:45 NO  PDBT_NPP_DEV
+pdbt_npp_sit.hk.standardchartered.com                   pdbt_npp_sit.hk.standardchartered.com                   20 Nov 2019 21:56:52 NO  PDBT_NPP_SIT
+PDBT_NPP_SIT_SCPAY_SVC.hk.standardchartered.com         PDBT_NPP_SIT_SCPAY_SVC.hk.standardchartered.com         20 Nov 2019 22:23:07 NO  PDBT_NPP_SIT
+PDBT_SIT_IN_SCPAY_SVC.hk.standardchartered.com          PDBT_SIT_IN_SCPAY_SVC.hk.standardchartered.com          18 Mar 2020 21:18:24 NO  PDBT_NPP_SIT
+PDBT_RTGS_SCPAY_SVC.hk.standardchartered.com            PDBT_RTGS_SCPAY_SVC.hk.standardchartered.com            15 Oct 2020 15:20:54 NO  PDBT_NPP_SIT
+PDBT_BT_SCPAY_SVC.hk.standardchartered.com              PDBT_BT_SCPAY_SVC.hk.standardchartered.com              10 Nov 2020 15:21:20 NO  PDBT_NPP_SIT
+pdbt_npp_ptr.hk.standardchartered.com                   pdbt_npp_ptr.hk.standardchartered.com                   20 Nov 2019 21:58:07 NO  PDBT_NPP_PTR
+PDBT_NPP_PTR_SCPAY_SVC.hk.standardchartered.com         PDBT_NPP_PTR_SCPAY_SVC.hk.standardchartered.com         20 Nov 2019 22:23:00 NO  PDBT_NPP_PTR
+PDBT_PREPRODHK_SCPAY_SVC.hk.standardchartered.com       PDBT_PREPRODHK_SCPAY_SVC.hk.standardchartered.com       29 Nov 2020 17:06:40 NO  PDBT_NPP_PTR
+PDBT_REGGBL_SCPAY_SVC.hk.standardchartered.com          PDBT_REGGBL_SCPAY_SVC.hk.standardchartered.com          04 Oct 2021 16:33:00 NO  PDBT_NPP_PTR
+
+22 rows selected.

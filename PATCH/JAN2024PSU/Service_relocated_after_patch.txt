@@ -1,0 +1,79 @@
+> srvctl status service -d pohk1api
+Service svc_pohk1api_api_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_api_gl_onl is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_onl is running on instance(s) POHK1API3
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+> srvctl status service -d pohk1ccd
+Service svc_pohk1ccd_cci_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ccs_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ccs_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb3_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg3_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_jmb2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_meg2_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_pay_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_pay_gl_onl is running on instance(s) POHK1CCD1,POHK1CCD3
+Service svc_pohk1ccd_rta_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_meg_gl_onl is running on instance(s) POHK1CCD1
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+srvctl status service -d POHK2CCD
+Service svc_pohk2ccd_aic_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_bat is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_ngo_gl_bat is running on instance(s) POHK2CCD2
+Service svc_pohk2ccd_ngo_gl_onl is running on instance(s) POHK2CCD2
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+> srvctl status service -d pohk3ccd
+Service svc_pohk3ccd_cas_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_cas_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tdc_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tdc_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tng_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tng_gl_onl is running on instance(s) POHK3CCD1
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+> srvctl status service -d pohk4ccd
+Service svc_pohk4ccd_cad_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cad_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cop_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cop_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_onl is running on instance(s) POHK4CCD3
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+> srvctl status service -d pohk5ccd
+Service svc_pohk5ccd_inf_gl_onl is running on instance(s) POHK5CCD1
+Service svc_pohk5ccd_ngw_gl_bat is running on instance(s) POHK5CCD3
+Service svc_pohk5ccd_ngw_gl_onl is running on instance(s) POHK5CCD3
+oracle@HKLPDPS2B002:/u01/app/oracle/local/scripts [POHK1API2]
+> srvctl status service -d pohk1CAT
+Service svc_pohk1cat_api_gl_onl is running on instance(s) POHK1CAT3
+Service svc_pohk1cat_ccs_gl_onl is running on instance(s) POHK1CAT1
