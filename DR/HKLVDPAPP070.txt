@@ -1,0 +1,118 @@
+> cd  orawallet/
+oracle@hklvdpapp070:/oracle/SPP/orawallet [SPP]
+> sudo -u oraspp -i
+hklvdpapp070:oraspp 51>
+hklvdpapp070:oraspp 51>
+hklvdpapp070:oraspp 51> mkstore -wrl /oracle/SPP/orawallet -listCredential
+Oracle Secret Store Tool Release 23.0.0.0.0 - Production
+Version 23.0.0.0.0
+Copyright (c) 2004, 2021, Oracle and/or its affiliates. All rights reserved.
+
+Enter wallet password:
+
+oracle@hklvdpapp070:/oracle/SPP/orawallet [SPP]
+> dgmgrl sys/XXXXX@SPP
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Fri Apr 28 17:43:56 2023
+Version 19.12.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "SPP"
+Connected as SYSDBA.
+DGMGRL>
+DGMGRL>
+DGMGRL> show configuration;
+
+Configuration - dgb_spp
+
+  Protection Mode: MaxAvailability
+  Members:
+  spp    - Primary database
+    spp_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 33 seconds ago)
+
+DGMGRL> show database spp
+
+Database - spp
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    SPP
+
+Database Status:
+SUCCESS
+
+DGMGRL>  show database spp_dg
+
+Database - spp_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 31.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    SPP_DG
+
+Database Status:
+SUCCESS
+
+
+
+DGMGRL> validate database spp
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    spp:  NO
+    Validating static connect identifier for the primary database spp...
+    The static connect identifier allows for a connection to database "spp".
+
+DGMGRL> validate database spp_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  spp
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Flashback Database Status:
+    spp   :  On
+    spp_dg:  Off
+
+  Managed by Clusterware:
+    spp   :  NO
+    spp_dg:  NO
+    Validating static connect identifier for the primary database spp...
+    The static connect identifier allows for a connection to database "spp".
+
+
+
+SQL> @chk_tbs.sql
+
+                            Total      Available   Percent
+       Tablespace           Mbytes       Mbytes     Used
+------------------------ ------------ ------------ -------
+PSAPSR3DB                      92,160       27,692   69.95
+SYSAUX                         12,288        4,663   62.05
+AUDIT_TBS                       3,072        1,879   38.83
+SYSTEM                          2,048        1,377   32.74
+PSAPUNDO                        2,560        2,443    4.57
+USERS                             100           99    1.00
+
+6 rows selected.
+
+
+no rows selected
+
+
+no rows selected

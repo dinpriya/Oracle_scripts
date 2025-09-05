@@ -1,0 +1,113 @@
+17:02:40 SYS @ POHK1DPK:CDB$ROOT:>alter session set container=PDBP_ICCD_PK;
+
+Session altered.
+
+17:02:51 SYS @ POHK1DPK:CDB$ROOT:>select mkeyid from enc$;
+
+no rows selected
+
+17:02:56 SYS @ POHK1DPK:CDB$ROOT:>set linesize 150
+17:03:12 SYS @ POHK1DPK:CDB$ROOT:>column name format a40
+17:03:12 SYS @ POHK1DPK:CDB$ROOT:>column masterkeyid_base64 format a60
+select name,utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) ||
+utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64 FROM (select t.name, RAWTOHEX(x.mkid) mkeyid from v$tablespace t, x$kcbtek x where t.ts#=x.ts#);
+17:03:12 SYS @ POHK1DPK:CDB$ROOT:>17:03:12   2
+NAME                                     MASTERKEYID_BASE64
+---------------------------------------- ------------------------------------------------------------
+SYSTEM                                   AbkZPrSBrk+Avyyk/dckqCU=
+SYSAUX                                   AbkZPrSBrk+Avyyk/dckqCU=
+UNDOTBS1                                 AbkZPrSBrk+Avyyk/dckqCU=
+AUDIT_TBS                                AQAAAAAAAAAAAAAAAAAAAAA=
+SCB_ADMIN_DATA                           AQAAAAAAAAAAAAAAAAAAAAA=
+USERS                                    AQAAAAAAAAAAAAAAAAAAAAA=
+ICDD2_SSI_DATA                           AQAAAAAAAAAAAAAAAAAAAAA=
+ICDD2_SSI_DATA_ENC                       AbkZPrSBrk+Avyyk/dckqCU=
+TEMP                                     AbkZPrSBrk+Avyyk/dckqCU=
+ICDD2_SSI_TEMP                           AbkZPrSBrk+Avyyk/dckqCU=
+
+10 rows selected.
+
+17:03:12 SYS @ POHK1DPK:CDB$ROOT:>select utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) || utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64
+FROM (select RAWTOHEX(mkid) mkeyid from x$kcbdbk);17:03:20   2
+
+MASTERKEYID_BASE64
+------------------------------------------------------------
+AbkZPrSBrk+Avyyk/dckqCU=
+
+17:03:22 SYS @ POHK1DPK:CDB$ROOT:>set linesize 150
+17:03:30 SYS @ POHK1DPK:CDB$ROOT:>column name format a30
+17:03:31 SYS @ POHK1DPK:CDB$ROOT:>column masterkeyid_base64 format a30
+select con_name , ts#, name as ts_name,utl_raw.cast_to_varchar2
+( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) ||
+utl_raw.cast_to_varchar2( utl_encode.base64_encode
+(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64
+FROM (select p.name as con_name, t.ts# , t.name, RAWTOHEX(x.mkid) mkeyid
+from v$tablespace t, x$kcbtek x, v$pdbs p
+where t.ts#=x.ts# and p.con_id=t.con_id and x.con_id=p.con_id)
+order by con_name, ts#;17:03:31 SYS @ POHK1DPK:CDB$ROOT:>17:03:31   2  17:03:31   3  17:03:31   4  17:03:31   5  17:03:31   6  17:03:31   7  17:03:31   8
+
+CON_NAME                              TS# TS_NAME                        MASTERKEYID_BASE64
+------------------------------ ---------- ------------------------------ ------------------------------
+PDBP_ICCD_PK                            0 SYSTEM                         AbkZPrSBrk+Avyyk/dckqCU=
+PDBP_ICCD_PK                            1 SYSAUX                         AbkZPrSBrk+Avyyk/dckqCU=
+PDBP_ICCD_PK                            2 UNDOTBS1                       AbkZPrSBrk+Avyyk/dckqCU=
+PDBP_ICCD_PK                            3 TEMP                           AbkZPrSBrk+Avyyk/dckqCU=
+PDBP_ICCD_PK                            4 AUDIT_TBS                      AQAAAAAAAAAAAAAAAAAAAAA=
+PDBP_ICCD_PK                            5 SCB_ADMIN_DATA                 AQAAAAAAAAAAAAAAAAAAAAA=
+PDBP_ICCD_PK                            6 USERS                          AQAAAAAAAAAAAAAAAAAAAAA=
+PDBP_ICCD_PK                            7 ICDD2_SSI_DATA                 AQAAAAAAAAAAAAAAAAAAAAA=
+PDBP_ICCD_PK                            8 ICDD2_SSI_TEMP                 AbkZPrSBrk+Avyyk/dckqCU=
+PDBP_ICCD_PK                            9 ICDD2_SSI_DATA_ENC             AbkZPrSBrk+Avyyk/dckqCU=
+
+
+
+On Standby, expected queries to fail as it was in mount mode.
+
+17:08:14 SYS @ POHK1DPK_DG:CDB$ROOT:>alter session set container=PDBP_ICCD_PK;
+
+Session altered.
+
+17:08:41 SYS @ POHK1DPK_DG:CDB$ROOT:>select mkeyid from enc$;
+select mkeyid from enc$
+                   *
+ERROR at line 1:
+ORA-01219: database or pluggable database not open: queries allowed on fixed tables or views only
+
+
+17:09:07 SYS @ POHK1DPK_DG:CDB$ROOT:>set linesize 150
+17:09:17 SYS @ POHK1DPK_DG:CDB$ROOT:>column name format a40
+17:09:17 SYS @ POHK1DPK_DG:CDB$ROOT:>column masterkeyid_base64 format a60
+select name,utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) ||
+utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64 FROM (select t.name, RAWTOHEX(x.mkid) mkeyid from v$tablespace t, x$kcbtek x where t.ts#=x.ts#);
+17:09:18 SYS @ POHK1DPK_DG:CDB$ROOT:>17:09:18   2  utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64 FROM (select t.name, RAWTOHEX(x.mkid) mkeyid from v$tablespace t, x$kcbtek x where t.ts#=x.ts#)
+                        *
+ERROR at line 2:
+ORA-00904: "UTL_RAW"."CAST_TO_VARCHAR2": invalid identifier
+
+
+17:09:18 SYS @ POHK1DPK_DG:CDB$ROOT:>select utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) || utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64
+FROM (select RAWTOHEX(mkid) mkeyid from x$kcbdbk);17:09:27   2
+select utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) || utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64
+                                                                                                                *
+ERROR at line 1:
+ORA-00904: "UTL_RAW"."CAST_TO_VARCHAR2": invalid identifier
+
+
+17:09:29 SYS @ POHK1DPK_DG:CDB$ROOT:>set linesize 150
+17:09:36 SYS @ POHK1DPK_DG:CDB$ROOT:>column name format a30
+17:09:37 SYS @ POHK1DPK_DG:CDB$ROOT:>column masterkeyid_base64 format a30
+select con_name , ts#, name as ts_name,utl_raw.cast_to_varchar2
+( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) ||
+utl_raw.cast_to_varchar2( utl_encode.base64_encode
+(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64
+FROM (select p.name as con_name, t.ts# , t.name, RAWTOHEX(x.mkid) mkeyid
+from v$tablespace t, x$kcbtek x, v$pdbs p
+where t.ts#=x.ts# and p.con_id=t.con_id and x.con_id=p.con_id)
+order by con_name, ts#;17:09:37 SYS @ POHK1DPK_DG:CDB$ROOT:>17:09:37   2  17:09:37   3  17:09:37   4  17:09:37   5  17:09:37   6  17:09:37   7  17:09:37   8
+utl_raw.cast_to_varchar2( utl_encode.base64_encode
+                        *
+ERROR at line 3:
+ORA-00904: "UTL_RAW"."CAST_TO_VARCHAR2": invalid identifier
+
+
+

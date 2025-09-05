@@ -1,0 +1,67 @@
+dgmgrl /@POHK1API
+
+dgmgrl /@POHK4CCD
+
+dgmgrl /@POHK5CCD
+
+
+switchover to pohk1api_dg
+
+switchover to pohk4ccd_dg
+
+switchover to pohk5ccd_dg
+
+
+01:57:39 SYS @ POHK5CCD_DG3:CDB$ROOT:>!srvctl status service -d POHK4CCD_DG
+Service svc_pohk4ccd_cad_gl_bat is not running.
+Service svc_pohk4ccd_cad_gl_onl is not running.
+Service svc_pohk4ccd_cop_gl_bat is not running.
+Service svc_pohk4ccd_cop_gl_onl is not running.
+Service svc_pohk4ccd_srs_gl_bat is not running.
+Service svc_pohk4ccd_srs_gl_onl is not running.
+
+01:57:53 SYS @ POHK5CCD_DG3:CDB$ROOT:>!srvctl status service -d POHK5CCD_DG
+Service svc_pohk5ccd_inf_gl_onl is not running.
+Service svc_pohk5ccd_ngw_gl_bat is not running.
+Service svc_pohk5ccd_ngw_gl_onl is not running.
+
+01:58:03 SYS @ POHK5CCD_DG3:CDB$ROOT:>!srvctl status service -d POHK1API_DG
+Service svc_pohk1api_api_gl_bat is not running.
+Service svc_pohk1api_api_gl_onl is not running.
+Service svc_pohk1api_hkjc_gl_bat is not running.
+Service svc_pohk1api_hkjc_gl_onl is not running.
+
+
+GGSCI (HKLPDPS2B003) 1> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+EXTRACT     RUNNING     ECASTIM1    00:00:00      00:00:01
+EXTRACT     RUNNING     ECASTIM2    00:00:04      00:00:02
+EXTRACT     RUNNING     ECASTIM3    00:00:00      00:00:01
+EXTRACT     RUNNING     ECASTIM4    00:00:03      00:00:02
+EXTRACT     RUNNING     ECASTIM5    00:00:00      00:00:09
+EXTRACT     RUNNING     EGLBIND1    00:00:00      00:00:01
+EXTRACT     RUNNING     EGLBIND2    00:00:03      00:00:01
+EXTRACT     RUNNING     EGLBIND3    00:00:04      00:00:05
+EXTRACT     RUNNING     EGLINBD1    00:00:03      00:00:10
+EXTRACT     RUNNING     EOLPCAD1    00:00:05      00:00:02
+EXTRACT     RUNNING     ESTARAD1    00:00:00      00:00:09
+EXTRACT     RUNNING     ETDCNGO1    00:00:03      00:00:06
+EXTRACT     RUNNING     PGLBIND1    00:00:00      00:00:03
+EXTRACT     RUNNING     PGLBIND2    00:00:00      00:00:02
+EXTRACT     RUNNING     PGLBIND3    00:00:00      00:00:05
+EXTRACT     RUNNING     PGLINBD1    00:00:00      00:00:03
+EXTRACT     RUNNING     PSTARAD1    00:00:00      00:00:07
+REPLICAT    RUNNING     RCASTIM1    00:00:00      00:00:09
+REPLICAT    RUNNING     RCASTIM2    00:00:00      00:00:03
+REPLICAT    RUNNING     RCASTIM3    00:00:00      00:00:05
+REPLICAT    RUNNING     RCASTIM4    00:00:00      00:00:01
+REPLICAT    RUNNING     RCASTIM5    00:00:00      00:00:05
+REPLICAT    RUNNING     RINDGLB1    00:00:00      00:00:02
+REPLICAT    RUNNING     RINDGLB3    00:00:00      00:00:00
+REPLICAT    RUNNING     RINGLBD1    00:00:00      00:00:05
+REPLICAT    RUNNING     ROLPCAD1    00:00:00      00:00:01
+REPLICAT    RUNNING     RTDCNGO1    00:00:00      00:00:00
+

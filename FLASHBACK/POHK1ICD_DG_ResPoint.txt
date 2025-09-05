@@ -1,0 +1,22 @@
+select name , db_unique_name, open_mode, database_role from v$database order by 1;03:32:31 SYS @ POHK1ICD_DG:CDB$ROOT:>03:32:31 SYS @ POHK1ICD_DG:CDB$ROOT:>03:32:31 SYS @ POHK1ICD_DG:CDB$ROOT:>
+
+NAME      DB_UNIQUE_NAME                 OPEN_MODE            DATABASE_ROLE
+--------- ------------------------------ -------------------- ----------------
+POHK1ICD  POHK1ICD_DG                    READ ONLY            PHYSICAL STANDBY
+
+03:32:32 SYS @ POHK1ICD_DG:CDB$ROOT:>
+create restore point PDBP_ICDD_FRI_DR_before_CHG0039047 for pluggable database PDBP_ICDD guarantee flashback database;03:32:47 SYS @ POHK1ICD_DG:CDB$ROOT:>
+
+Restore point created.
+
+03:32:49 SYS @ POHK1ICD_DG:CDB$ROOT:>col NAME for a22
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#,GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE, con_id FROM V$RESTORE_POINT
+WHERE GUARANTEE_FLASHBACK_DATABASE='YES';03:32:57 SYS @ POHK1ICD_DG:CDB$ROOT:>03:32:57   2
+
+NAME                          SCN TIME                                                                        DATABASE_INCARNATION# GUA STORAGE_SIZE     CON_ID
+---------------------- ---------- --------------------------------------------------------------------------- --------------------- --- ------------ ----------
+PDBP_ICDD_FRI_DR_BEFOR 1503466701 30-SEP-22 03.32.49.000000000 AM                                                                 3 YES   1073741824          3
+E_CHG0039047
+
+
+03:32:58 SYS @ POHK1ICD_DG:CDB$ROOT:>exit;

@@ -1,0 +1,58 @@
+Login to server HKLPDPS2B001 - 10.21.199.138
+
+cd /u01/app/oracle/product/ogg/19c
+
+./ggsci
+
+info all
+
+--Verify all process are running.
+
+exit 
+
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+$XAG_HOME/bin/agctl stop goldengate ogg_19c
+
+/u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+/u01/app/grid/product/19c/bin/crsctl stop resource xag.hklpdps2b-ogg.vip
+
+ps -eaf|grep -i PARAM
+
+for i in `/u01/app/grid/product/19c/bin/olsnodes`
+do
+echo -e "\n\n------------$i--------------\n\n"
+ssh -q $i "ps -eaf|grep -i PARAMFILE|grep -v grep|grep -v log"
+done
+
+-- Confirm none of the GG process are running.
+
+-- Upon confirmation from ATOS , CVE patch is completed in NODE 1, then proceed with below steps
+
+Login to server HKLPDPS2B001 - 10.21.199.138
+
+cd /u01/app/oracle/product/ogg/19c
+
+/u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+/u01/app/grid/product/19c/bin/crsctl start resource xag.hklpdds2b-ogg.vip -n HKLPDPS2B001
+
+/u01/app/grid/product/19c/bin/crsctl status resource xag.hklpdps2b-ogg.vip
+
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+$XAG_HOME/bin/agctl start goldengate ogg_19c --node hklpdps2b001
+
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+./ggsci
+
+info all
+
+-- Ensure all process are running else run below,
+
+start E*
+Start p*
+Start R*
+

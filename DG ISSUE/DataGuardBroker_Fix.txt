@@ -1,0 +1,448 @@
+Step By Step How to Recreate Dataguard Broker Configuration (Doc ID 808783.1)
+=================================================================================
+
+
+===============================================================================================
+current state of the DG broker 
+===============================================================================================
+oracle@hklvdsapp094:/home/oracle [POHK1DPK_DG]
+> dgmgrl /@POHK1DPK
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Jun 24 07:30:07 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1DPK"
+Connected as SYSDBA.
+DGMGRL> show database POHK1DPK;
+
+Database - pohk1dpk
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      (unknown)
+  Apply Lag:          (unknown)
+  Average Apply Rate: (unknown)
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1DPK
+
+  Database Error(s):
+    ORA-16816: incorrect database role
+
+Database Status:
+ERROR
+
+DGMGRL> show database POHK1DPK_DG ;
+
+Database - pohk1dpk_dg
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    POHK1DPK_DG
+
+  Database Error(s):
+    ORA-16816: incorrect database role
+
+Database Status:
+ERROR
+
+
+
+===============================================================================================
+ Remove configuration files from Standby (removed also from Primary)
+===============================================================================================
+07:37:38 SYS @ POHK1DPK_DG:CDB$ROOT:>ALTER SYSTEM SET DG_BROKER_START=FALSE;
+
+System altered.
+                                                 
+07:38:05 SYS @ POHK1DPK_DG:CDB$ROOT:>show parameter dg_broker_config_file
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+dg_broker_config_file1               string                           /u01/app/oracle/local/dbs/dr1P
+                                                                      OHK1DPK_DG.dat
+dg_broker_config_file2               string                           /u01/app/oracle/local/dbs/dr2P
+                                                                      OHK1DPK_DG.dat
+07:38:22 SYS @ POHK1DPK_DG:CDB$ROOT:>!
+oracle@hklvdsapp094:/home/oracle [POHK1DPK_DG]
+> rm /u01/app/oracle/local/dbs/dr1POHK1DPK_DG.dat
+oracle@hklvdsapp094:/home/oracle [POHK1DPK_DG]
+> rm /u01/app/oracle/local/dbs/dr2POHK1DPK_DG.dat
+oracle@hklvdsapp094:/home/oracle [POHK1DPK_DG]
+> sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Jun 24 07:40:35 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2023, Oracle.  All rights reserved.
+
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.22.0.0.0
+
+07:40:36 SYS @ POHK1DPK_DG:CDB$ROOT:>ALTER SYSTEM SET DG_BROKER_START=TRUE;
+
+System altered.
+
+
+===============================================================================================
+Check BROKER is true and set LOG_ARCHIVE_DEST_2 to null
+===============================================================================================
+07:56:07 SYS @ POHK1DPK_DG:CDB$ROOT:>show parameter DG_BROKER_START
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+dg_broker_start                      boolean                          TRUE
+07:56:11 SYS @ POHK1DPK_DG:CDB$ROOT:>show parameter fal
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+fal_client                           string                           POHK1DPK_DG
+fal_server                           string                           POHK1DPK
+08:12:11 SYS @ POHK1DPK_DG:CDB$ROOT:>col dest_name for a30
+set lines 300
+col destination for a40
+col error for a30
+SELECT inst_id,dest_name, status, destination,error,DELAY_MINS FROM gv$archive_dest where status!='INACTIVE';
+08:23:26 SYS @ POHK1DPK_DG:CDB$ROOT:>08:23:26 SYS @ POHK1DPK_DG:CDB$ROOT:>08:23:26 SYS @ POHK1DPK_DG:CDB$ROOT:>08:23:26 SYS @ POHK1DPK_DG:CDB$ROOT:>
+   INST_ID DEST_NAME                      STATUS    DESTINATION                              ERROR                          DELAY_MINS
+---------- ------------------------------ --------- ---------------------------------------- ------------------------------ ----------
+         1 LOG_ARCHIVE_DEST_1             VALID     USE_DB_RECOVERY_FILE_DEST                                                        0
+         1 LOG_ARCHIVE_DEST_2             VALID     pohk1dpk_dg1                                                                     0
+         1 STANDBY_ARCHIVE_DEST           VALID     USE_DB_RECOVERY_FILE_DEST                                                        0
+
+08:23:26 SYS @ POHK1DPK_DG:CDB$ROOT:>alter system set log_archive_dest_2='' scope=both ;
+
+System altered.
+
+
+
+
+
+===============================================================================================
+ Remove current configuration files for the DG broker
+===============================================================================================
+
+07:37:47 SYS @ POHK1DPK:CDB$ROOT:>ALTER SYSTEM SET DG_BROKER_START=FALSE;
+
+System altered.
+
+07:37:55 SYS @ POHK1DPK:CDB$ROOT:>show parameter dg_broker_config_file
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+dg_broker_config_file1               string                           /u01/app/oracle/local/dbs/dr1P
+                                                                      OHK1DPK.dat
+dg_broker_config_file2               string                           /u01/app/oracle/local/dbs/dr2P
+                                                                      OHK1DPK.dat
+07:38:08 SYS @ POHK1DPK:CDB$ROOT:>!
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> rm /u01/app/oracle/local/dbs/dr1POHK1DPK.dat
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> rm /u01/app/oracle/local/dbs/dr2POHK1DPK.dat
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Jun 24 07:40:22 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2023, Oracle.  All rights reserved.
+
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.22.0.0.0
+
+07:40:22 SYS @ POHK1DPK:CDB$ROOT:>ALTER SYSTEM SET DG_BROKER_START=TRUE;
+
+System altered.
+
+
+===============================================================================================
+Create configuration for your DG broker in primary
+===============================================================================================
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> dgmgrl /@POHK1DPK
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Jun 24 07:41:31 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1DPK"
+Connected as SYSDBA.
+DGMGRL> !
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> tnsping pohk1dpk_dg2
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 24-JUN-2024 07:52:42
+
+Copyright (c) 1997, 2023, Oracle.  All rights reserved.
+
+Used parameter files:
+/u01/app/oracle/local/network/admin/sqlnet.ora
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.62)(PORT = 1623))) (CONNECT_DATA = (SERVER = DEDICATED) (SID = POHK1DPK_DG)))
+OK (0 msec)
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> exit
+exit
+DGMGRL> CREATE CONFIGURATION 'DGB_POHK1DPK' AS PRIMARY DATABASE IS 'POHK1DPK' CONNECT IDENTIFIER IS POHK1DPK;
+Error:
+ORA-16525: The Oracle Data Guard broker is not yet available.
+
+DGMGRL> exit
+
+
+
+===============================================================================================
+Verified DG_BROKER_START is TRUE but retried failed
+===============================================================================================
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Jun 24 07:55:42 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2023, Oracle.  All rights reserved.
+
+#WARNING! This database is the property of the Standard Chartered Group and may be accessed only by
+#authorized users for Legitimate business purposes. Unauthorized use of this database is strictly prohibited
+#and may be subject to criminal prosecution. Standard Chartered Group may monitor any activity
+#in the database. By continuing to use this database you indicate your consent to these conditions
+#of use. LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.22.0.0.0
+
+07:55:42 SYS @ POHK1DPK:CDB$ROOT:>show parameter DG_BROKER_START
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+dg_broker_start                      boolean                          TRUE
+07:55:50 SYS @ POHK1DPK:CDB$ROOT:>exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.22.0.0.0
+oracle@hklvdpapp094:/home/oracle [POHK1DPK]
+> dgmgrl /@POHK1DPK
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Jun 24 07:56:45 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1DPK"
+Connected as SYSDBA.
+DGMGRL> CREATE CONFIGURATION 'DGB_POHK1DPK' AS PRIMARY DATABASE IS 'POHK1DPK' CONNECT IDENTIFIER IS POHK1DPK;
+Error:
+ORA-16525: The Oracle Data Guard broker is not yet available.
+
+DGMGRL> exit
+
+
+
+
+===============================================================================================
+ Set log_archive_dest_2 to null for primary and standby(learned from error below)
+=============================================================================================== 
+08:23:39 SYS @ POHK1DPK:CDB$ROOT:>col dest_name for a30
+set lines 300
+col destination for a40
+col error for a30
+SELECT inst_id,dest_name, status, destination,error,DELAY_MINS FROM gv$archive_dest where status!='INACTIVE';
+08:23:42 SYS @ POHK1DPK:CDB$ROOT:>08:23:42 SYS @ POHK1DPK:CDB$ROOT:>08:23:42 SYS @ POHK1DPK:CDB$ROOT:>08:23:42 SYS @ POHK1DPK:CDB$ROOT:>
+   INST_ID DEST_NAME                      STATUS    DESTINATION                              ERROR                          DELAY_MINS
+---------- ------------------------------ --------- ---------------------------------------- ------------------------------ ----------
+         1 LOG_ARCHIVE_DEST_1             VALID     USE_DB_RECOVERY_FILE_DEST                                                        0
+         1 LOG_ARCHIVE_DEST_2             ERROR     pohk1dpk_dg2                             ORA-16047: DGID mismatch                0
+                                                                                             between destination setting
+                                                                                             and target database
+
+
+08:23:42 SYS @ POHK1DPK:CDB$ROOT:>alter system set log_archive_dest_2='' scope=both ;
+
+System altered.
+
+
+===============================================================================================
+Retry create configuration and add database
+===============================================================================================
+oracle@hklvdpapp094:/u01/app/oracle/local/diag/rdbms/pohk1dpk/POHK1DPK/trace [POHK1DPK]
+> dgmgrl /@POHK1DPK
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Jun 24 08:24:56 2024
+Version 19.22.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1DPK"
+Connected as SYSDBA.
+DGMGRL> CREATE CONFIGURATION 'DGB_POHK1DPK' AS PRIMARY DATABASE IS 'POHK1DPK' CONNECT IDENTIFIER IS POHK1DPK;
+Configuration "DGB_POHK1DPK" created with primary database "POHK1DPK"
+DGMGRL> ADD DATABASE 'POHK1DPK_DG' AS CONNECT IDENTIFIER IS pohk1dpk_dg2 MAINTAINED AS PHYSICAL;
+Error: ORA-16698: member has a LOG_ARCHIVE_DEST_n parameter with SERVICE attribute set
+
+Failed.
+DGMGRL> ADD DATABASE 'POHK1DPK_DG' AS CONNECT IDENTIFIER IS pohk1dpk_dg2 MAINTAINED AS PHYSICAL;
+Database "POHK1DPK_DG" added
+DGMGRL> ENABLE CONFIGURATION;
+Enabled.
+DGMGRL> SHOW CONFIGURATION;
+
+Configuration - DGB_POHK1DPK
+
+  Protection Mode: MaxAvailability
+  Members:
+  POHK1DPK    - Primary database
+    Warning: ORA-16629: database reports a different protection level from the protection mode
+
+    POHK1DPK_DG - Physical standby database
+      Warning: ORA-16809: multiple warnings detected for the member
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+WARNING   (status updated 3 seconds ago)
+
+
+
+===============================================================================================
+ Validating the DBs, returns errors
+===============================================================================================
+DGMGRL> validate database POHK1DPK;
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    POHK1DPK:  NO
+    Validating static connect identifier for the primary database POHK1DPK...
+Unable to connect to database using (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.7.176.36)(PORT=1621))(CONNECT_DATA=(SERVICE_NAME=POHK1DPK_DGMGRL.hk.standardchartered.com)(INSTANCE_NAME=POHK1DPK)(SERVER=DEDICATED)(STATIC_SERVICE=TRUE)))
+ORA-12514: TNS:listener does not currently know of service requested in connect descriptor
+
+Failed.
+    Warning: Ensure primary database's StaticConnectIdentifier property
+    is configured properly so that the primary database can be restarted
+    by DGMGRL after switchover
+
+DGMGRL> validate database POHK1DPK_DG;
+
+  Database Role:     Physical standby database
+  Primary Database:  POHK1DPK
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Managed by Clusterware:
+    POHK1DPK   :  NO
+    POHK1DPK_DG:  NO
+    Validating static connect identifier for the primary database POHK1DPK...
+Unable to connect to database using (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.7.176.36)(PORT=1621))(CONNECT_DATA=(SERVICE_NAME=POHK1DPK_DGMGRL.hk.standardchartered.com)(INSTANCE_NAME=POHK1DPK)(SERVER=DEDICATED)(STATIC_SERVICE=TRUE)))
+ORA-12514: TNS:listener does not currently know of service requested in connect descriptor
+
+Failed.
+    Warning: Ensure primary database's StaticConnectIdentifier property
+    is configured properly so that the primary database can be restarted
+    by DGMGRL after switchover
+
+  Transport-Related Property Settings:
+    Property                        POHK1DPK Value           POHK1DPK_DG Value
+    LogXptMode                      SYNC                     ASYNC
+
+
+
+===============================================================================================
+ change connect identifier to correct values for both standby and primary
+===============================================================================================
+**Got values from previous setup / getting from LISTENER_DG IP and Port
+
+DGMGRL> edit database POHK1DPK_DG set property StaticConnectIdentifier='(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.62)(PORT = 1623)))(CONNECT_DATA =(SERVER = DEDICATED)(SID = POHK1DPK_DG)))'
+> ;
+Property "staticconnectidentifier" updated
+
+DGMGRL> validate database POHK1DPK_DG;
+
+  Database Role:     Physical standby database
+  Primary Database:  POHK1DPK
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Managed by Clusterware:
+    POHK1DPK   :  NO
+    POHK1DPK_DG:  NO
+    Validating static connect identifier for the primary database POHK1DPK...
+Unable to connect to database using (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.7.176.36)(PORT=1621))(CONNECT_DATA=(SERVICE_NAME=POHK1DPK_DGMGRL.hk.standardchartered.com)(INSTANCE_NAME=POHK1DPK)(SERVER=DEDICATED)(STATIC_SERVICE=TRUE)))
+ORA-12514: TNS:listener does not currently know of service requested in connect descriptor
+
+Failed.
+    Warning: Ensure primary database's StaticConnectIdentifier property
+    is configured properly so that the primary database can be restarted
+    by DGMGRL after switchover
+
+  Transport-Related Property Settings:
+    Property                        POHK1DPK Value           POHK1DPK_DG Value
+    LogXptMode                      SYNC                     ASYNC
+
+
+===============================================================================================
+ *****Still errors here but was successful after some time and changing value for primary
+===============================================================================================
+
+DGMGRL> edit database POHK1DPK set property StaticConnectIdentifier='(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.61)(PORT = 1623)))(CONNECT_DATA =(SERVER = DEDICATED)(SID = POHK1DPK)))';
+Property "staticconnectidentifier" updated
+DGMGRL> show database POHK1DPK StaticConnectIdentifier
+  StaticConnectIdentifier = '(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.61)(PORT = 1623)))(CONNECT_DATA =(SERVER = DEDICATED)(SID = POHK1DPK)))'
+DGMGRL> show database POHK1DPK_DG StaticConnectIdentifier
+  StaticConnectIdentifier = '(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.62)(PORT = 1623)))(CONNECT_DATA =(SERVER = DEDICATED)(SID = POHK1DPK_DG)))'
+DGMGRL> validate database POHK1DPK;
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    POHK1DPK:  NO
+    Validating static connect identifier for the primary database POHK1DPK...
+    The static connect identifier allows for a connection to database "POHK1DPK".
+
+DGMGRL> validate database POHK1DPK_DG;
+
+  Database Role:     Physical standby database
+  Primary Database:  POHK1DPK
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Managed by Clusterware:
+    POHK1DPK   :  NO
+    POHK1DPK_DG:  NO
+    Validating static connect identifier for the primary database POHK1DPK...
+    The static connect identifier allows for a connection to database "POHK1DPK".
+
+  Transport-Related Property Settings:
+    Property                        POHK1DPK Value           POHK1DPK_DG Value
+    LogXptMode                      SYNC                     ASYNC
+
+

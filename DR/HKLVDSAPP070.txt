@@ -1,0 +1,79 @@
+hklvdsapp070:oraspp 52> dgmgrl sys/XXXXX@SPP_DG
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Fri Apr 28 18:42:20 2023
+Version 19.12.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "SPP_DG"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_spp
+
+  Protection Mode: MaxAvailability
+  Members:
+  spp    - Primary database
+    spp_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 36 seconds ago)
+
+DGMGRL> show database spp
+
+Database - spp
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    SPP
+
+Database Status:
+SUCCESS
+
+DGMGRL> show database spp_dg
+
+Database - spp_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 1 second ago)
+  Apply Lag:          0 seconds (computed 1 second ago)
+  Average Apply Rate: 31.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    SPP_DG
+
+Database Status:
+SUCCESS
+
+DGMGRL> validate database spp
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    spp:  NO
+    Validating static connect identifier for the primary database spp...
+    The static connect identifier allows for a connection to database "spp".
+
+DGMGRL> validate database spp_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  spp
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Flashback Database Status:
+    spp   :  On
+    spp_dg:  Off
+
+  Managed by Clusterware:
+    spp   :  NO
+    spp_dg:  NO
+    Validating static connect identifier for the primary database spp...
+    The static connect identifier allows for a connection to database "spp".

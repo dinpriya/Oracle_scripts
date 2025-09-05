@@ -1,0 +1,67 @@
+[12:17 PM] MUGUNDHAN RAJA (ext)
+12:04:25 SYS @ POHK1DPK_DG:CDB$ROOT:>
+
+12:04:26 SYS @ POHK1DPK_DG:CDB$ROOT:>select protection_mode, protection_level from v$database;
+ 
+PROTECTION_MODE      PROTECTION_LEVEL
+
+-------------------- --------------------
+
+MAXIMUM AVAILABILITY MAXIMUM AVAILABILITY
+ 
+12:16:21 SYS @ POHK1DPK_DG:CDB$ROOT:>exit
+
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+
+Version 19.22.0.0.0
+
+oracle@hklvdsapp094:/home/oracle [POHK1DPK_DG]
+
+> dgmgrl /@POHK1DPK
+
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Jun 24 12:16:39 2024
+
+Version 19.22.0.0.0
+ 
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+ 
+Welcome to DGMGRL, type "help" for information.
+
+Connected to "POHK1DPK"
+
+Connected as SYSDBA.
+
+DGMGRL> show configuration;
+ 
+Configuration - DGB_POHK1DPK
+ 
+  Protection Mode: MaxAvailability
+
+  Members:
+
+  POHK1DPK    - Primary database
+
+    POHK1DPK_DG - Physical standby database
+ 
+Fast-Start Failover:  Disabled
+ 
+Configuration Status:
+
+SUCCESS   (status updated 41 seconds ago)
+ 
+DGMGRL>
+
+[12:17 PM] MUGUNDHAN RAJA (ext)
+12:04:26 SYS @ POHK1DPK_DG:CDB$ROOT:>select protection_mode, protection_level from v$database;
+ 
+PROTECTION_MODE      PROTECTION_LEVEL
+
+-------------------- --------------------
+
+MAXIMUM AVAILABILITY MAXIMUM AVAILABILITY
+ 
+12:16:21 SYS @ POHK1DPK_DG:CDB$ROOT:>e
+[12:17 PM] MUGUNDHAN RAJA (ext)
+fixed ji
+[12:17 PM] MUGUNDHAN RAJA (ext)
+soln : EDIT DATABASE POHK1DPK_DG SET PROPERTY LogXptMode=SYNC;

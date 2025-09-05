@@ -1,0 +1,340 @@
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK1CCD as sysdba
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:42:13 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1CCD"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk1ccd
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1ccd    - Primary database
+    pohk1ccd_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 50 seconds ago)
+
+DGMGRL> show database pohk1ccd_dg
+
+Database - pohk1ccd_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 925.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1CCD_DG1 (apply instance)
+    POHK1CCD_DG2
+    POHK1CCD_DG3
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK2CCD
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:42:58 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK2CCD"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk2ccd
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk2ccd    - Primary database
+    pohk2ccd_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 9 seconds ago)
+
+DGMGRL> show database pohk2ccd_dg
+
+Database - pohk2ccd_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 4.86 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK2CCD_DG1 (apply instance)
+    POHK2CCD_DG2
+    POHK2CCD_DG3
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK3CCD
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:44:37 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK3CCD"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk3ccd
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk3ccd    - Primary database
+    pohk3ccd_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 45 seconds ago)
+
+DGMGRL> show database pohk3ccd_dg
+
+Database - pohk3ccd_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 436.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK3CCD_DG1
+    POHK3CCD_DG2
+    POHK3CCD_DG3 (apply instance)
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK4CCD
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:45:11 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK4CCD"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk4ccd
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk4ccd    - Primary database
+    pohk4ccd_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 25 seconds ago)
+
+DGMGRL> show database pohk4ccd_dg
+
+Database - pohk4ccd_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 1 second ago)
+  Apply Lag:          0 seconds (computed 1 second ago)
+  Average Apply Rate: 369.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK4CCD_DG1 (apply instance)
+    POHK4CCD_DG2
+    POHK4CCD_DG3
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK5CCD
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:45:52 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK5CCD"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk5ccd
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk5ccd    - Primary database
+    pohk5ccd_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 55 seconds ago)
+
+DGMGRL> show database pohk5ccd_dg
+
+Database - pohk5ccd_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 1 second ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 2.96 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK5CCD_DG1 (apply instance)
+    POHK5CCD_DG2
+    POHK5CCD_DG3
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> dgmgrl /@POHK1API
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Sat Sep 24 22:46:25 2022
+Version 19.14.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1API"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk1api
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1api    - Primary database
+    pohk1api_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 33 seconds ago)
+
+DGMGRL> show database pohk1api_dg
+
+Database - pohk1api_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 1 second ago)
+  Apply Lag:          0 seconds (computed 1 second ago)
+  Average Apply Rate: 709.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1API_DG1 (apply instance)
+    POHK1API_DG2
+    POHK1API_DG3
+
+Database Status:
+SUCCESS
+
+DGMGRL> exit
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> date; ./chk_db.sh
+Sat Sep 24 22:46:58 HKT 2022
+DATABASE STATUS
+Instance POHK1CCD1 is running on node hklpdps2b001
+Instance POHK1CCD2 is running on node hklpdps2b002
+Instance POHK1CCD3 is running on node hklpdps2b003
+Instance POHK2CCD1 is running on node hklpdps2b001
+Instance POHK2CCD2 is running on node hklpdps2b002
+Instance POHK2CCD3 is running on node hklpdps2b003
+Instance POHK3CCD1 is running on node hklpdps2b001
+Instance POHK3CCD2 is running on node hklpdps2b002
+Instance POHK3CCD3 is running on node hklpdps2b003
+Instance POHK4CCD1 is running on node hklpdps2b001
+Instance POHK4CCD2 is running on node hklpdps2b002
+Instance POHK4CCD3 is running on node hklpdps2b003
+Instance POHK5CCD1 is running on node hklpdps2b001
+Instance POHK5CCD2 is running on node hklpdps2b002
+Instance POHK5CCD3 is running on node hklpdps2b003
+Instance POHK1API1 is running on node hklpdps2b001
+Instance POHK1API2 is running on node hklpdps2b002
+Instance POHK1API3 is running on node hklpdps2b003
+Instance POHK1RCT1 is running on node hklpdps2b001
+Instance POHK1RCT2 is running on node hklpdps2b002
+Instance POHK1RCT3 is running on node hklpdps2b003
+SERVICE STATUS
+Service svc_pohk1ccd_cci_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cci_jmb2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_cci_jmb_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_cci_meg2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_cci_meg_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ccs_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ccs_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_cyc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_etl_jmb2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_etl_jmb_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_etl_meg2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_etl_meg_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_idc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_idc_jmb_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_idc_meg_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ipc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ipc_jmb2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ipc_jmb_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ipc_meg2_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ipc_meg_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_ldr_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_ldr_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_npc_jmb_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_npc_meg_gl_onl is running on instance(s) POHK1CCD3
+Service svc_pohk1ccd_pay_gl_bat is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_pay_gl_onl is running on instance(s) POHK1CCD1,POHK1CCD3
+Service svc_pohk1ccd_rta_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_jmb_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_rta_meg_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk1ccd_sav_gl_onl is running on instance(s) POHK1CCD1
+Service svc_pohk2ccd_aic_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_bat is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_fwb_gl_onl is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_ngo_gl_bat is running on instance(s) POHK2CCD1
+Service svc_pohk2ccd_ngo_gl_onl is running on instance(s) POHK2CCD2
+Service svc_pohk3ccd_cas_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_cas_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tdc_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tdc_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk3ccd_tng_gl_bat is running on instance(s) POHK3CCD3
+Service svc_pohk3ccd_tng_gl_onl is running on instance(s) POHK3CCD1
+Service svc_pohk4ccd_cad_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_cad_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_bat is running on instance(s) POHK4CCD3
+Service svc_pohk4ccd_srs_gl_onl is running on instance(s) POHK4CCD3
+Service svc_pohk5ccd_ngw_gl_bat is running on instance(s) POHK5CCD3
+Service svc_pohk5ccd_ngw_gl_onl is running on instance(s) POHK5CCD3
+Service api_ro is running on instance(s) POHK1API1,POHK1API3
+Service api_rw is running on instance(s) POHK1API1,POHK1API3
+Service svc_pohk1api_api_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_api_gl_onl is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_bat is running on instance(s) POHK1API3
+Service svc_pohk1api_hkjc_gl_onl is running on instance(s) POHK1API3

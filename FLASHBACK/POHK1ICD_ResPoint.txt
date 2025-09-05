@@ -1,0 +1,40 @@
+03:38:07 SYS @ POHK1ICD:CDB$ROOT:>select name , db_unique_name, flashback_on, force_logging from v$database order by 1;
+
+NAME      DB_UNIQUE_NAME                 FLASHBACK_ON       FORCE_LOGGING
+--------- ------------------------------ ------------------ ---------------------------------------
+POHK1ICD  POHK1ICD                       YES                YES
+
+03:38:53 SYS @ POHK1ICD:CDB$ROOT:>select PROPERTY_VALUE  from database_properties where property_name='LOCAL_UNDO_ENABLED';
+
+PROPERTY_VALUE
+------------------------------
+TRUE
+
+03:39:01 SYS @ POHK1ICD:CDB$ROOT:>alter system switch logfile;
+
+System altered.
+
+03:39:10 SYS @ POHK1ICD:CDB$ROOT:>alter system switch logfile;
+
+System altered.
+
+03:39:30 SYS @ POHK1ICD:CDB$ROOT:>alter system switch logfile;
+
+System altered.
+
+
+03:41:10 SYS @ POHK1ICD:CDB$ROOT:>create restore point PDBP_ICDD_FRI_PR_before_CHG0039047 for pluggable database PDBP_ICDD guarantee flashback database;
+
+Restore point created.
+
+03:44:03 SYS @ POHK1ICD:CDB$ROOT:>col NAME for a22
+03:44:09 SYS @ POHK1ICD:CDB$ROOT:>SELECT NAME, SCN, TIME, DATABASE_INCARNATION#,GUARANTEE_FLASHBACK_DATABASE, STORAGE_SIZE, con_id FROM V$RESTORE_POINT
+WHERE GUARANTEE_FLASHBACK_DATABASE='YES';03:44:17   2
+
+NAME                          SCN TIME                                                                        DATABASE_INCARNATION# GUA STORAGE_SIZE     CON_ID
+---------------------- ---------- --------------------------------------------------------------------------- --------------------- --- ------------ ----------
+PDBP_ICDD_FRI_PR_BEFOR 1503477842 30-SEP-22 03.44.03.000000000 AM                                                                 3 YES   1073741824          3
+E_CHG0039047
+
+
+03:44:19 SYS @ POHK1ICD:CDB$ROOT:>exit;

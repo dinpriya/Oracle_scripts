@@ -1,0 +1,235 @@
+Step by Step Guide on How To Reinstate Failed Primary Database into Physical Standby (Doc ID 738642.1)
+================================================================================
+
+
+===============================================================================================
+During call with oracle, we tried to bring up MRP
+===============================================================================================
+17:12:56 SYS @ POHK1DPK_DG:CDB$ROOT:>alter database recover managed standby database through all switchover disconnect nodelay;
+alter database recover managed standby database through all switchover disconnect nodelay
+*
+ERROR at line 1:
+ORA-01665: control file is not a standby control file
+
+=====As it was reading the control file as primary, we tried to bring up to read/write
+17:16:15 SYS @ POHK1DPK_DG:CDB$ROOT:>alter database open read write;
+
+Database altered.
+
+17:16:50 SYS @ POHK1DPK_DG:CDB$ROOT:>set pages 200 lines 1000
+Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;17:17:09 SYS @ POHK1DPK_DG:CDB$ROOT:>
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1DPK  READ WRITE           MAXIMUM AVAILABILITY PRIMARY          NONE    YES
+
+=========Get the SCN from standby DB for flashback
+17:21:55 SYS @ POHK1DPK_DG:CDB$ROOT:>SELECT TO_CHAR(STANDBY_BECAME_PRIMARY_SCN) FROM V$DATABASE;
+
+TO_CHAR(STANDBY_BECAME_PRIMARY_SCN)
+----------------------------------------
+2022032057
+
+17:26:05 SYS @ POHK1DPK_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1DPK  READ WRITE           MAXIMUM AVAILABILITY PRIMARY          NONE    YES
+
+
+
+===============================================================================================
+Follow steps below to perform flashback and convert to physical standby 
+===============================================================================================
+17:26:59 SYS @ POHK1DPK_DG:CDB$ROOT:>SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+17:28:02 SYS @ POHK1DPK_DG:CDB$ROOT:>startup mount
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 13935432 bytes
+Variable Size            4026531840 bytes
+Database Buffers         4.9526E+10 bytes
+Redo Buffers              120279040 bytes
+Database mounted.
+17:28:31 SYS @ POHK1DPK_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1DPK  MOUNTED              MAXIMUM AVAILABILITY PRIMARY          NONE    YES
+
+17:28:35 SYS @ POHK1DPK_DG:CDB$ROOT:>FLASHBACK DATABASE TO SCN 2022032057;
+
+Flashback complete.
+
+17:28:46 SYS @ POHK1DPK_DG:CDB$ROOT:>ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+
+Database altered.
+
+17:28:58 SYS @ POHK1DPK_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1DPK  MOUNTED              MAXIMUM AVAILABILITY PHYSICAL STANDBY NONE    YES
+
+17:29:20 SYS @ POHK1DPK_DG:CDB$ROOT:>SHUTDOWN IMMEDIATE;
+ORA-01109: database not open
+
+
+Database dismounted.
+ORACLE instance shut down.
+17:29:50 SYS @ POHK1DPK_DG:CDB$ROOT:>STARTUP MOUNT;
+ORACLE instance started.
+
+Total System Global Area 5.3687E+10 bytes
+Fixed Size                 13935432 bytes
+Variable Size            4026531840 bytes
+Database Buffers         4.9526E+10 bytes
+Redo Buffers              120279040 bytes
+Database mounted.
+
+17:30:38 SYS @ POHK1DPK_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1DPK  MOUNTED              MAXIMUM AVAILABILITY PHYSICAL STANDBY NONE    YES
+
+
+===============================================================================================
+From Primary, set the log_archive_dest_2 
+===============================================================================================
+
+17:55:28 SYS @ POHK1DPK:CDB$ROOT:>!tnsping pohk1dpk_dg2
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 23-JUN-2024 17:55:38
+
+Copyright (c) 1997, 2023, Oracle.  All rights reserved.
+
+Used parameter files:
+/u01/app/oracle/local/network/admin/sqlnet.ora
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =192.168.55.62)(PORT = 1623))) (CONNECT_DATA = (SERVER = DEDICATED) (SID = POHK1DPK_DG)))
+OK (0 msec)
+
+17:55:38 SYS @ POHK1DPK:CDB$ROOT:>alter system set log_archive_dest_2 ='service=pohk1dpk_dg2 valid_for=(ONLINE_LOGFILE,PRIMARY_ROLE) db_unique_name=pohk1dpk';
+
+System altered.
+
+
+
+===============================================================================================
+Activate MRP and verify Lag 
+===============================================================================================
+17:51:38 SYS @ POHK1DPK_DG:CDB$ROOT:>ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+Database altered.
+
+17:51:52 SYS @ POHK1DPK_DG:CDB$ROOT:>col db_name for a10
+17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>col INSTANCE_NAME for a15
+col host_name for a15
+col DATABASE_ROLE for a20
+col LOG_MODE for a10
+col OPEN_MODE for a10
+col SWITCHOVER_STATUS for a17
+set lines 300
+alter session set NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS';
+select name db_name, instance_name, host_name, database_role, log_mode, open_mode, switchover_status, dataguard_broker, startup_time from gv$database a join gv$instance b on a.inst_id = b.inst_id;
+SELECT INST_ID,PROCESS,STATUS,DELAY_MINS FROM GV$MANAGED_STANDBY where PROCESS = 'MRP0';
+SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last Sequence Received", APPL.SEQUENCE# "Last Sequence Applied", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference" FROM (SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH, (SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL WHERE ARCH.THREAD# = APPL.THREAD# ORDER BY 1;
+17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>
+Session altered.
+
+17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>
+DB_NAME    INSTANCE_NAME   HOST_NAME       DATABASE_ROLE        LOG_MODE   OPEN_MODE  SWITCHOVER_STATUS DATAGUAR STARTUP_TIME
+---------- --------------- --------------- -------------------- ---------- ---------- ----------------- -------- -------------------
+POHK1DPK   POHK1DPK_DG     hklvdsapp094    PHYSICAL STANDBY     ARCHIVELOG MOUNTED    TO PRIMARY        ENABLED  2024-06-23 17:29:57
+
+17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>
+   INST_ID PROCESS   STATUS       DELAY_MINS
+---------- --------- ------------ ----------
+         1 MRP0      WAIT_FOR_GAP          0
+
+17:52:03 SYS @ POHK1DPK_DG:CDB$ROOT:>
+    Thread Last Sequence Received Last Sequence Applied Difference
+---------- ---------------------- --------------------- ----------
+         1                  23658                 23658          0
+
+**Looks like in sync but errors found in alert log for fal_server.
+
+
+===============================================================================================
+set FAL_server on standby
+===============================================================================================
+17:59:08 SYS @ POHK1DPK_DG:CDB$ROOT:>show parameter fal
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+fal_client                           string                           POHK1DPK_DG
+fal_server                           string
+17:59:13 SYS @ POHK1DPK_DG:CDB$ROOT:>!tnsping POHK1DPK
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 23-JUN-2024 17:59:26
+
+Copyright (c) 1997, 2023, Oracle.  All rights reserved.
+
+Used parameter files:
+/u01/app/oracle/local/network/admin/sqlnet.ora
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = hklvdpapp094.hk.standardchartered.com)(PORT = 1621)) (CONNECT_DATA = (SERVER = DEDICATED) (SID = POHK1DPK)))
+OK (10 msec)
+
+17:59:26 SYS @ POHK1DPK_DG:CDB$ROOT:>alter system set fal_server=POHK1DPK;
+
+System altered.
+
+18:00:05 SYS @ POHK1DPK_DG:CDB$ROOT:>show parameter fal
+
+NAME                                 TYPE                             VALUE
+------------------------------------ -------------------------------- ------------------------------
+fal_client                           string                           POHK1DPK_DG
+fal_server                           string                           POHK1DPK
+
+18:02:28 SYS @ POHK1DPK_DG:CDB$ROOT:>col db_name for a10
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>col INSTANCE_NAME for a15
+col host_name for a15
+col DATABASE_ROLE for a20
+col LOG_MODE for a10
+col OPEN_MODE for a10
+col SWITCHOVER_STATUS for a17
+set lines 300
+alter session set NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS';
+select name db_name, instance_name, host_name, database_role, log_mode, open_mode, switchover_status, dataguard_broker, startup_time from gv$database a join gv$instance b on a.inst_id = b.inst_id;
+SELECT INST_ID,PROCESS,STATUS,DELAY_MINS FROM GV$MANAGED_STANDBY where PROCESS =18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:> 'MRP0';
+SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last Sequence Received", APPL.SEQUENCE# "Last Sequence Applied", (ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference" FROM (SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH, (SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL WHERE ARCH.THREAD# = APPL.THREAD# OR18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>DER BY 1;
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>
+Session altered.
+
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>
+DB_NAME    INSTANCE_NAME   HOST_NAME       DATABASE_ROLE        LOG_MODE   OPEN_MODE  SWITCHOVER_STATUS DATAGUAR STARTUP_TIME
+---------- --------------- --------------- -------------------- ---------- ---------- ----------------- -------- -------------------
+POHK1DPK   POHK1DPK_DG     hklvdsapp094    PHYSICAL STANDBY     ARCHIVELOG MOUNTED    NOT ALLOWED       ENABLED  2024-06-23 17:29:57
+
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>
+   INST_ID PROCESS   STATUS       DELAY_MINS
+---------- --------- ------------ ----------
+         1 MRP0      WAIT_FOR_GAP          0
+
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>
+    Thread Last Sequence Received Last Sequence Applied Difference
+---------- ---------------------- --------------------- ----------
+         1                  23665                 23665          0
+
+18:02:46 SYS @ POHK1DPK_DG:CDB$ROOT:>/
+
+    Thread Last Sequence Received Last Sequence Applied Difference
+---------- ---------------------- --------------------- ----------
+         1                  23681                 23681          0
+
+
+
