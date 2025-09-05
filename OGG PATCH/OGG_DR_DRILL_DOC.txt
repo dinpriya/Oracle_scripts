@@ -1,0 +1,55 @@
+alter session set nls_date_format='YYYY-MM-DD HH24:MI:SS';
+col name for a100
+set lines 250 pages 1000
+col first_change# format 999999999999999999999999999
+SELECT first_change#,thread#,blocks,block_size,dictionary_begin,name 
+   FROM v$archived_log 
+   WHERE dictionary_begin = 'YES' AND 
+      standby_dest = 'NO' AND
+      name IS NOT NULL AND 
+      status = 'A' order by 1;
+
+
+
+alter extract <ext_name> begin now;
+
+alter extract <ext_name> etrollover;
+
+info ECASTIM1 detail ---> get extseqno
+
+alter extract<pump_name>, extseqno 2538, extrba 0
+
+alter extract <pump_name> etrollover;
+
+alter replicat <rep_name>, extseqno 2557 (Current write postion >> send <pump_name> status command --> next number), extrba 0
+
+
+============
+https://blogs.oracle.com/dataintegration/post/alter-integrated-extract-to-previous-scn
+
+
+GGSCI (HKLPDPS2B002) 2> send PGLBIND1 status
+
+Sending STATUS request to EXTRACT PGLBIND1 ...
+EXTRACT PGLBIND1 (PID 95858)
+  Current status: Recovery complete: At EOF
+
+  Current read position:
+  Sequence #: 2551
+  RBA: 162665670
+  Timestamp: 2024-05-31 13:41:29.000000
+  Extract Trail: /u01/app/oracle/product/oggdata_s2b/dirdat/prd1/indloc/gb
+
+  Current write position:
+  Sequence #: 2556
+  RBA: 162674312
+  Timestamp: 2024-05-31 13:42:42.203379
+  Extract Trail: /u01/app/oracle/product/oggdata_s2b/dirdat/indloc/gb
+
+
+
+/u01/app/oracle/product/oggdata_s2b/dirdat/prd1/cash/vh
+
+/u01/app/oracle/product/oggdata_s2b/dirdat/prd1/cash/vh000002537
+
+TDC to OLAP --?

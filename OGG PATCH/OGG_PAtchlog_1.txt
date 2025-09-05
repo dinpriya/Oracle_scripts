@@ -1,0 +1,210 @@
+oracle@HKLPDDS2B003:/u01/app/oracle/product/ogg/19c []
+> cd
+oracle@HKLPDDS2B003:/home/oracle []
+> export ORACLE_HOME=/u01/app/oracle/product/ogg/19c
+oracle@HKLPDDS2B003:/home/oracle []
+> $ORACLE_HOME/OPatch/opatch version
+OPatch Version: 12.2.0.1.41
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/home/oracle []
+> $ORACLE_HOME/OPatch/opatch lsinventory
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/ogg/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/ogg/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.4.0
+Log file location : /u01/app/oracle/product/ogg/19c/cfgtoollogs/opatch/opatch2024-05-09_20-24-06PM_1.log
+
+Lsinventory Output file location : /u01/app/oracle/product/ogg/19c/cfgtoollogs/opatch/lsinv/lsinventory2024-05-09_20-24-06PM.txt
+--------------------------------------------------------------------------------
+Local Machine Information::
+Hostname: HKLPDDS2B003.hk.standardchartered.com
+ARU platform id: 226
+ARU platform description:: Linux x86-64
+
+Installed Top-level Products (1):
+
+Oracle GoldenGate Core                                               19.1.0.0.0
+There are 1 products installed in this Oracle Home.
+
+
+There are no Interim patches installed in this Oracle Home.
+
+
+--------------------------------------------------------------------------------
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/home/oracle []
+> $ORACLE_HOME/OPatch/opatch lspatches
+There are no Interim patches installed in this Oracle Home "/u01/app/oracle/product/ogg/19c".
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/home/oracle []
+> cd /oradump/Patches/OGG/36238782
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir .
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /u01/app/oracle/product/ogg/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/ogg/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.4.0
+Log file location : /u01/app/oracle/product/ogg/19c/cfgtoollogs/opatch/opatch2024-05-09_20-24-27PM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $XAG_HOME/bin/agctl status goldengate
+Goldengate  instance 'ogg_19c' is not running
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $XAG_HOME/bin/agctl status goldengate ogg_19c
+Goldengate  instance 'ogg_19c' is not running
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $ORACLE_HOME/OPatch/opatch apply
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/ogg/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/ogg/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.4.0
+Log file location : /u01/app/oracle/product/ogg/19c/cfgtoollogs/opatch/opatch2024-05-09_20-24-58PM_1.log
+
+Verifying environment and performing prerequisite checks...
+OPatch continues with these patches:   36238782
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+All checks passed.
+
+Please shutdown Oracle instances running out of this ORACLE_HOME on the local system.
+(Oracle Home = '/u01/app/oracle/product/ogg/19c')
+
+
+Is the local system ready for patching? [y|n]
+y
+User Responded with: Y
+Backing up files...
+Applying interim patch '36238782' to OH '/u01/app/oracle/product/ogg/19c'
+
+Patching component oracle.oggcore.ora19c, 19.1.0.0.0...
+Patch 36238782 successfully applied.
+Log file location: /u01/app/oracle/product/ogg/19c/cfgtoollogs/opatch/opatch2024-05-09_20-24-58PM_1.log
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $ORACLE_HOME/OPatch/opatch lsinventory|grep -i applied
+Patch  36238782     : applied on Thu May 09 20:26:09 HKT 2024
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> $ORACLE_HOME/OPatch/opatch lspatches
+36238782;
+
+OPatch succeeded.
+oracle@HKLPDDS2B003:/oradump/Patches/OGG/36238782 []
+> cd /u01/app/oracle/product/ogg/19c
+oracle@HKLPDDS2B003:/u01/app/oracle/product/ogg/19c []
+> ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.22.0.0.240124 OGGCORE_19.22.0.0.0OGGRU_PLATFORMS_240125.1200_FBO
+Linux, x64, 64bit (optimized), Oracle 19c  on Jan 25 2024 16:06:25
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2024, Oracle and/or its affiliates. All rights reserved.
+
+
+GGSCI (HKLPDDS2B003) 14> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+EXTRACT     RUNNING     ECASHIM1    00:00:04      00:00:04
+EXTRACT     RUNNING     ECASHIM2    00:00:04      00:00:02
+EXTRACT     RUNNING     ECASHIM3    00:00:00      00:00:06
+EXTRACT     RUNNING     ECASHIM4    00:00:04      00:00:08
+EXTRACT     RUNNING     ECASHIM5    00:00:00      00:00:02
+EXTRACT     RUNNING     ECASIMC1    00:00:00      00:00:04
+EXTRACT     RUNNING     ECASIMC2    00:00:00      00:00:02
+EXTRACT     RUNNING     ECASIMC3    00:00:04      00:00:03
+EXTRACT     RUNNING     ECASIMC4    00:00:05      00:00:00
+EXTRACT     RUNNING     ECASIMC5    00:00:03      00:00:04
+EXTRACT     RUNNING     ECASIMD1    00:00:00      00:00:01
+EXTRACT     RUNNING     ECASIMD2    00:00:04      00:00:03
+EXTRACT     RUNNING     ECASIMD3    00:00:05      00:00:08
+EXTRACT     RUNNING     ECASIMD4    00:00:03      00:00:05
+EXTRACT     RUNNING     ECASIMD5    00:00:00      00:00:03
+EXTRACT     RUNNING     ECASIMS1    00:00:00      00:00:07
+EXTRACT     RUNNING     ECASIMS2    00:00:04      00:00:08
+EXTRACT     RUNNING     ECASIMS3    00:00:03      00:00:03
+EXTRACT     RUNNING     ECASIMS4    00:00:00      00:00:03
+EXTRACT     RUNNING     ECASIMS5    00:00:03      00:00:03
+EXTRACT     RUNNING     EGLBIND2    00:00:03      00:00:03
+EXTRACT     RUNNING     EGLBIND3    00:00:03      00:00:05
+EXTRACT     RUNNING     EGLBIND5    00:00:03      00:00:03
+EXTRACT     RUNNING     EGLBIND7    00:00:03      00:00:01
+EXTRACT     RUNNING     EINDGLB2    00:00:04      00:00:00
+EXTRACT     RUNNING     EINDGLB3    00:00:03      00:00:01
+EXTRACT     RUNNING     EINDGLB5    00:00:03      00:00:02
+EXTRACT     RUNNING     EINDGLB7    00:00:04      00:00:06
+EXTRACT     RUNNING     EOLPCAD1    00:00:03      00:00:03
+EXTRACT     RUNNING     EOLPCAD2    00:00:04      00:00:05
+EXTRACT     RUNNING     EOLPCAD3    00:00:03      00:00:04
+EXTRACT     RUNNING     EOLPCAD6    00:00:03      00:00:04
+EXTRACT     RUNNING     EOLPCAD7    00:00:00      00:00:02
+EXTRACT     RUNNING     EOLPCAD8    00:00:03      00:00:01
+EXTRACT     RUNNING     EPAYTBU1    00:00:02      00:00:00
+EXTRACT     RUNNING     EPAYTBU2    00:00:00      00:00:09
+EXTRACT     RUNNING     ETDCNGO1    00:00:00      00:00:06
+EXTRACT     RUNNING     PPAYTBU1    00:00:00      00:00:08
+EXTRACT     RUNNING     PPAYTBU2    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASHIM1    00:00:00      00:00:02
+REPLICAT    RUNNING     RCASHIM2    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASHIM3    00:00:00      00:00:00
+REPLICAT    RUNNING     RCASHIM4    00:00:00      00:00:06
+REPLICAT    RUNNING     RCASHIM5    00:00:00      00:00:09
+REPLICAT    RUNNING     RCASIMC1    00:00:00      00:00:06
+REPLICAT    RUNNING     RCASIMC2    00:00:00      00:00:00
+REPLICAT    RUNNING     RCASIMC3    00:00:00      00:00:07
+REPLICAT    RUNNING     RCASIMC4    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASIMC5    00:00:00      00:00:09
+REPLICAT    RUNNING     RCASIMD1    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASIMD2    00:00:00      00:00:06
+REPLICAT    RUNNING     RCASIMD3    00:00:00      00:00:00
+REPLICAT    RUNNING     RCASIMD4    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASIMD5    00:00:00      00:00:06
+REPLICAT    RUNNING     RCASIMS1    00:00:00      00:00:02
+REPLICAT    RUNNING     RCASIMS2    00:00:00      00:00:05
+REPLICAT    RUNNING     RCASIMS3    00:00:00      00:00:08
+REPLICAT    RUNNING     RCASIMS4    00:00:00      00:00:00
+REPLICAT    RUNNING     RCASIMS5    00:00:00      00:00:09
+REPLICAT    RUNNING     RGLBIND2    00:00:00      00:00:09
+REPLICAT    RUNNING     RGLBIND3    00:00:00      00:00:08
+REPLICAT    RUNNING     RGLBIND5    00:00:00      00:00:07
+REPLICAT    RUNNING     RGLBIND7    00:00:00      00:00:09
+REPLICAT    RUNNING     RINDGLB2    00:00:00      00:00:01
+REPLICAT    RUNNING     RINDGLB3    00:00:00      00:00:04
+REPLICAT    RUNNING     RINDGLB5    00:00:00      00:00:02
+REPLICAT    RUNNING     RINDGLB7    00:00:00      00:00:02
+REPLICAT    RUNNING     ROLPCAD1    00:00:00      00:00:06
+REPLICAT    RUNNING     ROLPCAD2    00:00:00      00:00:09
+REPLICAT    RUNNING     ROLPCAD3    00:00:00      00:00:09
+REPLICAT    RUNNING     ROLPCAD6    00:00:00      00:00:09
+REPLICAT    RUNNING     ROLPCAD7    00:00:00      00:00:00
+REPLICAT    RUNNING     ROLPCAD8    00:00:00      00:00:00
+REPLICAT    RUNNING     RTDCNGO1    00:00:00      00:00:09
+

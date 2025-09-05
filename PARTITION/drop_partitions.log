@@ -1,0 +1,107 @@
+Tablespace                                   Used MB     Free MB    Total MB      Max MB  Pct. Used  Pct. Free
+---------------------------------------- ----------- ----------- ----------- ----------- ---------- ----------
+TS_CC_ARC_GL_RAC                           1,116,333      29,523   1,145,856           0         97          3
+TS_CC_MIG_GL_RAC                           1,467,574     343,882   1,811,456           0         81         19
+SYSAUX                                       196,455      49,305     245,760           0         80         20
+TS_CC_NGO_GL_RAC                           3,634,912     955,252   4,590,164           0         79         21
+SYSTEM                                         1,628       3,492       5,120           0         32         68
+UNDO_4                                        42,784     133,344     176,128           0         24         76
+UNDO_3                                        10,979      93,469     104,448           0         11         89
+UNDOTBS1                                       5,389     123,635     129,024           0          4         96
+SCB_ADMIN_DATA                                     1          63          64           0          2         98
+USERS                                              1          63          64           0          2         98
+AUDIT_TBS                                          1          63          64           0          2         98
+
+11 rows selected.
+
+
+
+08:52:55 SYS @ POHK2CCD3:CDB$ROOT:>08:52:55 SYS @ POHK2CCD3:CDB$ROOT:>select ind.GLOBAL_STATS,ind.index_name,ind_col.column_name,ind.index_type,ind.uniqueness,ind.table_owner as schema_name,ind.table_name as
+08:53:04   2  object_name,ind.status as status from sys.all_indexes ind inner join sys.all_ind_columns ind_col on ind.owner = ind_col.index_owner and
+ind.index_name = ind_col.index_name where ind.table_name ='CDL_ACE_TRACKGPI' order by ind.table_owner,  ind.table_name,  ind.index_name,
+ind_col.column_position; 08:53:04   3  08:53:04   4
+
+GLO INDEX_NAME                                                                                                                       COLUMN_NAME     INDEX_TYPE               UNIQUENES SCHEMA_NAM OBJECT_NAME             STATUS
+--- -------------------------------------------------------------------------------------------------------------------------------- --------------- ------------------------- --------- ---------- ------------------------------ --------
+YES IDX_ACE_TRACKGPI_OCRDT                                                                                                           CREATEDDATE     NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES IDX_CDL_ACE_TRACKGPI                                                                                                             STATUS          NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES IDX_CDL_ACE_TRACKGPI                                                                                                             PROCESSID       NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES PK_CDL_ACE_TRACKGPI                                                                                                              MESSAGEID       NORMAL                   UNIQUE     S2BV4CDS_A CDL_ACE_TRACKGPI               VALID
+                                                                                                                                                                        DMIN
+
+YES PK_CDL_ACE_TRACKGPI                                                                                                              MESSAGEID       NORMAL                   UNIQUE     V4STAGE2_A CDL_ACE_TRACKGPI               VALID
+                                                                                                                                                                        DMIN
+
+
+08:53:05 SYS @ POHK2CCD3:CDB$ROOT:>select partition_name, high_value from   dba_tab_partitions where  table_name = 'CDL_ACE_TRACKGPI' and  table_owner='S2BV4CDS_ARCH';
+
+PARTITION_NAME                                                                                                                   HIGH_VALUE
+-------------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------
+SYS_P10860                                                                                                                       TIMESTAMP' 2022-06-28 00:00:00'
+SYS_P11480                                                                                                                       TIMESTAMP' 2022-07-28 00:00:00'
+SYS_P12044                                                                                                                       TIMESTAMP' 2022-08-28 00:00:00'
+SYS_P12424                                                                                                                       TIMESTAMP' 2022-09-28 00:00:00'
+SYS_P9784                                                                                                                        TIMESTAMP' 2022-04-28 00:00:00'
+
+08:53:15 SYS @ POHK2CCD3:CDB$ROOT:>Alter table S2BV4CDS_ARCH.CDL_ACE_TRACKGPI drop partition SYS_P10860 update global indexes;
+
+Table altered.
+
+08:53:29 SYS @ POHK2CCD3:CDB$ROOT:>select partition_name, high_value from   dba_tab_partitions where  table_name = 'CDL_ACE_TRACKGPI' and  table_owner='S2BV4CDS_ARCH';
+
+PARTITION_NAME                                                                                                                   HIGH_VALUE
+-------------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------
+SYS_P11480                                                                                                                       TIMESTAMP' 2022-07-28 00:00:00'
+SYS_P12044                                                                                                                       TIMESTAMP' 2022-08-28 00:00:00'
+SYS_P12424                                                                                                                       TIMESTAMP' 2022-09-28 00:00:00'
+SYS_P9784                                                                                                                        TIMESTAMP' 2022-04-28 00:00:00'
+
+08:53:36 SYS @ POHK2CCD3:CDB$ROOT:>select ind.GLOBAL_STATS,ind.index_name,ind_col.column_name,ind.index_type,ind.uniqueness,ind.table_owner as schema_name,ind.table_name as
+08:53:44   2  object_name,ind.status as status from sys.all_indexes ind inner join sys.all_ind_columns ind_col on ind.owner = ind_col.index_owner and
+ind.index_name = ind_col.index_name where ind.table_name ='CDL_ACE_TRACKGPI' order by ind.table_owner,  ind.table_name,  ind.index_name,
+ind_col.column_position;
+08:53:44   3  08:53:44   4
+GLO INDEX_NAME                                                                                                                       COLUMN_NAME     INDEX_TYPE               UNIQUENES SCHEMA_NAM OBJECT_NAME             STATUS
+--- -------------------------------------------------------------------------------------------------------------------------------- --------------- ------------------------- --------- ---------- ------------------------------ --------
+YES IDX_ACE_TRACKGPI_OCRDT                                                                                                           CREATEDDATE     NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES IDX_CDL_ACE_TRACKGPI                                                                                                             STATUS          NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES IDX_CDL_ACE_TRACKGPI                                                                                                             PROCESSID       NORMAL                   NONUNIQUE S2BV4CDS_A CDL_ACE_TRACKGPI                VALID
+                                                                                                                                                                        DMIN
+
+YES PK_CDL_ACE_TRACKGPI                                                                                                              MESSAGEID       NORMAL                   UNIQUE     S2BV4CDS_A CDL_ACE_TRACKGPI               VALID
+                                                                                                                                                                        DMIN
+
+YES PK_CDL_ACE_TRACKGPI                                                                                                              MESSAGEID       NORMAL                   UNIQUE     V4STAGE2_A CDL_ACE_TRACKGPI               VALID
+                                                                                                                                                                        DMIN
+
+
+08:53:44 SYS @ POHK2CCD3:CDB$ROOT:>
+
+
+
+Tablespace                                   Used MB     Free MB    Total MB      Max MB  Pct. Used  Pct. Free
+---------------------------------------- ----------- ----------- ----------- ----------- ---------- ----------
+TS_CC_ARC_GL_RAC                           1,065,713      80,143   1,145,856           0         93          7
+TS_CC_MIG_GL_RAC                           1,467,574     343,882   1,811,456           0         81         19
+SYSAUX                                       196,455      49,305     245,760           0         80         20
+TS_CC_NGO_GL_RAC                           3,634,912     955,252   4,590,164           0         79         21
+SYSTEM                                         1,628       3,492       5,120           0         32         68
+UNDO_4                                        42,398     133,730     176,128           0         24         76
+UNDO_3                                        10,982      93,466     104,448           0         11         89
+UNDOTBS1                                       5,389     123,635     129,024           0          4         96
+SCB_ADMIN_DATA                                     1          63          64           0          2         98
+USERS                                              1          63          64           0          2         98
+AUDIT_TBS                                          1          63          64           0          2         98
+
+11 rows selected.
+

@@ -1,0 +1,187 @@
+=========================================================================================
+
+Active side : inlpdpdcd001, inlpdpdcd002, inlpdpdcd003
+
+=========================================================================================
+
+## Implementation steps to Apply Jan 2024 RU Patch on OGG 19.1 Home.
+Patch 36238782: Oracle GoldenGate 19.22.0.0.240124 for Oracle  
+p36238782_1922000OGGRU_Linux-x86-64.zip
+p6880880_190000_Linux-x86-64_Jan2024.zip  <<<< Latest opatch
+
+
+
+----------------------------------------------------------------------------------------------------------------
+## Get confirmation from APP PSS that application is stopped which is using OGG 
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+## Download Patch to a Temporary Directory
+
+----------------------------------------------------------------------------------------------------------------
+ 
+mkdir -p /oradump/Patches/OGG/
+cd /oradump/Patches/OGG/
+ 
+#Patch for OGG 19 on DB 19c
+ 
+curl -k https://artifactory.global.standardchartered.com/artifactory/vendor-generic-staging-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p36238782_1922000OGGRU_Linux-x86-64.zip -o /oradump/Patches/OGG/p36238782_1922000OGGRU_Linux-x86-64.zip
+curl -k https://artifactory.global.standardchartered.com/artifactory/vendor-generic-staging-local/50702-scb-ansible-oracle/DBENG/Oracle/Build/p6880880_190000_Linux-x86-64_Jan2024.zip -o /oradump/Patches/OGG/p6880880_190000_Linux-x86-64_Jan2024.zip
+
+unzip p36238782_1922000OGGRU_Linux-x86-64.zip
+
+ 
+----------------------------------------------------------------------------------------------------------------
+## Check Golden Gate Oracle home and set ORACLE HOME to GoldenGate home
+----------------------------------------------------------------------------------------------------------------  
+ 
+echo $ORACLE_HOME
+
+-- /u01/app/oracle/product/db/19.18.0.0.Jan2023
+
+cd /u01/app/oracle/product/ogg/19c
+
+#set ORACLE_HOME to OGG Home
+ 
+export ORACLE_HOME=/u01/app/oracle/product/ogg/19c
+ 
+cd /u01/app/oracle/product/ogg/
+tar -cvpzf /oradump/Patches/OGG/`hostname`_ogg_home_PR_bkp.tgz 19c
+
+----------------------------------------------------------------------------------------------------------------
+## Update OPATCH - Version should be "OPatch Version: 12.2.0.1.41"
+----------------------------------------------------------------------------------------------------------------
+ 
+
+export ORACLE_HOME=/u01/app/oracle/product/ogg/19c
+ 
+cd $ORACLE_HOME
+
+ls -l p6880880_190000_Linux-x86-64_Jan2024.zip
+ls -ld OPatch*
+mv OPatch OPatch.`date +%Y%m%d`
+ls -ld OPatch*
+unzip p6880880_190000_Linux-x86-64_Jan2024.zip
+ 
+$ORACLE_HOME/OPatch/opatch version
+
+----------------------------------------------------------------------------------------------------------------
+## Execute Prechecks and collect data
+----------------------------------------------------------------------------------------------------------------
+ 
+$ORACLE_HOME/OPatch/opatch lsinventory
+$ORACLE_HOME/OPatch/opatch lspatches
+ 
+cd /oradump/Patches/OGG/36238782
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir .
+ 
+ 
+----------------------------------------------------------------------------------------------------------------
+## Check Status of OGG XAG and stop OGG processes
+----------------------------------------------------------------------------------------------------------------
+ 
+export XAG_HOME=/u01/app/grid/product/xag
+ 
+crsctl stat res -t | grep -A2 -i xag
+$XAG_HOME/bin/agctl status goldengate
+ 
+--Take note of resource name.
+ 
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+
+## Stop OGG XAG
+ 
+ggsci
+info all
+info * detail
+info EINDGLB1 showch
+info EINDGLB3 showch
+info EINGLBD1 showch
+info PINDGLB1 showch
+info PINDGLB3 showch
+info PINGLBD1 showch
+lag EINDGLB1
+lag EINDGLB3
+lag EINGLBD1
+lag PINDGLB1
+lag PINDGLB3
+lag PINGLBD1
+lag RGLBIND1
+lag RGLBIND2
+lag RGLBIND3
+lag RGLINBD1
+stop EINDGLB1
+stop EINDGLB3
+stop EINGLBD1
+stop PINDGLB1
+stop PINDGLB3
+stop PINGLBD1
+stop RGLBIND1
+stop RGLBIND2
+stop RGLBIND3
+stop RGLINBD1
+info E*
+info P*
+info R*
+info all
+info *
+
+  
+$XAG_HOME/bin/agctl stop goldengate ogg_19c
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+ 
+ggsci > info all
+ 
+*** Ensure all processes are STOPPED
+ 
+ 
+----------------------------------------------------------------------------------------------------------------
+## Apply Patch
+----------------------------------------------------------------------------------------------------------------
+ 
+cd /oradump/Patches/OGG/36238782
+ 
+$ORACLE_HOME/OPatch/opatch apply
+ 
+$ORACLE_HOME/OPatch/opatch lsinventory
+$ORACLE_HOME/OPatch/opatch lsinventory|grep -i applied
+$ORACLE_HOME/OPatch/opatch lspatches
+ 
+ 
+----------------------------------------------------------------------------------------------------------------
+## Start OGG
+----------------------------------------------------------------------------------------------------------------
+   
+$XAG_HOME/bin/agctl start goldengate ogg_19c
+$XAG_HOME/bin/agctl status goldengate ogg_19c
+crsctl stat res -t | grep -A2 -i xag
+ 
+ggsci > info all
+ 
+*** Ensure all Process are RUNNING and RBAs are moving.
+ 
+## Application UVT
+ 
+Request application teams to start application and to perform UVT and signoff.
+
+ 
+----------------------------------------------------------------------------------------------------------------
+## Monitor OGG and ensure RBA is moving
+----------------------------------------------------------------------------------------------------------------
+ 
+ 
+####################################################################
+ 
+ 
+ 
+## ROLLBACK STEPS
+
+Stop OGG 
+ 
+export ORACLE_HOME=/u01/app/oracle/product/ogg/19c
+echo $ORACLE_HOME
+$ORACLE_HOME/OPatch/opatch rollback -id 36238782
+
+Start OGG 
+
