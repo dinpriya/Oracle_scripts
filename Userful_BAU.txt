@@ -1,0 +1,65 @@
+Top 10 objects in database
+===========================
+
+select *from (select segment_name,segment_type,bytes/1024/1024/1024 GB,tablespace_name from dba_segments order by 3 desc) where rownum <=10;
+
+select owner,table_name,column_name,segment_name from dba_lobs where segment_name='';
+
+Nohub
+=============================
+
+nohup sh script.sh >> xxx.log &
+
+===============================
+AUDIT
+
+col OS_USERNAME format a20
+col USERNAME format a10
+col USERHOST format a20
+col TERMINAL format a20
+col USERNAME format a15
+select OS_USERNAME,USERNAME,TERMINAL,RETURNCODE,TIMESTAMP from dba_audit_trail where USERNAME like '%YWLADMIN%' and RETURNCODE > 0 and ACTION_NAME='LOGON' order by TIMESTAMP;
+
+SQL> set linesize 500 
+SQL> set pagesize 500 
+SQL> col OS_USERNAME format a12 
+SQL> col USERNAME format a10 
+SQL> col USERHOST format a10 
+SQL> col TERMINAL format a10 
+SQL> col TIMESTAMP format a25 
+SQL> col ACTION_NAME format a15 
+SQL> col OWNER format a10 
+SQL> select to_char(TIMESTAMP,'DD_MM_YYYY HH24:MI:SS') "TIMESTAMP",USERHOST,TERMINAL,OS_USERNAME,USERNAME,ACTION_NAME,to_char(RETURNCODE) "RETURNCODE" from dba_audit_session where USERNAME='ESSREADER' order by TIMESTAMP; 
+
+=======================================
+
+Datafile add Asm
+
+alter tablespace XXXXX add datafile '+Disk_group' size 30G autoextend off;
+
+============================================
+
+Get DDL of TABLE
+
+select dbms_metadata.get_ddl('TABLE','DS_FAP','QLDSADMIN') from dual;
+
+select dbms_metadata.get_ddl('TABLE','DS_DEBIT_CREDIT_ADVICE','QLDSADMIN') from dual;
+========================================================================================
+
+Session Kill
+
+SELECT SID,SERIAL#,SQL_ID,STATUS,MACHINE FROM gV$SESSION WHERE SID in();
+
+SELECT SQL_FULLTEXT FROM gV$SQL WHERE SQL_ID='';
+
+
+[12:29 PM] Francis Dizon
+sftp semasupp@10.20.168.16
+
+[12:30 PM] Francis Dizon
+MNBV1234
+
+
+Disk group pass alert to 
+
+STRAIGHT2BANKV4-CASH PROD TSO SUP

@@ -1,0 +1,124 @@
+Login to HKLPDPS2B001
+
+POHK5CCD1 
+
+alter session set container=PDBP_NGW;
+
+select LOG_OWNER,MASTER,LOG_TABLE,LAST_PURGE_DATE from dba_mview_logs;
+
+LOG_OWNER  MASTER              LOG_TABLE                                                                                                                        LAST_PURGE_DATE
+---------- ------------------- -------------------------------------------------------------------------------------------------------------------------------- --------------------
+QLDSADMIN  DS_PAY_INQUIRIES    MLOG$_DS_PAY_INQUIRIES
+QLDSADMIN  SS_POS_DTL          MLOG$_SS_POS_DTL                                                                                                                 11 Apr 2024 14:41:59
+
+DROP MATERIALIZED VIEW LOG on "QLDSADMIN"."SS_POS_DTL";
+
+select LOG_OWNER,MASTER,LOG_TABLE,LAST_PURGE_DATE from dba_mview_logs;
+
+  CREATE MATERIALIZED VIEW LOG ON "QLDSADMIN"."SS_POS_DTL"
+ PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "TS_CC_INF_GL_RAC"
+  WITH PRIMARY KEY, ROWID, SEQUENCE ( "BIZDT", "CREATEDT", "DEPOTID", "DEPOTNM",
+ "EXCHNGRATE", "LCY", "MKTPRICE", "NUMOFSEC", "PRICEDT", "RECOMPVAL", "SCRIPIND"
+, "SECCCY", "SUBCUSTCTRYID", "SUBCUSTID", "VALUATIONTCY" ) INCLUDING NEW VALUES;
+
+grant DELETE on QLDSADMIN.MLOG$_SS_POS_DTL to INFOADM;
+grant DELETE on QLDSADMIN.MLOG$_SS_POS_DTL to SCB_USER_INF_RW;
+grant INSERT on QLDSADMIN.MLOG$_SS_POS_DTL to INFOADM;
+grant INSERT on QLDSADMIN.MLOG$_SS_POS_DTL to SCB_USER_INF_RW;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to INFOADM;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to INFOSESSUSER;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to INFOUSER;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CATIUSER;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to SCB_USER_INF_RO;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to SCB_USER_INF_RW;
+grant UPDATE on QLDSADMIN.MLOG$_SS_POS_DTL to INFOADM;
+grant UPDATE on QLDSADMIN.MLOG$_SS_POS_DTL to SCB_USER_INF_RW;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_PSS_VIEW;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_TNG_IDD;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_DSLDR_DR;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_ASYNC_DR;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_CTRLM;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_DSLDR;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_ASYNC;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_GWAN;
+grant SELECT on QLDSADMIN.MLOG$_SS_POS_DTL to CC_INF_DMZ;
+
+
+create or replace synonym CC_PSS_VIEW.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym INFOADM.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym RCMS.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym DWH.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym EIADMIN.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym EIUSER.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym INFOUSER.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CCS.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CATIUSER.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CCS_DR.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CCS_RTA_DR.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_TNG_IDD.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_DSLDR_DR.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_ASYNC_DR.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CTRLM.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_DSLDR.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_ASYNC.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_GWAN.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_DMZ.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CUS_NG_CA.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CUS_CLS.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+create or replace synonym CC_INF_CUS_CLS_CA.MLOG$_SS_POS_DTL for QLDSADMIN.MLOG$_SS_POS_DTL;
+
+
+select count(1) from CC_PSS_VIEW.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from INFOADM.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from RCMS.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from DWH.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from EIADMIN.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from EIUSER.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from INFOUSER.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from CC_INF_CCS.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from CATIUSER.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from CC_INF_CCS_DR.MLOG$_SS_POS_DTL where rownum < 3;
+select count(1) from CC_INF_CCS_RTA_DR.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_TNG_IDD.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_DSLDR_DR.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_ASYNC_DR.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_CTRLM.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_DSLDR.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_ASYNC.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_GWAN.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_DMZ.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_CUS_NG_CA.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_CUS_CLS.MLOG$_SS_POS_DTL  where rownum < 3;
+select count(1) from CC_INF_CUS_CLS_CA.MLOG$_SS_POS_DTL  where rownum < 3;
+
+
+MVIEW complete Refresh:
+========================
+
+Stop the job if it is running,
+
+execute dbms_scheduler.stop_job('WAK_MAX');
+execute dbms_scheduler.stop_job('WAK_SUM');   --> if req 
+
+Disable the job,
+
+execute dbms_scheduler.disable('WAK_SUM');
+execute dbms_scheduler.disable('WAK_MAX');
+
+do complete refresh,
+
+execute dbms_mview.refresh('QLDSADMIN.SS_TOT_POSITION_SUM','C');
+execute dbms_mview.refresh('QLDSADMIN.SS_TOT_POSITION_MAX','C');
+
+Enable the job,
+
+execute dbms_scheduler.enable('WAK_SUM');
+execute dbms_scheduler.enable('WAK_MAX');
+
+Verify the job status,
+ 
+select owner,job_name,STATE,job_Action,FAILURE_COUNT,LAST_START_DATE from DBA_SCHEDULER_JOBS where upper(job_Action) like '%SS_TOT_POSITION_%';

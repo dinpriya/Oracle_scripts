@@ -1,0 +1,52 @@
+DR
+
+11:47:27 SYS @ POHK5CCD_DG1:CDB$ROOT:>select NAME,path,header_status from v$asm_disk where name like '%FRA_IMP%';
+
+NAME                           PATH                                                                                                 HEADER_STATU
+------------------------------ ---------------------------------------------------------------------------------------------------- ------------
+FRA_IMP_0018                   /dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_105                                                   MEMBER
+
+Do unmount from other nodes
+
+alter diskgroup FRA_IMP dismount;
+
+then, run drop
+
+DROP DISKGROUP FRA_IMP;
+
+Monitor rebalance opeartion. 
+
+select * from v$asm_operation;
+
+ALTER DISKGROUP FRA_CCD05 ADD DISK '/dev/oracleasm/disks/asm_disk_JVSP5500-A_flash_105' NAME FRA_CCD05_112 rebalance power 100;
+
+Monitor rebalance opeartion. 
+
+select * from v$asm_operation
+
+
+PROD
+
+11:49:49 sys@POHK5CCD> select NAME,path,header_status from v$asm_disk where name like '%FRA_IMP%';
+
+NAME                           PATH                                                                                                 HEADER_STATU
+------------------------------ ---------------------------------------------------------------------------------------------------- ------------
+FRA_IMP_0018                   /dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_105                                                   MEMBER
+
+Do unmount from other nodes
+
+alter diskgroup FRA_IMP dismount;
+
+then, run drop 
+
+DROP DISKGROUP FRA_IMP;
+
+Monitor rebalance opeartion. 
+
+select * from v$asm_operation;
+
+ALTER DISKGROUP FRA_CCD05 ADD  DISK '/dev/oracleasm/disks/asm_disk_MVSP5500-A_flash_105' NAME FRA_CCD05_112 rebalance power 100;
+
+Monitor rebalance opeartion. 
+
+select * from v$asm_operation

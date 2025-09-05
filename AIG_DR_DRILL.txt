@@ -1,0 +1,78 @@
+
+(i) Steps for Switchover
+===========================
+
+Login to HKLPDPS2B003
+
+on primary side,
+
+To connect to DGMGRL for particular DB,
+
+dgmgrl /@DBNAME
+
+To show the DG broker configuration
+
+DGMGRL> show configuration
+
+To show primary DB details
+
+DGMGRL> show database PRIMEDB
+
+To show Standby DB details
+
+DGMGRL> show database STANDBYDB
+
+To validate the primary DB for switchover, make sure no errors/warnings
+
+DGMGRL> validate database PRIMEDB
+
+To validate the Standby DB for switchover, make sure no errors/warnings
+
+DGMGRL> validate database STANDBYDB
+
+To perform DB switch over,
+
+DGMGRL> Switchover to STANDBYDB
+
+Verify the RAC services, alert logs, DB status and temp file status on new primary.
+
+Session management needs to taken care by killing session running on alternate services
+
+(ii) Steps for Switchback
+===========================
+
+Login to HKLPDSS2B003
+
+on standby side, where current role of DB is primary
+
+To connect to DGMGRL for particular DB,
+
+dgmgrl /@DBNAME
+
+To show the DG broker configuration
+
+DGMGRL> show configuration
+
+To show primary DB details
+
+DGMGRL> show database STANDBYDB
+
+To show Standby DB details
+
+DGMGRL> show database PRIMEDB
+
+To validate the primary DB for switchover, make sure no errors/warnings
+
+DGMGRL> validate database STANDBYDB
+
+To validate the Standby DB for switchover, make sure no errors/warnings
+
+DGMGRL> validate database PRIMEDB
+
+To perform DB switch over,
+
+DGMGRL> Switchover to PRIMEDB
+
+Verify the RAC services, alert logs, DB status and temp file status on old primary
+
+Session management needs to taken care by killing session running on alternate services

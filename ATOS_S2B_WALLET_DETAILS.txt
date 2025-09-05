@@ -1,0 +1,15 @@
+mkstore -wrl /u01/app/oracle/global/wallet -createCredential POHK3CCD_dbaro dbaro
+mkstore -wrl /u01/app/oracle/global/wallet -createCredential POHK4CCD_dbaro dbaro
+mkstore -wrl /u01/app/oracle/global/wallet -createCredential POHK3CCD_dbsnmp dbsnmp
+mkstore -wrl /u01/app/oracle/global/wallet -createCredential POHK4CCD_dbsnmp dbsnmp
+mkstore -wrl /u01/app/oracle/global/wallet -createCredential POHK5CCD_dbsnmp dbsnmp
+ 
+ 
+ 
+5) List/View creadential
+export TNS_ADMIN=/u01/app/oracle/global/network/admin
+mkstore -wrl /u01/app/oracle/global/wallet -listCredential
+mkstore -wrl /u01/app/oracle/global/wallet -viewEntry oracle.security.client.password1
+
+
+Password is atos1234

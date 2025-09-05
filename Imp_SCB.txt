@@ -1,0 +1,13 @@
+Archivelog deletion Non-prod
+
+oracle@HKLPDDS2B002:/home/oracle/indra []
+Mas Dinesh/Mas Pulkit please use this script to remove archivelog ... this is keep until sysdate-1
+
+oracle@HKLPDDS2B002:/home/oracle/indra []
+
+> ./del_arch.sh
+=======================================
+
+
+
+ 

@@ -1,0 +1,1244 @@
+> du -sh  $ORACLE_HOME/.patch_storage
+8.2G    /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+
+
+> sudo -u grid -i
+grid@HKLPDPS2B001:/home/grid [+ASM1]opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_11-39-18AM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  5
+
+***** There are 8 inactive RU patches in chain 1
+-Inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:36:24 HKT 2019, with no overlays
+-Inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:19:49 HKT 2020, with no overlays
+-Inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 02:05:14 HKT 2021, with no overlays
+-Inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 15:05:39 HKT 2022, with no overlays
+-Inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 14:00:13 HKT 2022, with no overlays
+-Inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sat Nov 26 20:57:41 HKT 2022, with no overlays
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sat May 27 23:36:37 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 20:56:43 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 20 22:40:16 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 2
+-Inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 15:18:04 HKT 2022, with no overlays
+-Inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sat Nov 26 21:19:31 HKT 2022, with no overlays
+-Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:35:39 HKT 2019, with no overlays
+-Inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:21:43 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 02:08:50 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 15:01:06 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 13:49:55 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391
+-Inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sat Nov 26 21:09:55 HKT 2022, with overlays: 34113634, 35336174, 34777391
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 00:03:02 HKT 2023, with overlays: 35336174, 34777391
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 21:09:18 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 20 23:00:41 HKT 2024, with no overlays
+
+***** There are 6 inactive RU patches in chain 3
+-Inactive RU/BP 30898856:TOMCAT RELEASE UPDATE 19.0.0.0.0 (30898856), installed on: Mon Apr 27 10:25:10 HKT 2020, with no overlays
+-Inactive RU/BP 32584670:TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670), installed on: Sat Aug 07 02:14:19 HKT 2021, with no overlays
+-Inactive RU/BP 33239955:TOMCAT RELEASE UPDATE 19.0.0.0.0 (33239955), installed on: Sat Jan 15 15:12:26 HKT 2022, with no overlays
+-Inactive RU/BP 34318175:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34318175), installed on: Sat Nov 26 21:14:22 HKT 2022, with no overlays
+-Inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 00:17:19 HKT 2023, with no overlays
+-Inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sat Nov 04 21:28:16 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sat Apr 20 23:30:09 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 4
+-Inactive RU/BP 29517247:ACFS RELEASE UPDATE 19.3.0.0.0 (29517247), installed on: Thu Apr 18 15:36:02 HKT 2019, with no overlays
+-Inactive RU/BP 30869304:ACFS RELEASE UPDATE 19.7.0.0.0 (30869304), installed on: Mon Apr 27 10:20:41 HKT 2020, with no overlays
+-Inactive RU/BP 32576499:ACFS RELEASE UPDATE 19.11.0.0.0 (32576499), installed on: Sat Aug 07 02:06:49 HKT 2021, with no overlays
+-Inactive RU/BP 33208107:ACFS RELEASE UPDATE 19.13.0.0.0 (33208107), installed on: Sat Jan 15 15:07:54 HKT 2022, with no overlays
+-Inactive RU/BP 33534448:ACFS RELEASE UPDATE 19.14.0.0.0 (33534448), installed on: Sat Apr 16 14:06:53 HKT 2022, with no overlays
+-Inactive RU/BP 33535435:ACFS Interim patch for 33535435, installed on: Sat Apr 16 15:21:54 HKT 2022, with no overlays
+-Inactive RU/BP 34139601:ACFS RELEASE UPDATE 19.16.0.0.0 (34139601), installed on: Sat Nov 26 21:00:01 HKT 2022, with no overlays
+-Inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sat May 27 23:42:05 HKT 2023, with no overlays
+-Inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sat Nov 04 21:01:50 HKT 2023, with no overlays
+-Inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sat Apr 20 22:49:07 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sat Apr 20 23:58:58 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 5
+-Inactive RU/BP 32585572:DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572), installed on: Sat Aug 07 02:12:24 HKT 2021, with no overlays
+-Active RU/BP 33575402:DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402), installed on: Sat Apr 16 14:08:58 HKT 2022, with no overlays
+
+OPatch succeeded.
+grid@HKLPDPS2B001:/home/grid [+ASM1]
+
+
+
+grid@HKLPDPS2B001:/home/grid [+ASM1]opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_11-57-03AM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 8 inactive RU patches in chain 1
+
+***** 7 inactive patches will be deleted
+-To be deleted inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:36:24 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:19:49 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 02:05:14 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 15:05:39 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 14:00:13 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sat Nov 26 20:57:41 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sat May 27 23:36:37 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 20:56:43 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 20 22:40:16 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 2
+
+***** 9 inactive patches will be deleted
+-To be deleted inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 15:18:04 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sat Nov 26 21:19:31 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:35:39 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:21:43 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 02:08:50 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 15:01:06 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 13:49:55 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391
+-To be deleted inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sat Nov 26 21:09:55 HKT 2022, with overlays: 34113634, 35336174, 34777391
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 00:03:02 HKT 2023, with overlays: 35336174, 34777391
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 21:09:18 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 20 23:00:41 HKT 2024, with no overlays
+
+***** There are 6 inactive RU patches in chain 3
+
+***** 5 inactive patches will be deleted
+-To be deleted inactive RU/BP 30898856:TOMCAT RELEASE UPDATE 19.0.0.0.0 (30898856), installed on: Mon Apr 27 10:25:10 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32584670:TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670), installed on: Sat Aug 07 02:14:19 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33239955:TOMCAT RELEASE UPDATE 19.0.0.0.0 (33239955), installed on: Sat Jan 15 15:12:26 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34318175:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34318175), installed on: Sat Nov 26 21:14:22 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 00:17:19 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sat Nov 04 21:28:16 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sat Apr 20 23:30:09 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 4
+
+***** 9 inactive patches will be deleted
+-To be deleted inactive RU/BP 29517247:ACFS RELEASE UPDATE 19.3.0.0.0 (29517247), installed on: Thu Apr 18 15:36:02 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30869304:ACFS RELEASE UPDATE 19.7.0.0.0 (30869304), installed on: Mon Apr 27 10:20:41 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32576499:ACFS RELEASE UPDATE 19.11.0.0.0 (32576499), installed on: Sat Aug 07 02:06:49 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208107:ACFS RELEASE UPDATE 19.13.0.0.0 (33208107), installed on: Sat Jan 15 15:07:54 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33534448:ACFS RELEASE UPDATE 19.14.0.0.0 (33534448), installed on: Sat Apr 16 14:06:53 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33535435:ACFS Interim patch for 33535435, installed on: Sat Apr 16 15:21:54 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34139601:ACFS RELEASE UPDATE 19.16.0.0.0 (34139601), installed on: Sat Nov 26 21:00:01 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sat May 27 23:42:05 HKT 2023, with no overlays
+-To be deleted inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sat Nov 04 21:01:50 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sat Apr 20 22:49:07 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sat Apr 20 23:58:58 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 29585399
+Deleted RU/BP patch: 30894985
+Deleted RU/BP patch: 32579761
+Deleted RU/BP patch: 33208123
+Deleted RU/BP patch: 33529556
+Deleted RU/BP patch: 34160635
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 31732095
+Deleted RU/BP patch: 33912872
+Deleted RU/BP patch: 29517242
+Deleted overlay patch: 34113634
+Deleted overlay patch: 33497160
+Deleted overlay patch: 33197296
+Deleted overlay patch: 34777391
+Deleted RU/BP patch: 30869156
+Deleted RU/BP patch: 32545013
+Deleted RU/BP patch: 33192793
+Deleted RU/BP patch: 33515361
+Deleted RU/BP patch: 34133642
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 30898856
+Deleted RU/BP patch: 32584670
+Deleted RU/BP patch: 33239955
+Deleted RU/BP patch: 34318175
+Deleted RU/BP patch: 34863894
+Deleted RU/BP patch: 29517247
+Deleted RU/BP patch: 30869304
+Deleted RU/BP patch: 32576499
+Deleted RU/BP patch: 33208107
+Deleted RU/BP patch: 33534448
+Deleted RU/BP patch: 33535435
+Deleted RU/BP patch: 34139601
+Deleted RU/BP patch: 34768569
+Deleted RU/BP patch: 35332537
+
+OPatch succeeded.
+grid@HKLPDPS2B001:/home/grid [+ASM1]timed out waiting for input: auto-logout
+
+> sudo -u grid -i
+grid@HKLPDPS2B001:/home/grid [+ASM1]opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_12-52-12PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  5
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 20:56:43 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 20 22:40:16 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sat Nov 04 21:28:16 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sat Apr 20 23:30:09 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 32585572:DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572), installed on: Sat Aug 07 02:12:24 HKT 2021, with no overlays
+-Active RU/BP 33575402:DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402), installed on: Sat Apr 16 14:08:58 HKT 2022, with no overlays
+
+***** There are 1 inactive RU patches in chain 4
+-Inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sat Apr 20 22:49:07 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sat Apr 20 23:58:58 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 5
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 21:09:18 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 20 23:00:41 HKT 2024, with no overlays
+
+
+/dev/mapper/gridvg-oragridvol   105G   54G   52G  52% /u01/app/grid
+
+
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_12-55-07PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 2 inactive RU patches in chain 1
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 00:30:23 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 22:06:49 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 00:07:54 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 2
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 01:06:13 HKT 2023, with overlays: 35336174
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 22:35:15 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 00:33:21 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 3
+-Inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 01:22:59 HKT 2023, with no overlays
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 00:49:43 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 01:22:41 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_13-03-22PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 2 inactive RU patches in chain 1
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 00:30:23 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 22:06:49 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 00:07:54 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 2
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 01:06:13 HKT 2023, with overlays: 35336174
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 22:35:15 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 00:33:21 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 3
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 01:22:59 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 00:49:43 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 01:22:41 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 34786990
+
+OPatch succeeded.
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_13-13-05PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Nov 04 22:06:49 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 00:07:54 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 00:49:43 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 01:22:41 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Nov 04 22:35:15 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 00:33:21 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B001:/home/oracle [POHK1API1]
+> du -sh $ORACLE_HOME/.patch_storage
+5.7G    /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+
+
+
+NODE 2
+
+grid@HKLPDPS2B002:/home/grid []du -sh $ORACLE_HOME/.patch_storage
+12G     /u01/app/grid/product/19c/.patch_storage
+grid@HKLPDPS2B002:/home/grid []opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_13-18-12PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  5
+
+***** There are 2 inactive RU patches in chain 1
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 07:24:31 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 06:00:40 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 08:57:00 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 2
+-Inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 07:43:26 HKT 2023, with no overlays
+-Inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sun Nov 05 06:31:01 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sun Apr 21 09:15:47 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 3
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 07:33:05 HKT 2023, with overlays: 35336174
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 06:12:50 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 09:04:07 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 4
+-Inactive RU/BP 32585572:DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572), installed on: Sat Aug 07 01:30:57 HKT 2021, with no overlays
+-Active RU/BP 33575402:DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402), installed on: Sat Apr 16 16:17:02 HKT 2022, with no overlays
+
+***** There are 3 inactive RU patches in chain 5
+-Inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sun May 28 07:27:49 HKT 2023, with no overlays
+-Inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sun Nov 05 06:05:14 HKT 2023, with no overlays
+-Inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sun Apr 21 08:59:30 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sun Apr 21 09:25:09 HKT 2024, with no overlays
+
+OPatch succeeded.
+grid@HKLPDPS2B002:/home/grid []opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_13-26-12PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 2 inactive RU patches in chain 1
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 07:24:31 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 06:00:40 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 08:57:00 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 2
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 07:43:26 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sun Nov 05 06:31:01 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sun Apr 21 09:15:47 HKT 2024, with no overlays
+
+***** There are 2 inactive RU patches in chain 3
+
+***** 1 inactive patches will be deleted
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 07:33:05 HKT 2023, with overlays: 35336174
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 06:12:50 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 09:04:07 HKT 2024, with no overlays
+
+***** There are 3 inactive RU patches in chain 4
+
+***** 2 inactive patches will be deleted
+-To be deleted inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sun May 28 07:27:49 HKT 2023, with no overlays
+-To be deleted inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sun Nov 05 06:05:14 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sun Apr 21 08:59:30 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sun Apr 21 09:25:09 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 34863894
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 34768569
+Deleted RU/BP patch: 35332537
+
+OPatch succeeded.
+grid@HKLPDPS2B002:/home/grid []du -sh $ORACLE_HOME/.patch_storage
+7.7G    /u01/app/grid/product/19c/.patch_storage
+
+
+> du -sh $ORACLE_HOME/.patch_storage
+21G     /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+
+
+> cd $ORACLE_HOME/OPatch
+oracle@HKLPDPS2B002:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK1API2]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_13-41-58PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 8 inactive RU patches in chain 1
+-Inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-Inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:31:16 HKT 2020, with no overlays
+-Inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 01:35:05 HKT 2021, with no overlays
+-Inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 17:53:58 HKT 2022, with no overlays
+-Inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 16:37:41 HKT 2022, with no overlays
+-Inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 04:32:02 HKT 2022, with no overlays
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 07:54:37 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 08:38:21 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 09:55:50 HKT 2024, with no overlays
+
+***** There are 11 inactive RU patches in chain 2
+-Inactive RU/BP 31335037:RDBMS - DSTV35 UPDATE - TZDATA2020A, installed on: Sun Nov 27 05:16:37 HKT 2022, with no overlays
+-Inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 18:05:32 HKT 2022, with no overlays
+-Inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 04:54:55 HKT 2022, with no overlays
+-Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143, 34953532
+-Inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:34:54 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 01:39:14 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 17:57:01 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 16:31:24 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 04:38:33 HKT 2022, with overlays: 34113634, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 08:25:29 HKT 2023, with overlays: 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 09:24:23 HKT 2023, with overlays: 35395648, 35617844, 35336174, 34969678, 35120120, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 11:06:33 HKT 2024, with no overlays
+
+***** There are 7 inactive RU patches in chain 3
+-Inactive RU/BP 30805684:OJVM RELEASE UPDATE: 19.7.0.0.200414 (30805684), installed on: Mon Apr 27 11:50:43 HKT 2020, with no overlays
+-Inactive RU/BP 32399816:OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816), installed on: Sat Aug 07 22:44:42 HKT 2021, with no overlays
+-Inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Sat Jan 15 18:34:17 HKT 2022, with no overlays
+-Inactive RU/BP 33561310:OJVM RELEASE UPDATE: 19.14.0.0.220118 (33561310), installed on: Sat Apr 16 16:43:54 HKT 2022, with no overlays
+-Inactive RU/BP 34086870:OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870), installed on: Sun Nov 27 04:47:30 HKT 2022, with no overlays
+-Inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 08:49:34 HKT 2023, with no overlays
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 11:52:30 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 13:14:54 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B002:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK1API2]
+> opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_14-07-08PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 8 inactive RU patches in chain 1
+
+***** 7 inactive patches will be deleted
+-To be deleted inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:31:16 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 01:35:05 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 17:53:58 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 16:37:41 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 04:32:02 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 07:54:37 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 08:38:21 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 09:55:50 HKT 2024, with no overlays
+
+***** There are 11 inactive RU patches in chain 2
+
+***** 10 inactive patches will be deleted
+-To be deleted inactive RU/BP 31335037:RDBMS - DSTV35 UPDATE - TZDATA2020A, installed on: Sun Nov 27 05:16:37 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 18:05:32 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 04:54:55 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:34:54 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 01:39:14 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 17:57:01 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 16:31:24 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 04:38:33 HKT 2022, with overlays: 34113634, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 08:25:29 HKT 2023, with overlays: 35336174, 34777391, 34100969, 32727143, 34953532
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 09:24:23 HKT 2023, with overlays: 35395648, 35617844, 35336174, 34969678, 35120120, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 11:06:33 HKT 2024, with no overlays
+
+***** There are 7 inactive RU patches in chain 3
+
+***** 6 inactive patches will be deleted
+-To be deleted inactive RU/BP 30805684:OJVM RELEASE UPDATE: 19.7.0.0.200414 (30805684), installed on: Mon Apr 27 11:50:43 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32399816:OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816), installed on: Sat Aug 07 22:44:42 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Sat Jan 15 18:34:17 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33561310:OJVM RELEASE UPDATE: 19.14.0.0.220118 (33561310), installed on: Sat Apr 16 16:43:54 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34086870:OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870), installed on: Sun Nov 27 04:47:30 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 08:49:34 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 11:52:30 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 13:14:54 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 29585399
+Deleted RU/BP patch: 30894985
+Deleted RU/BP patch: 32579761
+Deleted RU/BP patch: 33208123
+Deleted RU/BP patch: 33529556
+Deleted RU/BP patch: 34160635
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 31335037
+Deleted RU/BP patch: 31732095
+Deleted RU/BP patch: 33912872
+Deleted overlay patch: 34100969
+Deleted overlay patch: 32727143
+Deleted overlay patch: 34953532
+Deleted RU/BP patch: 29517242
+Deleted overlay patch: 34113634
+Deleted overlay patch: 33497160
+Deleted overlay patch: 33197296
+Deleted overlay patch: 34777391
+Deleted RU/BP patch: 30869156
+Deleted RU/BP patch: 32545013
+Deleted RU/BP patch: 33192793
+Deleted RU/BP patch: 33515361
+Deleted RU/BP patch: 34133642
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 30805684
+Deleted RU/BP patch: 32399816
+Deleted RU/BP patch: 33192694
+Deleted RU/BP patch: 33561310
+Deleted RU/BP patch: 34086870
+Deleted RU/BP patch: 34786990
+
+OPatch succeeded.
+oracle@HKLPDPS2B002:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK1API2]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_14-43-23PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 08:38:21 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 09:55:50 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 11:52:30 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 13:14:54 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 09:24:23 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 11:06:33 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B002:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK1API2]
+> du -sh $ORACLE_HOME/.patch_storage
+5.6G    /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+
+
+NODE 3
+
+> sudo -u grid -i
+grid@HKLPDPS2B003:/home/grid []du -sh $ORACLE_HOME/.patch_storage
+30G     /u01/app/grid/product/19c/.patch_storage
+grid@HKLPDPS2B003:/home/grid []opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_14-46-41PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  5
+
+***** There are 8 inactive RU patches in chain 1
+-Inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:36:24 HKT 2019, with no overlays
+-Inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:19:49 HKT 2020, with no overlays
+-Inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 00:18:52 HKT 2021, with no overlays
+-Inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 16:22:24 HKT 2022, with no overlays
+-Inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 17:13:46 HKT 2022, with no overlays
+-Inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 01:04:46 HKT 2022, with no overlays
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 03:19:19 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 01:34:26 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 03:26:52 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 2
+-Inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 16:35:29 HKT 2022, with no overlays
+-Inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 01:24:50 HKT 2022, with no overlays
+-Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:35:39 HKT 2019, with no overlays
+-Inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:21:43 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 00:21:31 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 16:17:30 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-Inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 17:08:41 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391
+-Inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 01:13:17 HKT 2022, with overlays: 34113634, 35336174, 34777391
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 03:31:03 HKT 2023, with overlays: 35336174, 34777391
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 01:45:10 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 03:46:50 HKT 2024, with no overlays
+
+***** There are 6 inactive RU patches in chain 3
+-Inactive RU/BP 30898856:TOMCAT RELEASE UPDATE 19.0.0.0.0 (30898856), installed on: Mon Apr 27 10:25:10 HKT 2020, with no overlays
+-Inactive RU/BP 32584670:TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670), installed on: Sat Aug 07 00:26:26 HKT 2021, with no overlays
+-Inactive RU/BP 33239955:TOMCAT RELEASE UPDATE 19.0.0.0.0 (33239955), installed on: Sat Jan 15 16:29:53 HKT 2022, with no overlays
+-Inactive RU/BP 34318175:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34318175), installed on: Sun Nov 27 01:17:55 HKT 2022, with no overlays
+-Inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 03:40:49 HKT 2023, with no overlays
+-Inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sun Nov 05 02:03:42 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sun Apr 21 04:15:03 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 4
+-Inactive RU/BP 29517247:ACFS RELEASE UPDATE 19.3.0.0.0 (29517247), installed on: Thu Apr 18 15:36:02 HKT 2019, with no overlays
+-Inactive RU/BP 30869304:ACFS RELEASE UPDATE 19.7.0.0.0 (30869304), installed on: Mon Apr 27 10:20:41 HKT 2020, with no overlays
+-Inactive RU/BP 32576499:ACFS RELEASE UPDATE 19.11.0.0.0 (32576499), installed on: Sat Aug 07 00:19:45 HKT 2021, with no overlays
+-Inactive RU/BP 33208107:ACFS RELEASE UPDATE 19.13.0.0.0 (33208107), installed on: Sat Jan 15 16:24:54 HKT 2022, with no overlays
+-Inactive RU/BP 33534448:ACFS RELEASE UPDATE 19.14.0.0.0 (33534448), installed on: Sat Apr 16 17:18:41 HKT 2022, with no overlays
+-Inactive RU/BP 33535435:ACFS Interim patch for 33535435, installed on: Sat Apr 16 17:23:55 HKT 2022, with no overlays
+-Inactive RU/BP 34139601:ACFS RELEASE UPDATE 19.16.0.0.0 (34139601), installed on: Sun Nov 27 01:07:20 HKT 2022, with no overlays
+-Inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sun May 28 03:25:52 HKT 2023, with no overlays
+-Inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sun Nov 05 01:38:32 HKT 2023, with no overlays
+-Inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sun Apr 21 03:35:22 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sun Apr 21 04:42:14 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 5
+-Inactive RU/BP 32585572:DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572), installed on: Sat Aug 07 00:24:43 HKT 2021, with no overlays
+-Active RU/BP 33575402:DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402), installed on: Sat Apr 16 17:20:45 HKT 2022, with no overlays
+
+OPatch succeeded.
+grid@HKLPDPS2B003:/home/grid []timed out waiting for input: auto-logout
+oracle@HKLPDPS2B003:/home/oracle [POHK5CCD3]
+> sudo -u grid -i
+grid@HKLPDPS2B003:/home/grid []
+grid@HKLPDPS2B003:/home/grid []opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_15-17-07PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 8 inactive RU patches in chain 1
+
+***** 7 inactive patches will be deleted
+-To be deleted inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:36:24 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:19:49 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 00:18:52 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 16:22:24 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 17:13:46 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 01:04:46 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 03:19:19 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 01:34:26 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 03:26:52 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 2
+
+***** 9 inactive patches will be deleted
+-To be deleted inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 16:35:29 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 01:24:50 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:35:39 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:21:43 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 00:21:31 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 16:17:30 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391
+-To be deleted inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 17:08:41 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391
+-To be deleted inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 01:13:17 HKT 2022, with overlays: 34113634, 35336174, 34777391
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 03:31:03 HKT 2023, with overlays: 35336174, 34777391
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 01:45:10 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 03:46:50 HKT 2024, with no overlays
+
+***** There are 6 inactive RU patches in chain 3
+
+***** 5 inactive patches will be deleted
+-To be deleted inactive RU/BP 30898856:TOMCAT RELEASE UPDATE 19.0.0.0.0 (30898856), installed on: Mon Apr 27 10:25:10 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32584670:TOMCAT RELEASE UPDATE 19.0.0.0.0 (32584670), installed on: Sat Aug 07 00:26:26 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33239955:TOMCAT RELEASE UPDATE 19.0.0.0.0 (33239955), installed on: Sat Jan 15 16:29:53 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34318175:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34318175), installed on: Sun Nov 27 01:17:55 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34863894:TOMCAT RELEASE UPDATE 19.0.0.0.0 (34863894), installed on: Sun May 28 03:40:49 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sun Nov 05 02:03:42 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sun Apr 21 04:15:03 HKT 2024, with no overlays
+
+***** There are 10 inactive RU patches in chain 4
+
+***** 9 inactive patches will be deleted
+-To be deleted inactive RU/BP 29517247:ACFS RELEASE UPDATE 19.3.0.0.0 (29517247), installed on: Thu Apr 18 15:36:02 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30869304:ACFS RELEASE UPDATE 19.7.0.0.0 (30869304), installed on: Mon Apr 27 10:20:41 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32576499:ACFS RELEASE UPDATE 19.11.0.0.0 (32576499), installed on: Sat Aug 07 00:19:45 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208107:ACFS RELEASE UPDATE 19.13.0.0.0 (33208107), installed on: Sat Jan 15 16:24:54 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33534448:ACFS RELEASE UPDATE 19.14.0.0.0 (33534448), installed on: Sat Apr 16 17:18:41 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33535435:ACFS Interim patch for 33535435, installed on: Sat Apr 16 17:23:55 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34139601:ACFS RELEASE UPDATE 19.16.0.0.0 (34139601), installed on: Sun Nov 27 01:07:20 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768569:ACFS RELEASE UPDATE 19.18.0.0.0 (34768569), installed on: Sun May 28 03:25:52 HKT 2023, with no overlays
+-To be deleted inactive RU/BP 35332537:ACFS RELEASE UPDATE 19.20.0.0.0 (35332537), installed on: Sun Nov 05 01:38:32 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sun Apr 21 03:35:22 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sun Apr 21 04:42:14 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 29585399
+Deleted RU/BP patch: 30894985
+Deleted RU/BP patch: 32579761
+Deleted RU/BP patch: 33208123
+Deleted RU/BP patch: 33529556
+Deleted RU/BP patch: 34160635
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 31732095
+Deleted RU/BP patch: 33912872
+Deleted RU/BP patch: 29517242
+Deleted overlay patch: 34113634
+Deleted overlay patch: 33497160
+Deleted overlay patch: 33197296
+Deleted overlay patch: 34777391
+Deleted RU/BP patch: 30869156
+Deleted RU/BP patch: 32545013
+Deleted RU/BP patch: 33192793
+Deleted RU/BP patch: 33515361
+Deleted RU/BP patch: 34133642
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 30898856
+Deleted RU/BP patch: 32584670
+Deleted RU/BP patch: 33239955
+Deleted RU/BP patch: 34318175
+Deleted RU/BP patch: 34863894
+Deleted RU/BP patch: 29517247
+Deleted RU/BP patch: 30869304
+Deleted RU/BP patch: 32576499
+Deleted RU/BP patch: 33208107
+Deleted RU/BP patch: 33534448
+Deleted RU/BP patch: 33535435
+Deleted RU/BP patch: 34139601
+Deleted RU/BP patch: 34768569
+Deleted RU/BP patch: 35332537
+
+OPatch succeeded.
+grid@HKLPDPS2B003:/home/grid []opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/grid/product/19c
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/grid/product/19c/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/grid/product/19c/cfgtoollogs/opatch/opatch2024-06-08_15-43-58PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  5
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 01:34:26 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 03:26:52 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35553096:TOMCAT RELEASE UPDATE 19.0.0.0.0 (35553096), installed on: Sun Nov 05 02:03:42 HKT 2023, with no overlays
+-Active RU/BP 36115038:TOMCAT RELEASE UPDATE 19.0.0.0.0 (36115038), installed on: Sun Apr 21 04:15:03 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 32585572:DBWLM RELEASE UPDATE 19.0.0.0.0 (32585572), installed on: Sat Aug 07 00:24:43 HKT 2021, with no overlays
+-Active RU/BP 33575402:DBWLM RELEASE UPDATE 19.0.0.0.0 (33575402), installed on: Sat Apr 16 17:20:45 HKT 2022, with no overlays
+
+***** There are 1 inactive RU patches in chain 4
+-Inactive RU/BP 35956421:ACFS RELEASE UPDATE 19.22.0.0.0 (35956421), installed on: Sun Apr 21 03:35:22 HKT 2024, with no overlays
+-Active RU/BP 35988503:ACFS Interim patch for 35988503, installed on: Sun Apr 21 04:42:14 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 5
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 01:45:10 HKT 2023, with overlays: 35395648, 35617844, 35336174
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 03:46:50 HKT 2024, with no overlays
+
+OPatch succeeded.
+grid@HKLPDPS2B003:/home/grid []du -sh $ORACLE_HOME/.patch_storage
+7.7G    /u01/app/grid/product/19c/.patch_storage
+
+
+oracle@HKLPDPS2B003:/home/oracle [POHK5CCD3]
+> du -sh $ORACLE_HOME/.patch_storage
+21G     /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+oracle@HKLPDPS2B003:/home/oracle [POHK5CCD3]
+> opatch util ListOrderedInactivePatches
+-bash: opatch: command not found
+oracle@HKLPDPS2B003:/home/oracle [POHK5CCD3]
+> cd $ORACLE_HOME/OPatch
+oracle@HKLPDPS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK5CCD3]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_15-46-16PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 8 inactive RU patches in chain 1
+-Inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-Inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:31:16 HKT 2020, with no overlays
+-Inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 00:29:04 HKT 2021, with no overlays
+-Inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 16:38:57 HKT 2022, with no overlays
+-Inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 17:38:48 HKT 2022, with no overlays
+-Inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 01:32:46 HKT 2022, with no overlays
+-Inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 03:52:52 HKT 2023, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 02:47:54 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 05:15:17 HKT 2024, with no overlays
+
+***** There are 11 inactive RU patches in chain 2
+-Inactive RU/BP 31335037:RDBMS - DSTV35 UPDATE - TZDATA2020A, installed on: Sun Nov 27 02:12:43 HKT 2022, with no overlays
+-Inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 16:57:11 HKT 2022, with no overlays
+-Inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 01:55:10 HKT 2022, with no overlays
+-Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143, 34953532
+-Inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:34:54 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 00:31:08 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 16:41:31 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 17:32:47 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 01:41:25 HKT 2022, with overlays: 34113634, 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 04:24:22 HKT 2023, with overlays: 35336174, 34777391, 34100969, 32727143, 34953532
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 03:13:09 HKT 2023, with overlays: 35395648, 35617844, 35336174, 34969678, 35120120, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 06:27:29 HKT 2024, with no overlays
+
+***** There are 7 inactive RU patches in chain 3
+-Inactive RU/BP 30805684:OJVM RELEASE UPDATE: 19.7.0.0.200414 (30805684), installed on: Mon Apr 27 11:50:43 HKT 2020, with no overlays
+-Inactive RU/BP 32399816:OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816), installed on: Sat Aug 07 22:22:37 HKT 2021, with no overlays
+-Inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Sat Jan 15 17:06:31 HKT 2022, with no overlays
+-Inactive RU/BP 33561310:OJVM RELEASE UPDATE: 19.14.0.0.220118 (33561310), installed on: Sat Apr 16 17:45:19 HKT 2022, with no overlays
+-Inactive RU/BP 34086870:OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870), installed on: Sun Nov 27 01:48:17 HKT 2022, with no overlays
+-Inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 04:42:37 HKT 2023, with no overlays
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 05:16:08 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 08:26:30 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK5CCD3]
+>
+oracle@HKLPDPS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK5CCD3]
+> opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_16-04-21PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 8 inactive RU patches in chain 1
+
+***** 7 inactive patches will be deleted
+-To be deleted inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 30894985:OCW RELEASE UPDATE 19.7.0.0.0 (30894985), installed on: Mon Apr 27 10:31:16 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32579761:OCW RELEASE UPDATE 19.11.0.0.0 (32579761), installed on: Sat Aug 07 00:29:04 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Jan 15 16:38:57 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33529556:OCW RELEASE UPDATE 19.14.0.0.0 (33529556), installed on: Sat Apr 16 17:38:48 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34160635:OCW RELEASE UPDATE 19.16.0.0.0 (34160635), installed on: Sun Nov 27 01:32:46 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34768559:OCW RELEASE UPDATE 19.18.0.0.0 (34768559), installed on: Sun May 28 03:52:52 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 02:47:54 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 05:15:17 HKT 2024, with no overlays
+
+***** There are 11 inactive RU patches in chain 2
+
+***** 10 inactive patches will be deleted
+-To be deleted inactive RU/BP 31335037:RDBMS - DSTV35 UPDATE - TZDATA2020A, installed on: Sun Nov 27 02:12:43 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 31732095:UPDATE PERL IN 19C DATABASE ORACLE HOME TO V5.32, installed on: Sat Jan 15 16:57:11 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33912872:DATABASE PERL UPDATE IN 19C TO V5.32-1 (CVE-2022-23990 - LIBEXPAT UPDATE), installed on: Sun Nov 27 01:55:10 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 30869156:Database Release Update : 19.7.0.0.200414 (30869156), installed on: Mon Apr 27 10:34:54 HKT 2020, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 32545013:Database Release Update : 19.11.0.0.210420 (32545013), installed on: Sat Aug 07 00:31:08 HKT 2021, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Sat Jan 15 16:41:31 HKT 2022, with overlays: 34113634, 33497160, 33197296, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 33515361:Database Release Update : 19.14.0.0.220118 (33515361), installed on: Sat Apr 16 17:32:47 HKT 2022, with overlays: 34113634, 33497160, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 34133642:Database Release Update : 19.16.0.0.220719 (34133642), installed on: Sun Nov 27 01:41:25 HKT 2022, with overlays: 34113634, 35336174, 34777391, 34100969, 32727143, 34953532
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sun May 28 04:24:22 HKT 2023, with overlays: 35336174, 34777391, 34100969, 32727143, 34953532
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 03:13:09 HKT 2023, with overlays: 35395648, 35617844, 35336174, 34969678, 35120120, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 06:27:29 HKT 2024, with no overlays
+
+***** There are 7 inactive RU patches in chain 3
+
+***** 6 inactive patches will be deleted
+-To be deleted inactive RU/BP 30805684:OJVM RELEASE UPDATE: 19.7.0.0.200414 (30805684), installed on: Mon Apr 27 11:50:43 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 32399816:OJVM RELEASE UPDATE: 19.11.0.0.210420 (32399816), installed on: Sat Aug 07 22:22:37 HKT 2021, with no overlays
+-To be deleted inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Sat Jan 15 17:06:31 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 33561310:OJVM RELEASE UPDATE: 19.14.0.0.220118 (33561310), installed on: Sat Apr 16 17:45:19 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34086870:OJVM RELEASE UPDATE: 19.16.0.0.220719 (34086870), installed on: Sun Nov 27 01:48:17 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sun May 28 04:42:37 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 05:16:08 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 08:26:30 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted RU/BP patch: 29585399
+Deleted RU/BP patch: 30894985
+Deleted RU/BP patch: 32579761
+Deleted RU/BP patch: 33208123
+Deleted RU/BP patch: 33529556
+Deleted RU/BP patch: 34160635
+Deleted RU/BP patch: 34768559
+Deleted RU/BP patch: 31335037
+Deleted RU/BP patch: 31732095
+Deleted RU/BP patch: 33912872
+Deleted overlay patch: 34100969
+Deleted overlay patch: 32727143
+Deleted overlay patch: 34953532
+Deleted RU/BP patch: 29517242
+Deleted overlay patch: 34113634
+Deleted overlay patch: 33497160
+Deleted overlay patch: 33197296
+Deleted overlay patch: 34777391
+Deleted RU/BP patch: 30869156
+Deleted RU/BP patch: 32545013
+Deleted RU/BP patch: 33192793
+Deleted RU/BP patch: 33515361
+Deleted RU/BP patch: 34133642
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 30805684
+Deleted RU/BP patch: 32399816
+Deleted RU/BP patch: 33192694
+Deleted RU/BP patch: 33561310
+Deleted RU/BP patch: 34086870
+Deleted RU/BP patch: 34786990
+
+OPatch succeeded.
+oracle@HKLPDPS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK5CCD3]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.7.0.0.Apr2020
+Central Inventory : /u01/app/grid/oraInventory
+   from           : /u01/app/oracle/product/db/19.7.0.0.Apr2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.7.0.0.Apr2020/cfgtoollogs/opatch/opatch2024-06-08_16-36-07PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sun Nov 05 02:47:54 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sun Apr 21 05:15:17 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sun Nov 05 05:16:08 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 21 08:26:30 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sun Nov 05 03:13:09 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678, 35181715, 35403248
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sun Apr 21 06:27:29 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@HKLPDPS2B003:/u01/app/oracle/product/db/19.7.0.0.Apr2020/OPatch [POHK5CCD3]
+> du -sh $ORACLE_HOME/.patch_storage
+5.7G    /u01/app/oracle/product/db/19.7.0.0.Apr2020/.patch_storage
+
+
+HKLVDPAPP068
+
+> du -sh $ORACLE_HOME/.patch_storage
+11G     /u01/app/oracle/product/db/19.9.0.0.Oct2020/.patch_storage
+oracle@hklvdpapp068:/home/oracle [POHK1CCA]
+> opatch util ListOrderedInactivePatches
+-bash: opatch: command not found
+oracle@hklvdpapp068:/home/oracle [POHK1CCA]
+> dc  $ORACLE_HOME/OPatch
+dc: Will not attempt to process directory /u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch
+oracle@hklvdpapp068:/home/oracle [POHK1CCA]
+> cd  $ORACLE_HOME/OPatch
+oracle@hklvdpapp068:/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch [POHK1CCA]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.9.0.0.Oct2020
+Central Inventory : /u01/app/oracle/oraInventory
+   from           : /u01/app/oracle/product/db/19.9.0.0.Oct2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.9.0.0.Oct2020/cfgtoollogs/opatch/opatch2024-06-08_16-43-34PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 5 inactive RU patches in chain 1
+-Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143
+-Inactive RU/BP 31771877:Database Release Update : 19.9.0.0.201020 (31771877), installed on: Wed Nov 18 17:18:19 HKT 2020, with overlays: 34100969, 31743771, 32727143, 35336174, 34777391
+-Inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Fri Jan 21 16:26:19 HKT 2022, with overlays: 34100969, 32727143, 35336174, 34777391
+-Inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sat Jul 22 14:34:55 HKT 2023, with overlays: 34100969, 32727143, 35336174, 34777391
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Oct 14 20:02:59 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 13 22:23:51 HKT 2024, with no overlays
+
+***** There are 4 inactive RU patches in chain 2
+-Inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-Inactive RU/BP 31772784:OCW RELEASE UPDATE 19.9.0.0.0 (31772784), installed on: Wed Nov 18 17:17:25 HKT 2020, with no overlays
+-Inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Nov 27 02:48:40 HKT 2021, with no overlays
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Oct 14 19:48:13 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 13 22:07:47 HKT 2024, with no overlays
+
+***** There are 4 inactive RU patches in chain 3
+-Inactive RU/BP 31668882:OJVM RELEASE UPDATE: 19.9.0.0.201020 (31668882), installed on: Wed Nov 18 17:20:15 HKT 2020, with no overlays
+-Inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Fri Jan 21 11:33:11 HKT 2022, with no overlays
+-Inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sat Jul 22 14:41:19 HKT 2023, with no overlays
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sat Oct 14 22:11:21 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 14 00:12:45 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@hklvdpapp068:/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch [POHK1CCA]
+>
+oracle@hklvdpapp068:/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch [POHK1CCA]
+> opatch util DeleteInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.9.0.0.Oct2020
+Central Inventory : /u01/app/oracle/oraInventory
+   from           : /u01/app/oracle/product/db/19.9.0.0.Oct2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.9.0.0.Oct2020/cfgtoollogs/opatch/opatch2024-06-08_16-57-55PM_1.log
+
+Invoking utility "deleteinactivepatches"
+Inactive Patches Cleanup option provided
+Delete Inactive Patches .......
+
+***** There are 5 inactive RU patches in chain 1
+
+***** 4 inactive patches will be deleted
+-To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 15:21:17 HKT 2019, with overlays: 34100969, 32727143
+-To be deleted inactive RU/BP 31771877:Database Release Update : 19.9.0.0.201020 (31771877), installed on: Wed Nov 18 17:18:19 HKT 2020, with overlays: 34100969, 31743771, 32727143, 35336174, 34777391
+-To be deleted inactive RU/BP 33192793:Database Release Update : 19.13.0.0.211019 (33192793), installed on: Fri Jan 21 16:26:19 HKT 2022, with overlays: 34100969, 32727143, 35336174, 34777391
+-To be deleted inactive RU/BP 34765931:DATABASE RELEASE UPDATE : 19.18.0.0.230117 (REL-JAN230131) (34765931), installed on: Sat Jul 22 14:34:55 HKT 2023, with overlays: 34100969, 32727143, 35336174, 34777391
+-To be retained inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Oct 14 20:02:59 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 13 22:23:51 HKT 2024, with no overlays
+
+***** There are 4 inactive RU patches in chain 2
+
+***** 3 inactive patches will be deleted
+-To be deleted inactive RU/BP 29585399:OCW RELEASE UPDATE 19.3.0.0.0 (29585399), installed on: Thu Apr 18 15:21:33 HKT 2019, with no overlays
+-To be deleted inactive RU/BP 31772784:OCW RELEASE UPDATE 19.9.0.0.0 (31772784), installed on: Wed Nov 18 17:17:25 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 33208123:OCW RELEASE UPDATE 19.13.0.0.0 (33208123), installed on: Sat Nov 27 02:48:40 HKT 2021, with no overlays
+-To be retained inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Oct 14 19:48:13 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 13 22:07:47 HKT 2024, with no overlays
+
+***** There are 4 inactive RU patches in chain 3
+
+***** 3 inactive patches will be deleted
+-To be deleted inactive RU/BP 31668882:OJVM RELEASE UPDATE: 19.9.0.0.201020 (31668882), installed on: Wed Nov 18 17:20:15 HKT 2020, with no overlays
+-To be deleted inactive RU/BP 33192694:OJVM RELEASE UPDATE: 19.13.0.0.211019 (33192694), installed on: Fri Jan 21 11:33:11 HKT 2022, with no overlays
+-To be deleted inactive RU/BP 34786990:OJVM RELEASE UPDATE: 19.18.0.0.230117 (34786990), installed on: Sat Jul 22 14:41:19 HKT 2023, with no overlays
+-To be retained inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sat Oct 14 22:11:21 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 14 00:12:45 HKT 2024, with no overlays
+
+Do you want to proceed? [y|n]
+y
+User Responded with: Y
+Deleted overlay patch: 34100969
+Deleted overlay patch: 32727143
+Deleted RU/BP patch: 29517242
+Deleted overlay patch: 31743771
+Deleted overlay patch: 34777391
+Deleted RU/BP patch: 31771877
+Deleted RU/BP patch: 33192793
+Deleted RU/BP patch: 34765931
+Deleted RU/BP patch: 29585399
+Deleted RU/BP patch: 31772784
+Deleted RU/BP patch: 33208123
+Deleted RU/BP patch: 31668882
+Deleted RU/BP patch: 33192694
+Deleted RU/BP patch: 34786990
+
+OPatch succeeded.
+oracle@hklvdpapp068:/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch [POHK1CCA]
+> opatch util ListOrderedInactivePatches
+Oracle Interim Patch Installer version 12.2.0.1.41
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/db/19.9.0.0.Oct2020
+Central Inventory : /u01/app/oracle/oraInventory
+   from           : /u01/app/oracle/product/db/19.9.0.0.Oct2020/oraInst.loc
+OPatch version    : 12.2.0.1.41
+OUI version       : 12.2.0.7.0
+Log file location : /u01/app/oracle/product/db/19.9.0.0.Oct2020/cfgtoollogs/opatch/opatch2024-06-08_17-19-55PM_1.log
+
+Invoking utility "listorderedinactivepatches"
+List Inactive patches option provided
+
+The oracle home has the following inactive patch(es) and their respective overlay patches:
+
+The number of RU chains is  3
+
+***** There are 1 inactive RU patches in chain 1
+-Inactive RU/BP 35320149:OCW RELEASE UPDATE 19.20.0.0.0 (35320149), installed on: Sat Oct 14 19:48:13 HKT 2023, with no overlays
+-Active RU/BP 35967489:OCW RELEASE UPDATE 19.22.0.0.0 (35967489), installed on: Sat Apr 13 22:07:47 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 2
+-Inactive RU/BP 35354406:OJVM RELEASE UPDATE: 19.20.0.0.230718 (35354406), installed on: Sat Oct 14 22:11:21 HKT 2023, with no overlays
+-Active RU/BP 35926646:OJVM RELEASE UPDATE: 19.22.0.0.240116 (35926646), installed on: Sun Apr 14 00:12:45 HKT 2024, with no overlays
+
+***** There are 1 inactive RU patches in chain 3
+-Inactive RU/BP 35320081:Database Release Update : 19.20.0.0.230718 (35320081), installed on: Sat Oct 14 20:02:59 HKT 2023, with overlays: 35395648, 35617844, 35120120, 35336174, 34969678
+-Active RU/BP 35943157:Database Release Update : 19.22.0.0.240116 (35943157), installed on: Sat Apr 13 22:23:51 HKT 2024, with no overlays
+
+OPatch succeeded.
+oracle@hklvdpapp068:/u01/app/oracle/product/db/19.9.0.0.Oct2020/OPatch [POHK1CCA]
+> du -sh $ORACLE_HOME/.patch_storage
+5.6G    /u01/app/oracle/product/db/19.9.0.0.Oct2020/.patch_storage
+
+

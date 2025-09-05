@@ -1,0 +1,3 @@
+select event_timestamp, sql_text, dbusername, unified_audit_policies, os_username, client_program_name, userhost
+from unified_audit_trail
+where event_timestamp > trunc(sysdate-1) and unified_audit_policies like '%AUDIT%' and lower(sql_text) like '%account lock%';
