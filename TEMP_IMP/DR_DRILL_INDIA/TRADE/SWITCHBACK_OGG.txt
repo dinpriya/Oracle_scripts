@@ -1,0 +1,59 @@
+SWITCHOVER
+==========
+
+RG189
+======
+
+$ pwd
+/usr/ggate
+
+GGSCI>
+
+stop E*
+stop P*
+stop MGR
+info all
+
+RG190
+=======
+$ pwd
+/usr/ggate
+
+./ggsci
+
+stop R*
+stop MGR
+info all
+
+AFTER SWITCHOVER
+================
+
+PG189
+======
+
+$ pwd
+/usr/ggate
+
+./ggsci
+
+GGSCI>
+
+start MGR
+start E*
+start P*
+
+info all
+
+PG190
+=======
+
+$ pwd
+/usr/ggate
+
+./ggsci
+
+start MGR
+start R*
+
+info all
+

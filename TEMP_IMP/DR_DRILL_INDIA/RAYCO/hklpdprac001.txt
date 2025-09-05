@@ -1,0 +1,247 @@
+> date ; dgmgrl /@POHK1RAC
+Mon Sep  9 12:12:36 HKT 2024
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Sep 9 12:12:36 2024
+Version 19.23.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1RAC"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk1rac
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1rac    - Primary database
+    pohk1rac_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 56 seconds ago)
+
+DGMGRL> show database pohk1rac
+
+Database - pohk1rac
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    POHK1RAC
+
+Database Status:
+SUCCESS
+
+DGMGRL> show database pohk1rac_dg
+
+Database - pohk1rac_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 2.79 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1RAC_DG
+
+Database Status:
+SUCCESS
+
+DGMGRL> validate database pohk1rac
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    pohk1rac:  YES
+
+DGMGRL> validate database pohk1rac_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  pohk1rac
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Managed by Clusterware:
+    pohk1rac   :  YES
+    pohk1rac_dg:  NO
+
+DGMGRL>
+
+CDB
+
+TABLESPACE_NAME          PERCENTAGE_USED SPACE_ALLOCATED SPACE_USED SPACE_FREE  DATAFILES
+------------------------ --------------- --------------- ---------- ---------- ----------
+SYSAUX                             55.83              30      16.75      13.25          1
+SYSTEM                             45.48               4       1.82       2.18          1
+AUDIT_TBS                          31.54               4       1.26       2.74          1
+SCB_ADMIN_DATA                      9.47           .0625        .01        .06          1
+USERS                               6.81               1        .07        .93          1
+UNDOTBS1                             .74      5.17578125        .04       5.14          1
+RCO72_SAN_DATA                                                               0          1
+TEMP                                                                         0
+
+PDB
+
+TABLESPACE_NAME          PERCENTAGE_USED SPACE_ALLOCATED SPACE_USED SPACE_FREE  DATAFILES
+------------------------ --------------- --------------- ---------- ---------- ----------
+SYSTEM                             99.95         16.5625      16.55        .01          1
+SYSAUX                              81.9              55      45.04       9.96          1
+RCO72_SAN_DATA                     68.49           13000     8903.4     4096.6          1
+RAY_FLASH_DATA                     65.03      15719.1826   10222.01    5497.17          1
+UNDOTBS1                           15.38            1000     153.77     846.23          1
+SCB_ADMIN_DATA                      9.57           .0625        .01        .06          1
+AUDIT_TBS                           9.47           .0625        .01        .06          1
+USERS                               9.47           .0625        .01        .06          1
+TEMP                                                                         0
+
+
+> srvctl status service -d POHK1RAC -v
+Service pdbp_rayco_ro is running
+Service pdbp_rayco_rw is running
+
+
+Disk Group
+Name                      State       Total Size (GB) Used Size (GB)  % Used Free Size (GB)  % Free
+------------------------- ----------- --------------- -------------- ------- -------------- -------
+DATA                      CONNECTED            42,021         35,050   83.41          6,971   16.59
+DATA_SAN                  CONNECTED            30,004         13,010   43.36         16,993   56.64
+FRA                       CONNECTED            16,002          3,603   22.51         12,399   77.49
+REDO1                     CONNECTED               447            115   25.70            332   74.30
+REDO2                     CONNECTED               447            115   25.70            332   74.30
+                                      --------------- --------------
+Grand Total:                                   88,921         51,893
+
+
+DR:
+===
+
+> date ; dgmgrl /@POHK1RAC_DG
+Mon Sep  9 12:20:43 HKT 2024
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Sep 9 12:20:43 2024
+Version 19.23.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1RAC_DG"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dgb_pohk1rac
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1rac    - Primary database
+    pohk1rac_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 60 seconds ago)
+
+DGMGRL> show database pohk1rac
+
+Database - pohk1rac
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    POHK1RAC
+
+Database Status:
+SUCCESS
+
+DGMGRL> show database pohk1rac_dg
+
+Database - pohk1rac_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 2.79 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1RAC_DG
+
+Database Status:
+SUCCESS
+
+DGMGRL> validate database pohk1rac
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    pohk1rac:  YES
+
+DGMGRL> validate database pohk1rac_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  pohk1rac
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Managed by Clusterware:
+    pohk1rac   :  YES
+    pohk1rac_dg:  NO
+
+DGMGRL>
+
+13:36:19 SYS @ POHK1RAC_DG:CDB$ROOT:>set pages 200 lines 1000
+13:36:20 SYS @ POHK1RAC_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1RAC  MOUNTED              MAXIMUM AVAILABILITY PHYSICAL STANDBY NONE    YES
+
+13:36:30 SYS @ POHK1RAC_DG:CDB$ROOT:>archive log list
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     0
+Next log sequence to archive   0
+Current log sequence           0
+13:36:36 SYS @ POHK1RAC_DG:CDB$ROOT:>select thread#,max(sequence#) from v$archived_log group by thread#;
+
+   THREAD# MAX(SEQUENCE#)
+---------- --------------
+         1          83092
+
+13:36:46 SYS @ POHK1RAC_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1RAC  MOUNTED              MAXIMUM AVAILABILITY PHYSICAL STANDBY NONE    YES
+
+13:36:55 SYS @ POHK1RAC_DG:CDB$ROOT:>select process,status,sequence#, thread# from gv$managed_standby where process not in ('ARCH');
+
+PROCESS   STATUS        SEQUENCE#    THREAD#
+--------- ------------ ---------- ----------
+DGRD      ALLOCATED             0          0
+DGRD      ALLOCATED             0          0
+RFS       IDLE                  0          1
+RFS       IDLE              83093          1
+RFS       IDLE                  0          0
+RFS       IDLE                  0          0
+RFS       IDLE                  0          0
+MRP0      APPLYING_LOG      83093          1
+
+8 rows selected.
+
+13:38:14 SYS @ POHK1RAC_DG:CDB$ROOT:>SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last Sequence Received", APPL.SEQUENCE# "Last Sequence Applied",(ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference" FROM (SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH, (SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL  WHERE ARCH.THREAD# = APPL.THREAD# ORDER BY 1;
+
+    Thread Last Sequence Received Last Sequence Applied Difference
+---------- ---------------------- --------------------- ----------
+         1                  83091                 83091          0
+         1                  83092                 83091          1
+         1                  83091                 83092         -1
+         1                  83092                 83092          0

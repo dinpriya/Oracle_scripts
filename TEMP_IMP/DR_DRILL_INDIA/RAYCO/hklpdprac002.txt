@@ -1,0 +1,290 @@
+> date ; dgmgrl /@POHK1RCO
+Mon Sep  9 12:29:09 HKT 2024
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Sep 9 12:29:09 2024
+Version 19.23.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1RCO"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dg_config
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1rco    - Primary database
+    pohk1rco_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 59 seconds ago)
+
+DGMGRL> show database pohk1rco
+
+Database - pohk1rco
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    POHK1RCO
+
+Database Status:
+SUCCESS
+
+DGMGRL> show database pohk1rco_dg
+
+Database - pohk1rco_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 1 second ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 43.96 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1RCODG
+    POHK1RCO_DG (apply instance)
+
+Database Status:
+SUCCESS
+
+DGMGRL> validate database pohk1rco
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    pohk1rco:  YES
+
+DGMGRL> validate database pohk1rco_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  pohk1rco
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Flashback Database Status:
+    pohk1rco   :  On
+    pohk1rco_dg:  Off
+
+  Managed by Clusterware:
+    pohk1rco   :  YES
+    pohk1rco_dg:  YES
+
+DGMGRL>
+
+
+
+12:31:41 SYS @ POHK1RCO:CDB$ROOT:>@chk_ctbs.sql
+
+           Container                                                    Total             Free
+    CON_ID Name                     TABLESPACE_NAME                  Space MB         Space MB      %USED
+---------- ------------------------ ------------------------ ---------------- ---------------- ----------
+         1 CDB$ROOT                 AUDIT_TBS                           5,120            3,803      25.72
+                                    SYSTEM                             10,240            8,505      16.94
+                                    SCB_ADMIN_DATA                         64               56       12.3
+                                    SYSAUX                          1,672,188        1,651,941       1.21
+                                    UNDOTBS1                           30,720           30,656        .21
+                                    USERS                               2,048            2,044        .21
+         2 PDB$SEED                 UNDOTBS1                              395                0      99.95
+                                    SYSTEM                                960                8      99.13
+                                    SYSAUX                                545               27      95.05
+         3 PDBP_RAYCO               RCO_SAN_DATA                   52,305,920        6,543,273      87.49
+                                    FEDETL_FLASH_DATA               6,635,620        2,273,281      65.74
+                                    RAY_FLASH_DATA                 17,243,319        6,276,533       63.6
+                                    SYSTEM                            130,510           90,422      30.72
+                                    SYSAUX                          2,057,903        1,772,848      13.85
+                                    UNDOTBS1                          974,695          871,561      10.58
+                                    SCB_ADMIN_DATA                         64               63       1.76
+                                    AUDIT_TBS                              64               63       1.56
+                                    USERS                                  64               63       1.56
+********** ************************ ************************ ---------------- ----------------
+sum                                                                81,070,439       19,525,146
+
+18 rows selected.
+
+
+12:31:51 SYS @ POHK1RCO:CDB$ROOT:>!srvctl status service -d POHK1RCO -v
+Service pdbp_rayco_ro.hk.standardchartered.com is not running.
+Service pdbp_rayco_rw.hk.standardchartered.com is running
+
+13:39:49 SYS @ POHK1RCO:CDB$ROOT:>SET ECHO        OFF
+SET FEEDBACK    6
+SET HEADING     ON
+SET LINESIZE    180
+SET PAGESIZE    50000
+SET TERMOUT     ON
+SET TIMING      OFF
+SET TRIMOUT     ON
+SET TRIMSPOOL   ON
+SET VERIFY      OFF
+CLEAR COLUMNS
+CLEAR BREAKS
+CLEAR COMPUTES
+COLUMN group_name             FORMAT a25           HEAD 'Disk Group|Name'
+COLUMN state                  FORMAT a11           HEAD 'State'
+COLUMN total_mb               FORMAT 999,999,999   HEAD 'Total Size (GB)'
+COLUMN used_mb                FORMAT 999,999,999   HEAD 'Used Size (GB)'
+COLUMN pct_used               FORMAT 999.99        HEAD '% Used'
+COLUMN free_mb                FORMAT 999,999,999   HEAD 'Free Size (GB)'
+COLUMN pct_free               FORMAT 999.99        HEAD '% Free'
+BREAK ON report ON disk_group_name SKIP 1
+COMPUTE sum LABEL "Grand Total: " OF total_mb used_mb ON report
+SELECT
+    name                                     group_name
+  , state                                    state
+  , total_mb/1024           13:40:06 SYS @ POHK1RCO:CDB$ROOT:>                      total_mb
+  , (total_mb - free_mb)/1024                     used_mb
+13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>columns cleared
+13:40:06 SYS @ POHK1RCO:CDB$ROOT:>breaks cleared
+13:40:06 SYS @ POHK1RCO:CDB$ROOT:>computes cleared
+13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06 SYS @ POHK1RCO:CDB$ROOT:>13:40:06   2  13:40:06   3  13:40:06   4  13:40:06   5  13:40:06   6    , ROUND((1- (free_mb / total_mb))*100, 2)  pct_used
+13:40:06   7    , free_mb/1024                             free_mb
+  , ROUND(((free_mb / total_mb))*100, 2)      pct_free
+FROM
+    v$asm_diskgroup
+WHERE
+    total_mb != 0
+ORDER BY
+    Name
+/13:40:06   8  13:40:06   9  13:40:06  10  13:40:06  11  13:40:06  12  13:40:06  13  13:40:06  14  13:40:06  15
+
+Disk Group
+Name                      State       Total Size (GB) Used Size (GB)  % Used Free Size (GB)  % Free
+------------------------- ----------- --------------- -------------- ------- -------------- -------
+DATA                      CONNECTED            78,009         63,812   81.80         14,197   18.20
+DATA_NVME                 CONNECTED            47,693         34,491   72.32         13,202   27.68
+FRA                       CONNECTED            20,002         14,289   71.44          5,713   28.56
+REDO1                     CONNECTED               550              0     .03            550   99.97
+REDO2                     CONNECTED               550              0     .03            550   99.97
+                                      --------------- --------------
+Grand Total:                                  146,805        112,592
+
+13:40:08 SYS @ POHK1RCO:CDB$ROOT:>
+
+
+> date ; dgmgrl /@POHK1RCO_DG
+Mon Sep  9 12:21:00 HKT 2024
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Mon Sep 9 12:21:00 2024
+Version 19.23.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Connected to "POHK1RCO_DG"
+Connected as SYSDBA.
+DGMGRL> show configuration
+
+Configuration - dg_config
+
+  Protection Mode: MaxAvailability
+  Members:
+  pohk1rco    - Primary database
+    pohk1rco_dg - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 52 seconds ago)
+
+DGMGRL> show database pohk1rco
+
+Database - pohk1rco
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    POHK1RCO
+
+Database Status:
+SUCCESS
+
+DGMGRL> show database pohk1rco_dg
+
+Database - pohk1rco_dg
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 43.96 MByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    POHK1RCODG
+    POHK1RCO_DG (apply instance)
+
+Database Status:
+SUCCESS
+
+DGMGRL> validate database pohk1rco
+
+  Database Role:    Primary database
+
+  Ready for Switchover:  Yes
+
+  Managed by Clusterware:
+    pohk1rco:  YES
+
+DGMGRL> validate database pohk1rco_dg
+
+  Database Role:     Physical standby database
+  Primary Database:  pohk1rco
+
+  Ready for Switchover:  Yes
+  Ready for Failover:    Yes (Primary Running)
+
+  Flashback Database Status:
+    pohk1rco   :  On
+    pohk1rco_dg:  Off
+
+  Managed by Clusterware:
+    pohk1rco   :  YES
+    pohk1rco_dg:  YES
+
+DGMGRL>
+
+
+13:41:14 SYS @ POHK1RCO_DG:CDB$ROOT:>set pages 200 lines 1000
+13:41:15 SYS @ POHK1RCO_DG:CDB$ROOT:>Select NAME,OPEN_MODE,PROTECTION_MODE,DATABASE_ROLE,GUARD_STATUS,flashback_on from gv$DATABASE;
+
+NAME      OPEN_MODE            PROTECTION_MODE      DATABASE_ROLE    GUARD_S FLASHBACK_ON
+--------- -------------------- -------------------- ---------------- ------- ------------------
+POHK1RCO  MOUNTED              MAXIMUM AVAILABILITY PHYSICAL STANDBY NONE    NO
+
+13:41:25 SYS @ POHK1RCO_DG:CDB$ROOT:>archive log list
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     0
+Next log sequence to archive   0
+Current log sequence           0
+13:41:28 SYS @ POHK1RCO_DG:CDB$ROOT:>select thread#,max(sequence#) from v$archived_log group by thread#;
+
+   THREAD# MAX(SEQUENCE#)
+---------- --------------
+         1         148984
+
+13:41:38 SYS @ POHK1RCO_DG:CDB$ROOT:>select process,status,sequence#, thread# from gv$managed_standby where process not in ('ARCH');
+
+PROCESS   STATUS        SEQUENCE#    THREAD#
+--------- ------------ ---------- ----------
+DGRD      ALLOCATED             0          0
+DGRD      ALLOCATED             0          0
+MRP0      APPLYING_LOG     148985          1
+RFS       IDLE                  0          1
+RFS       IDLE             148985          1
+RFS       IDLE                  0          0
+RFS       IDLE                  0          0
+
+7 rows selected.
+
+13:41:49 SYS @ POHK1RCO_DG:CDB$ROOT:>SELECT ARCH.THREAD# "Thread", ARCH.SEQUENCE# "Last Sequence Received", APPL.SEQUENCE# "Last Sequence Applied",(ARCH.SEQUENCE# - APPL.SEQUENCE#) "Difference" FROM (SELECT THREAD# ,SEQUENCE# FROM V$ARCHIVED_LOG WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$ARCHIVED_LOG GROUP BY THREAD#)) ARCH, (SELECT THREAD# ,SEQUENCE# FROM V$LOG_HISTORY WHERE (THREAD#,FIRST_TIME ) IN (SELECT THREAD#,MAX(FIRST_TIME) FROM V$LOG_HISTORY GROUP BY THREAD#)) APPL  WHERE ARCH.THREAD# = APPL.THREAD# ORDER BY 1;
+
+    Thread Last Sequence Received Last Sequence Applied Difference
+---------- ---------------------- --------------------- ----------
+         1                 148984                148984          0

@@ -1,0 +1,73 @@
+SWITCHOVER
+==========
+
+PG189
+======
+
+$ pwd
+/usr/ggate
+
+./ggsci
+
+GGSCI (PG189) 1> info all
+
+Program     Status      Group       Lag           Time Since Chkpt
+
+MANAGER     RUNNING
+EXTRACT     RUNNING     EXT_C2R     00:00:00      00:00:04
+EXTRACT     RUNNING     PUMP_C2R    00:00:00      00:00:06
+
+GGSCI>
+
+stop E*
+stop P*
+stop MGR
+info all
+
+PG190
+=======
+$ pwd
+/usr/ggate
+
+./ggsci
+
+GGSCI (PG190) 1> info all
+
+Program     Status      Group       Lag           Time Since Chkpt
+
+MANAGER     RUNNING
+REPLICAT    RUNNING     REP_C2R     00:00:00      00:00:01
+
+stop R*
+stop MGR
+info all
+
+AFTER SWITCHOVER
+================
+
+RG189
+======
+
+$ pwd
+/usr/ggate
+
+./ggsci
+
+GGSCI>
+
+start MGR
+start E*
+start P*
+info all
+
+RG190
+=======
+
+$ pwd
+/usr/ggate
+
+./ggsci
+
+start MGR
+start R*
+info all
