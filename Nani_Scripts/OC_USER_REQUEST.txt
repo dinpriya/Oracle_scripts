@@ -1,0 +1,40 @@
+Oracle Clinical account request:
+
+1) for any OC account request with the following type but not in database QCODE, QDICT, assign the ticket to Global Security Team or Hari/Sharon. Those account should be created througth the following tool:  Oracle Clinical Adminitration 3.0
+
+http://usadc-vzdb22:7777/pls/apex3prd/f?p=385:1
+
+The OC account type should be create in this site is :  OPS$Qnumber,  studyname_qcode, studyname_other  (note _qcode type)
+
+2) for oracle account created in QCODE/QDICT database (note: not _qcode account type), should use the following script to create:
+
+----account type is _QCODE:
+
+/u01/app/oracle/dba_folders/sharon/oc_users/create_qcode_user.sql  (create _qcode type of account in QCODE database)
+
+----account type is _other:
+
+/u01/app/oracle/dba_folders/sharon/oc_users/crate_other_user.sql   (create _other type of account in QCODE database)
+
+-----account type is QXXXXX:
+  regularly only grant connect/resource to user account, if request to study access and give the study name, then grant 
+   grant studyname_role_code to qxxxx;
+   grant sutdyname_role_qcode_read to qxxxxx;
+
+  if qxxxx is coder then just grant select any table to qxxxx;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,56 @@
+To get DDL of the User, Grants, Table, Index & View Definitions
+
+Note:
+Before getting DDL, set long 50000 in sql prompt. then only you will get full ddl if it has more character
+
+To get DDL of the User:
+
+Syntax:
+set long 50000 (It will give you the full output when you set long for higher value)
+set pages 50000
+set lines 300
+SELECT dbms_metadata.get_ddl('USER','ARGUS_APP') FROM dual;
+
+To get DDL of the Tablespace:
+
+Syntax:
+select dbms_metadata.get_ddl('TABLESPACE','tablespace_name') from dba_tablespaces;
+
+
+To get DDL of the role granted to user:
+
+Syntax:
+SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','ARGUS_APP') from dual;
+
+
+Object grants & system grants are important when it gives insufficient privileges error during recompilation of invalid objects after importing the db. You must find the grants for the user who has privilege on some other user's object.
+
+To get DDL of the object grants privileges to user:
+
+Syntax:
+SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','ARGUS_APP') from dual;
+
+To get DDL of the system grants privileges to user:
+
+Syntax:
+SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','<schema_name>') from dual;
+
+To get DDL of the role:
+
+Syntax:
+SELECT dbms_metadata.get_ddl('ROLE','RESOURCE') from dual;
+
+To get DDL of the system grants privileges to the role:
+
+Syntax:
+SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','RESOURCE') from dual;
+
+To get DDL of the view for the user:
+
+Syntax:
+select DBMS_METADATA.GET_DDL('VIEW','<view_name>','<schema_name>') from DUAL;
+
+To get DDL of the index:
+
+Syntax:
+select DBMS_METADATA.GET_DDL('INDEX','<index_name>','<schema_name>') from DUAL;

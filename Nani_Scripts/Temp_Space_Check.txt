@@ -1,0 +1,21 @@
+
+For 9i and 10g database 
+-----------------------------
+select a.tablespace_name tablespace,
+d.mb_total,sum (a.used_blocks * d.block_size) / 1024/1024 MB_used,
+d.mb_total - sum (a.used_blocks * d.block_size) / 1024/1024 MB_free
+from v$sort_segment a,
+(select b.name, c.block_size, sum (c.bytes) / 1024 / 1024 MB_total
+from v$tablespace b, v$tempfile c
+where b.ts#= c.ts#
+group by b.name, c.block_size) d where a.tablespace_name = d.name group by a.tablespace_name,d.mb_total;
+
+
+For 11g database 
+-----------------------
+SELECT TABLESPACE_NAME, 
+       ROUND(TABLESPACE_SIZE/1024/1024/1024,2) as MAX_SIZE_GB, 
+       ROUND(ALLOCATED_SPACE/1024/1024/1024,2) as ALLOCATED_GB, 
+       ROUND(FREE_SPACE/1024/1024/1024,2) as FREE_GB, 
+       ROUND((TABLESPACE_SIZE-FREE_SPACE)/1024/1024/1024,2) AS USED_GB 
+  FROM DBA_TEMP_FREE_SPACE;

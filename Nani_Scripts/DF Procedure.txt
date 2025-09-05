@@ -1,0 +1,98 @@
+PASSWORD BACKUP
+
+select 'alter user '||name||' identified by values '''||password||''';' from user$;
+
+BACKUP THE SPFILE
+-----------------
+ASMCMD> cp spfiledfsit.ora /u01/app/oracle/dba_folders/q782490
+
+/u01/app/oracle/product/11.2.0.3/dbhome_1/network/admin/tnsnames.ora
+dfdemo =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = dw01db01.quintiles.com)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dfdemo)
+      (UR = A)
+    )
+  )
+
+MODIFY LISTENER.ORA IN TARGET DB (DFSIT)
+-------------------------------
+/u01/app/11.2.0.3/grid/network/admin/listener.ora
+
+
+sid_list_listener=
+    (sid_list =
+      (SID_DESC =
+        (GLOBAL_DBNAME = dfdit2)
+        (ORACLE_HOME = /u01/app/oracle/product/11.2.0.3/dbhome_1)
+        (SID_NAME = dfdit22)
+       )
+)
+
+
+down the DB
+-------------
+No need to source oenv( we use dfsit Db envir)
+[
+oracle@dw01db03 q782490]$ srvctl stop database -d dfsit
+[oracle@dw01db03 q782490]$ srvctl status database -d dfsit
+Instance dfsit1 is not running on node dw01db03
+Instance dfsit2 is not running on node dw01db04
+
+
+choose the Grid ORACLE_HOME
+
+REMOVE DATA AND TEMP FILES
+--------------------------
+Datafiles:
+Select name from v$datafile;
+
++DATA2/dfsit/datafile
+
+Tempfiles:
+Select name from v$tempfile;
+
+
++DATA2/dfsit/tempfile
+
+
+EDIT THE PFILE
+--------------
+
+cluster_database=FALSE
+
+SQL> startup nomount pfile=/u01/app/oracle/dba_folders/q782490/pfile_july_dfsit.ora;
+ORACLE instance started.
+
+Total System Global Area 5344731136 bytes
+Fixed Size                  2222768 bytes
+Variable Size            2818573648 bytes
+Database Buffers         2516582400 bytes
+Redo Buffers                7352320 bytes
+
+RMAN> connect target sys/Justd0_1t@dfprd
+
+connected to target database: DFPRD (DBID=4286881261)
+
+RMAN> connect auxiliary sys/Justd0_1t@dfsit
+
+connected to auxiliary database: DFSIT (not mounted)
+
+duplicate target database to dfdit2 pfile=/u01/app/oracle/dba_folders/q782490/pfile_dfdit2_aug.ora from active database;
+
+( NOW DB IS AVAILABLE IN SINGLE NODE)
+
+RESET THE PASSWORD
+
+ALTER SYSTEM SET cluster_database=true SCOPE=SPFILE;
+
+copy the spfile from pfile.
+ASMCMD> cp /u01/app/oracle/q782490/spfiledfsit.ora .
+copying /u01/app/oracle/q782490/spfiledfsit.ora -> +data2/dfsit/spfiledfsit.ora
+
+[oracle@dw01db04 ~]$ srvctl status database -d dfsit
+Instance dftst1a1 is not running on node dw01db03
+Instance dftst1a2 is not running on node dw01db04
+[oracle@dw01db04 ~]$ srvctl start database -d dfsit

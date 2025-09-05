@@ -1,0 +1,47 @@
+If requested to create a readonly account on Argus Databases
+
+All SRs for accounts must go to Infosario Safety Customer Support group for approval and will be returned to us for action, each SR must state if they want access to all enterprises,just one enterprise or no enterprise.
+
+To create a readonly account noden_exp as an example
+
+ CREATE USER noden_exp IDENTIFIED BY niceday2#
+ DEFAULT TABLESPACE USERS
+ TEMPORARY TABLESPACE TEMP
+ PROFILE QUINTILES_USERS 
+ ACCOUNT UNLOCK;
+ -- 1 Role for  noden_exp
+ GRANT CONNECT TO  noden_exp;
+ ALTER USER  noden_exp DEFAULT ROLE ALL;
+ -- 3 System Privileges for READONAC 
+ GRANT CREATE SESSION TO  noden_exp;
+ GRANT SELECT ANY TABLE TO  noden_exp;
+ -- 1 Tablespace Quota for  noden_exp
+ ALTER USER  noden_exp QUOTA UNLIMITED ON USERS;
+ -- 1 Object Privilege for  noden_exp
+    GRANT EXECUTE ON VPD_ARGUS_OWNER.PKG_RLS TO  noden_exp;
+    GRANT CREATE ANY TRIGGER TO  noden_exp;
+ 
+ 
+Create trigger on noden_exp for Databases 
+ 
+Log onto noden_exp schema 
+ 
+CREATE OR REPLACE TRIGGER noden_exp.set_context_ctx_trig AFTER LOGON ON SCHEMA
+BEGIN
+ pkg_rls.set_context('admin',355,'ARGUS_SAFETY');
+ END;
+/
+
+dissconnet from session
+
+
+Log onto noden_exp schema 
+
+To verify correct ENT ID has been set, run the below command
+
+select enterprise_id from argus_app.cfg_enterprise;
+
+Login to sys
+
+REVOKE CREATE ANY TRIGGER FROM noden_exp;
+

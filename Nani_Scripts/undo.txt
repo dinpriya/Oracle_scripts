@@ -1,0 +1,102 @@
+SELECT /* + RULE */  df.tablespace_name "Tablespace",
+       df.bytes / (1024 * 1024) "Size (MB)",
+       SUM(fs.bytes) / (1024 * 1024) "Free (MB)",
+       Nvl(Round(SUM(fs.bytes) * 100 / df.bytes),1) "% Free",
+       Round((df.bytes - SUM(fs.bytes)) * 100 / df.bytes) "% Used"
+  FROM dba_free_space fs,
+       (SELECT tablespace_name,SUM(bytes) bytes
+          FROM dba_data_files
+         GROUP BY tablespace_name) df
+ WHERE fs.tablespace_name (+)  = df.tablespace_name
+ GROUP BY df.tablespace_name,df.bytes
+UNION ALL
+SELECT /* + RULE */ df.tablespace_name tspace,
+       fs.bytes / (1024 * 1024),
+       SUM(df.bytes_free) / (1024 * 1024),
+       Nvl(Round((SUM(fs.bytes) - df.bytes_used) * 100 / fs.bytes), 1),
+       Round((SUM(fs.bytes) - df.bytes_free) * 100 / fs.bytes)
+  FROM dba_temp_files fs,
+       (SELECT tablespace_name,bytes_free,bytes_used
+          FROM v$temp_space_header
+         GROUP BY tablespace_name,bytes_free,bytes_used) df
+ WHERE fs.tablespace_name (+)  = df.tablespace_name
+ GROUP BY df.tablespace_name,fs.bytes,df.bytes_free,df.bytes_used
+ ORDER BY 4 DESC;
+
+To find Percentage Usage of Undo Tablespace which considers
+============================================================ 
+
+Expired Space: RITM1818546
+================
+
+select
+    ( select sum(bytes)/1024/1024 from dba_data_files
+       where tablespace_name like 'UND%' )  allocated,
+    ( select sum(bytes)/1024/1024 from dba_free_space
+       where tablespace_name like 'UND%')  free,
+    ( select sum(bytes)/1024/1024 from dba_undo_extents
+       where tablespace_name like 'UND%') USed
+from dual;
+
+SELECT d.tablespace_name, round(((NVL(f.bytes,0) + (a.maxbytes - a.bytes))/1048576+ u.exp_space),2)
+as max_free_mb, round(((a.bytes - (NVL(f.bytes,0)+ (1024*1024*u.exp_space)))*100/a.maxbytes),2)
+used_pct FROM   sys.dba_tablespaces d, (select tablespace_name, sum(bytes) bytes, 
+sum(greatest(maxbytes,bytes)) maxbytes from sys.dba_data_files group by tablespace_name) a, 
+(select tablespace_name, sum(bytes) bytes from sys.dba_free_space group by tablespace_name) f , 
+(select tablespace_name , sum(blocks)*8/(1024)  exp_space from  
+dba_undo_extents where status NOT IN ('ACTIVE','UNEXPIRED')  group by  tablespace_name) u 
+WHERE d.tablespace_name = a.tablespace_name(+) AND d.tablespace_name = f.tablespace_name(+) 
+AND d.tablespace_name=u.tablespace_name  AND d.contents = 'UNDO' AND u.tablespace_name = (select UPPER(value)
+from v$parameter where name = 'undo_tablespace');
+
+Undo space reclaimed and out of alarm
+
+TABLESPACE_NAME   MAX_FREE_MB   USED_PCT
+----------------------------------------------- -------------------------
+UNDOTBS1                       483.25                      77.12
+
+Temp space reclaimed and out of alarm
+
+TABLESPACE     MB_TOTAL    MB_USED    MB_FREE
+----------------------------------------------------------------------------
+TEMP                       7420      	           0                7420
+
+There are more space in the expired segment of undo and it will reclaim automatically.
+
+SQL> select count(status) from dba_undo_extents where status = 'EXPIRED';
+
+COUNT(STATUS)
+-------------------------
+         184
+
+
+DB is up and working fine, able to connect from client without any issues....monitoring the DB....
+
+select name,open_mode,logins, startup_time,log_mode  from v$database,v$instance;
+
+
+
+To Find Temp TBS Usage:
+========================
+SELECT * from DBA_TEMP_FREE_SPACE;
+
+SELECT TABLESPACE_NAME, 
+       ROUND(TABLESPACE_SIZE/1024/1024/1024,2) as MAX_SIZE_GB, 
+       ROUND(ALLOCATED_SPACE/1024/1024/1024,2) as ALLOCATED_GB, 
+       ROUND(FREE_SPACE/1024/1024/1024,2) as FREE_GB, 
+       ROUND((TABLESPACE_SIZE-FREE_SPACE)/1024/1024/1024,2) AS USED_GB 
+  FROM DBA__FREE_SPACE;
+
+
+select SUM(bytes_used)/1024/1024/1024 GBused, SUM(bytes_free)/1024/1024/1024 GBfree from  v$temp_space_header;
+
+
+select a.tablespace_name tablespace,
+d.mb_total,sum (a.used_blocks * d.block_size) / 1024/1024 MB_used,
+d.mb_total - sum (a.used_blocks * d.block_size) / 1024/1024 MB_free
+from v$sort_segment a,
+(select b.name, c.block_size, sum (c.bytes) / 1024 / 1024 MB_total
+from v$tablespace b, v$tempfile c
+where b.ts#= c.ts#
+group by b.name, c.block_size) d where a.tablespace_name = d.name group by a.tablespace_name,d.mb_total;
+

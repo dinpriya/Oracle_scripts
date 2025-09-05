@@ -1,0 +1,13 @@
+alter tablespace <tbs_name> add datafile '<datafile location' size 500M autoextend on next 100M maxsize unlimited;
+
+
+alter tablespace APR_MRPT_DATA_01 add datafile '/mounts/ilsti03_data/oradata/ilsti03/dbfiles/APR_MRPT_DATA_02.dbf' size 1g autoextend on next 100M maxsize unlimited;
+
+alter tablespace ARGUS_DATA_01 add datafile '/mounts/lsps1b1_data/oradata/lsps1b1/dbfiles/ARGUS_DATA_01a.dbf' size 500m autoextend on next 10M maxsize unlimited;
+
+select file_id,FILE_NAME,AUTOEXTENSIBLE,BYTES/1024/1024/1024,MAXBYTES/1024/1024/1024 from dba_data_files where TABLESPACE_NAME='JNJDSS_128M_D'
+
+alter tablespace TS_TMDM1 add datafile '+DATA2' size 500M autoextend on next 100M maxsize unlimited;
+
+
+

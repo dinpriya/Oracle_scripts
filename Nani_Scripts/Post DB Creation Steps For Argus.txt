@@ -1,0 +1,105 @@
+Set System parameters
+#############################################################################
+ 
+alter system set optimizer_secure_view_merging=false scope = both;
+ 
+alter system set job_queue_processes=50 scope = both;
+ 
+alter system set nls_length_semantics=char scope = both;
+ 
+ 
+#############################################################################
+ 
+Install Oracle Text
+ 
+#############################################################################
+
+connect SYS/password as SYSDBA
+spool text_install.txt
+@?/ctx/admin/catctx.sql CTXSYS SYSAUX TEMP NOLOCK
+ 
+connect ctxsys/CTXSYS
+@?/ctx/admin/defaults/drdefus.sql
+ 
+#############################################################################
+ 
+Install Oracle XDB
+ 
+#############################################################################
+ 
+
+ 
+CREATE TABLESPACE XDB DATAFILE '/mounts/lsps1h1_data/oradata/lsps1h1/dbfiles/xdb.dbf' SIZE 60M REUSE 
+AUTOEXTEND ON NEXT 10240K MAXSIZE 32767M EXTENT MANAGEMENT LOCAL 
+SEGMENT SPACE MANAGEMENT AUTO;
+ 
+set echo on 
+spool xdb_install.log 
+@?/rdbms/admin/catqm.sql XDB XDB TEMP NO
+
+ADMINISTER KEY MANAGEMENT CREATE KEYSTORE '/mounts/oracle_wallet/lsds1i1' IDENTIFIED BY "blackberry_17";
+
+cd /mounts/oracle_wallet/lspp1f1
+$ chmod 600 ewallet.p12
+
+ADMINISTER KEY MANAGEMENT SET KEYSTORE OPEN IDENTIFIED BY "blackberry_17";
+
+select * from V_$ENCRYPTION_WALLET;
+
+administer key management set key identified by "blackberry_17" with backup;
+
+select * from V_$ENCRYPTION_WALLET;
+
+ADMINISTER KEY MANAGEMENT CREATE AUTO_LOGIN KEYSTORE FROM KEYSTORE '/mounts/oracle_wallet/lspp1f1/' IDENTIFIED BY "blackberry_17";
+
+
+CREATE TABLESPACE encrypted_ts
+DATAFILE '/mounts/lsds1i1_data/oradata/lsds1i1/dbfiles/encrypted_ts01.dbf' SIZE 128K
+AUTOEXTEND ON NEXT 64K
+ENCRYPTION USING 'AES256'
+DEFAULT STORAGE(ENCRYPT);
+
+=================================================================================
+New wallet steps
+
+alter system set WALLET_ROOT="/mounts/oracle_wallet/lsps1h1" scope=spfile;
+
+
+alter system set TDE_CONFIGURATION="KEYSTORE_CONFIGURATION=FILE" scope=spfile;
+
+
+administer key management create keystore '/mounts/oracle_wallet/lsps1h1/' identified by "blackberry_17";
+
+SELECT STATUS FROM V$ENCRYPTION_WALLET;
+
+select WRL_TYPE, WRL_PARAMETER, STATUS, CON_ID from v$encryption_wallet;
+
+ !ls -lrt /scratch/app/oracle/admin/lsps1h1/wallet/tde
+
+administer key management create auto_login keystore from keystore '/mounts/oracle_wallet/lsps1h1/tde' identified by "blackberry_17";
+
+administer key management set keystore open force keystore identified by "blackberry_17";
+
+administer key management set key FORCE KEYSTORE identified by "blackberry_17" with backup; 
+
+CREATE TABLESPACE encrypted_ts
+DATAFILE '/mounts/lsps1h1_data/oradata/lsps1h1/dbfiles/encrypted_ts01.dbf' SIZE 128K
+AUTOEXTEND ON NEXT 64K
+ENCRYPTION USING 'AES256'
+DEFAULT STORAGE(ENCRYPT);
+
+================================================================================================================
+JAVA INSTALLATION on safety database(CHANGE HOME VERSION ACCORDINGLY)
+
+connect "SYS"/"&&sysPassword" as SYSDBA
+set echo on
+initjvm ? /u01/app/oracle/product/19.8.0.0.200714/javavm/install/initjvm.sql;
+
+connect "SYS"/"&&sysPassword" as SYSDBA
+set echo on
+initxml ? /u01/app/oracle/product/19.8.0.0.200714/xdk/admin/initxml.sql;
+• initxml is required
+xmlja ? /u01/app/oracle/product/19.8.0.0.200714/xdk/admin/xmlja.sql;
+• xmlja is not necessary but we should include it as it comes with the default installation of JVM
+catjava ? /u01/app/oracle/product/19.8.0.0.200714/rdbms/admin/catjava.sql;
+• catjava is not necessary but we should include it as it comes with the default installation of JVM

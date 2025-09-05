@@ -1,0 +1,4 @@
+ps -ef|grep "oracleilsstest (LOCAL=NO)" | awk '{print $2}' | xargs kill -9
+
+ps -ef|grep "oracleilsstest (LOCAL=NO)" |wc -l
+

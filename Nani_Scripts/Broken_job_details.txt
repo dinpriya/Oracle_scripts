@@ -1,0 +1,12 @@
+select SCHEMA_USER,JOB,BROKEN,to_char(NEXT_DATE, 'dd/mm/yyyy hh24:mi:SS') from dba_jobs
+
+EXEC DBMS_JOB.BROKEN(23,FALSE);
+
+
+EXEC DBMS_JOB.BROKEN(2702,TRUE);
+
+EXEC DBMS_JOB.BROKEN(1161,TRUE);
+
+commit;
+
+select SCHEMA_USER,JOB,BROKEN,to_char(NEXT_DATE, 'dd/mm/yyyy hh24:mi:SS') from dba_jobs where schema_user='CARES_PROD';

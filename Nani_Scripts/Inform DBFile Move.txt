@@ -1,0 +1,62 @@
+
+Database INF55P10: Move dbfile from $ORACLE_HOME/dbs directory to the appropriate dbfile location (/mounts/inf55pxx_data/oradata/inf55p10/dbfiles)
+
+
+SQL> select tablespace_name,file_name from dba_data_files where tablespace_name ='UVA98085_TXN';
+
+TABLESPACE_NAME
+------------------------------
+FILE_NAME
+------------------------------------------------------------------------------------------------------------------------------------------------------
+UVA98085_TXN
+/u01/app/oracle/product/11.2.0.2/dbs/<TBL_Drive>oradata<ORACLE_SID>UVA98085_Txn_01.dbf
+
+Take the tablespace that contains the datafiles offline:
+
+SQL> alter tablespace UVA98085_TXN offline normal;
+
+Tablespace altered.
+
+
+AT OS level:
+
+Copy physical datafile to the appropriate location:
+
+-bash-3.2 oracle@usadc-sdbxp06: ~/product/11.2.0.2/dbs
+$ cp '<TBL_Drive>oradata<ORACLE_SID>UVA98085_Txn_01.dbf' /mounts/inf55pxx_data/oradata/inf55p10/dbfiles/UVA98085_Txn_01.dbf
+
+
+Check to make sure the file has been copied over to the new location:
+
+-bash-3.2 oracle@usadc-sdbxp06: ~/product/11.2.0.2/dbs
+$ ls -l /mounts/inf55pxx_data/oradata/inf55p10/dbfiles/UVA98085_Txn_01.dbf
+
+-rw-r----- 1 oracle dba 52445184 Jun  9 13:33 /mounts/inf55pxx_data/oradata/inf55p10/dbfiles/UVA98085_Txn_01.dbf
+
+
+Now change the dbfile name within the database:
+
+SQL> alter tablespace UVA98085_TXN rename datafile '/u01/app/oracle/product/11.2.0.2/dbs/<TBL_Drive>oradata<ORACLE_SID>UVA98085_Txn_01.dbf' to '/mounts/inf55pxx_data/oradata/inf55p10/dbfiles/UVA98085_Txn_01.dbf';
+
+Tablespace altered.
+
+Bring tablespace back online:
+
+SQL>  alter tablespace UVA98085_TXN online;
+
+Tablespace altered.
+
+
+Now the dbfile has been moved to the appropriate location and updated in the database as well:
+
+SQL> select tablespace_name,online_status,file_name,status from dba_data_files where tablespace_name ='UVA98085_TXN';
+
+TABLESPACE_NAME                ONLINE_
+------------------------------ -------
+FILE_NAME
+--------------------------------------------------------------------------------
+STATUS
+---------
+UVA98085_TXN                   ONLINE
+/mounts/inf55pxx_data/oradata/inf55p10/dbfiles/UVA98085_Txn_01.dbf
+AVAILABLE

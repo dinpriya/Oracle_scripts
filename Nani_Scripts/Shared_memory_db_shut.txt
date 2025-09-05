@@ -1,0 +1,3 @@
+ps -ef|grep "oracleetltst (LOCAL=NO)" |wc -l
+
+ps -ef|grep "oracleetltst (LOCAL=NO)" | awk '{print $2}' | xargs kill -9

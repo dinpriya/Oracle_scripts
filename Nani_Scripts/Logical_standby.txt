@@ -1,0 +1,12 @@
+set numwidth 15
+column trd format 99
+ 
+select thread# trd, sequence#,
+    first_change#, next_change#,
+    dict_begin beg, dict_end end,
+    to_char(timestamp, 'hh:mi:ss') timestamp,
+    (case when l.next_change# < p.read_scn then 'YES'
+          when l.first_change# < p.applied_scn then 'CURRENT'
+          else 'NO' end) applied
+ from dba_logstdby_log l, dba_logstdby_progress p where sequence#>=274800
+ order by thread#, first_change#;

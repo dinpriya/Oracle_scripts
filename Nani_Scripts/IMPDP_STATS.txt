@@ -1,0 +1,7 @@
+EXEC DBMS_STATS.gather_schema_stats('INFOSARIO_PORTAL', estimate_percent =>DBMS_STATS.AUTO_SAMPLE_SIZE, cascade => TRUE);
+EXEC DBMS_STATS.gather_schema_stats('PORTAL_STAGE', estimate_percent =>DBMS_STATS.AUTO_SAMPLE_SIZE, cascade => TRUE);
+EXEC DBMS_STATS.gather_schema_stats('APP_SDE', estimate_percent =>DBMS_STATS.AUTO_SAMPLE_SIZE, cascade => TRUE);
+
+
+impdp system directory=EXPDP DUMPFILE=owcsvt1_b4svn.dmp LOGFILE=owcsvt1_b4svn_import.log schemas=INFOSARIO_PORTAL,PORTAL_STAGE,APP_SDE,OWCDEV_RO
+

@@ -1,0 +1,27 @@
+undefine sid
+undefine osuser
+col Sid/Serial/SPID/PID format a25
+set linesize 200
+col program format a20
+col machine_osproc format a40
+col username/osuser format a25
+col lockwait format a8
+col logontime format a20
+set pagesize 1000
+col wait_class format a20
+
+select --event, seconds_in_wait secs_waiting, 
+s.sid || '/' || s.serial# || '/' || p.spid || '/' || p.pid "Sid/Serial/SPID/PID",
+s.status, /*s.lockwait, */ s.username || ' / ' || s.osuser "USERNAME/OSUSER", 
+s.program, s.machine || ':' || s.process machine_osproc, to_char(logon_time,'mm/dd/yyyy hh24:mi') logontime,
+round((last_call_et)/60) "Mins idle"
+from v$process p, v$session s
+where p.addr(+)=s.paddr
+and s.username <> 'oracle'
+and s.sid like '%&sid%'
+and upper(s.machine) like upper('%&machine%')
+and s.process like '%&process%'
+and s.username like upper('%&username%')
+-- and s.sql_id like '%&&sqlid%' 
+order by logon_time
+/

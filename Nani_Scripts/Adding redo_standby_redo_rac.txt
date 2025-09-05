@@ -1,0 +1,60 @@
+PROD:
+
+ALTER DATABASE ADD LOGFILE THREAD 1 group 56 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/redo56.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 2 group 57 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/redo57.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 3 group 58 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/redo58.log' size 750m;
+
+
+alter database add standby logfile THREAD 1 group 59 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/standby_redo59.log' size 750m;
+
+alter database add standby logfile THREAD 2 group 60 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/standby_redo60.log' size 750m;
+
+alter database add standby logfile THREAD 3 group 61 '/mounts/ilsps01_data/oradata/ilsps01/dbfiles/standby_redo61.log' size 750m;
+
+
+ILSPS01RE
+
+alter database recover standby database cancel;
+
+alter system set standby_file_management='MANUAL';
+
+ALTER DATABASE ADD LOGFILE THREAD 1 group 68 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/redo68.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 2 group 69 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/redo69.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 3 group 70 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/redo70.log' size 750m;
+
+
+alter database add standby logfile THREAD 1 group 71 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/standby_redo71.log' size 750m;
+
+alter database add standby logfile THREAD 2 group 72 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/standby_redo72.log' size 750m;
+
+alter database add standby logfile THREAD 3 group 73 '/mounts/ilsps01re_data/oradata/ilsps01re/dbfiles/standby_redo73.log' size 750m;
+
+alter system set standby_file_management='AUTO';
+
+alter database recover managed standby database disconnect from session noparallel;
+
+ILSPS01E
+
+alter database recover standby database cancel;
+
+alter system set standby_file_management='MANUAL';
+
+ALTER DATABASE ADD LOGFILE THREAD 1 group 56 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/redo56.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 2 group 57 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/redo57.log' size 750m;
+
+ALTER DATABASE ADD LOGFILE THREAD 3 group 58 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/redo58.log' size 750m;
+
+alter database add standby logfile THREAD 1 group 59 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/standby_redo59.log' size 750m;
+
+alter database add standby logfile THREAD 2 group 60 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/standby_redo60.log' size 750m;
+
+alter database add standby logfile THREAD 3 group 61 '/mounts/ilsps01_data/oradata/ilsps01e/dbfiles/standby_redo61.log' size 750m;
+
+alter system set standby_file_management='AUTO';
+
+alter database recover managed standby database disconnect from session noparallel;

@@ -1,0 +1,4 @@
+select owner,mview_name,to_char(last_refresh_date, 'dd/mm/yy hh24:mi') last_refresh from dba_mviews where mview_name='MV_MAX_REVISION_NUMBER';
+
+execute dbms_mview.refresh ('SMART.MV_MAX_REVISION_NUMBER','C');
+

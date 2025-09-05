@@ -1,0 +1,25 @@
+
+
+
+
+drop user TEST_OSMTS2 cascade;
+
+create user TEST_OSMTS2 identified by SMSWATST2 default tablespace users quota unlimited on users;	
+
+alter user TEST_OSMTS2 identified by values '9C60506F89DE0CFF';
+
+
+select 'alter user '||name||' identified by values '''||password||''';' from user$ where name in('Q779593');
+
+
+system@PROD11> select 'alter user '||name||' identified by values '''||password||''';' from user$ where name in('ECD');
+
+sys@IMDMTST> select 'alter user '||name||' identified by values '''||password||''';' from user$ where name in('IMDM_PUB');
+
+'ALTERUSER'||NAME||'IDENTIFIEDBYVALUES'''||PASSWORD||''';'
+------------------------------------------------------------------------------------------------
+alter user IMDM_PUB identified by values 'C1518A9EFBB6AA31';
+
+
+
+

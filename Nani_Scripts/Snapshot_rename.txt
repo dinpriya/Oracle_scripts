@@ -1,0 +1,7 @@
+ssh usadc-vnasd03-mgt rename -volume vol4d_vd03 psdat-bkp.6 clone_snapshot_F92PRD
+
+
+
+
+
+Take a remote, try like http://usadc-vzdb22.quintiles.net:7777/pls/apex4prd/f?p=313

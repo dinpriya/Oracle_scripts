@@ -1,0 +1,25 @@
+	
+
+
+cp /mounts/idf1dev_data/.zfs/snapshot/addat-bkp.3/oradata/idf1dev/dbfiles/* /mounts/idf1dev_data/oradata/idf1dev/dbfiles/
+
+nohup ./scp.sh > scp.out > scp.err < /dev/null &
+
+nohup ./cp.sh > cp.out > cp.err < /dev/null &
+
+usadc-nas05a-san:/vol/vol43/ossdevb_data 115G   99G   17G  86% /mounts/ossdevb_data
+
+ completed 5
+
+16 acc + 4
+
+6
+
+5 (GSO,Safety)
+
+SQL> exec dbms_sqltune.alter_sql_profile('SYS_SQLPROF_0236d8f37a490001','STATUS','DISABLED');
+
+
+scp /mounts/lsps1b1_data/.snapshot/COLD_LSPS1B1_FOR_REBUILD/oradata/lsps1b1/dbfiles/*.* usadc-sdbxp26:/mounts/lsps1b1r_data/oradata/lsps1b1r/dbfiles
+
+cp /mounts/lsps1b1_data_snapmirror_restore/lsps1b1_data/oradata/lsps1b1/.snapshot/COLD_LSPS1B1_FOR_REBUILD/dbfiles/*.* /mounts/lsps1b1re_data/oradata/lsps1b1re/dbfiles

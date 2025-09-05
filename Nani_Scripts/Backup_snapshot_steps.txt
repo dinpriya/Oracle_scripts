@@ -1,0 +1,32 @@
+	oracle >ssh usadc-vnasd02-mgt create snapshot vol7_vd02 icdtrn_hot_07142014
+  (volume snapshot create)
+
+Error: command failed: Volume "snapshot" does not exist in Vserver
+       "usadc-vnasd02". Reason: entry doesn't exist.
+
+
+
+ssh usadc-vnasd02-mgt create snapshot vol7_vd02 icdtrn_hot_07142014
+
+
+
+ssh usadc-vnasd02-mgt show snapshot vol7_vd02
+
+
+ssh usadc-nas03a snap list vol7
+
+ssh usadc-nas03a qtree status vol7
+
+ssh usadc-nas03a snap create vol7 cold_qcprod_preupgrade
+
+
+
+
+ssh usadc-nas05b snap delete vol69 cold_b4_retire_RITM1599292
+
+oracle >ssh usadc-vnasd01-mgt snapshot create -vserver usadc-vnasd01 -volume vol8_vd01 -snapshot CTASK0049330_COLD_LSPS1B1
+oracle >ssh usadc-vnasd01-mgt snapshot show -vserver usadc-vnasd01 -volume vol8_vd01
+
+
+ssh usadc-vnasd01-mgt snapshot create -vserver usadc-vnasd01 -volume vol36d_vd01 -snapshot CTASK0053424_COLD_AFTER_DM
+ssh usadc-vnasd01-mgt snapshot show -vserver usadc-vnasd01 -volume vol36d_vd01

@@ -1,0 +1,33 @@
+Select 'grant select on '|| OWNER || '.'|| object_name || ' to qdm_db ;' from dba_OBJECTS WHERE OWNER in ('WHO_OWNER_MAR2020') and OBJECT_type in ('TABLE','VIEW'); 
+
+Select 'ALTER  '||object_type||'  '||OWNER||'.'||object_name|| ' compile;' From DBA_objects Where status <> 'VALID' and owner='GQPMSVT2' and object_type IN ('VIEW','SYNONYM','PROCEDURE','FUNCTION','PACKAGE','TRIGGER');
+
+
+Select 'grant execute on '|| OWNER || '.'|| object_name || ' to Q799663;' from dba_OBJECTS WHERE OWNER='AM_MART_USER' and OBJECT_type in ('PROCEDURE'); 
+
+select 'GRANT SELECT ON APPIAN.' || SEQUENCE_NAME || ' TO APPIAN_ADMIN_ROLE;' FROM all_sequences WHERE SEQUENCE_OWNER = 'APPIAN';
+
+select 'grant EXECUTE ON APPIAN.' || OBJECT_NAME || ' TO APPIAN_ADMIN_ROLE;' FROM all_procedures WHERE OWNER = 'QSYNC_APP'; 
+
+
+Select 'grant select on '|| OWNER || '.'|| object_name || ' to Q779593;' from dba_OBJECTS WHERE OWNER='QSYNC_APP' and OBJECT_type in ('VIEW'); 
+
+DROP FLASHBACK ARCHIVE Q_CEP_RESPONSE_ARCHIVE;
+
+CREATE FLASHBACK ARCHIVE DEFAULT Q_CEP_RESPONSE_ARCHIVE
+TABLESPACE RULEPOINT
+QUOTA 10 M
+RETENTION 365 DAY;
+
+OTSUKA_ESM_E2E          
+OTSUKA_EXTRACT_E2E      
+
+create role appian_admin_role
+
+Select 'grant select,insert,delete,update on '|| OWNER || '.'|| object_name || ' to APPIAN_ADMIN_ROLE;' from dba_OBJECTS WHERE OWNER in ('APPIAN') and OBJECT_type in ('TABLE','VIEW'); 
+
+
+select 'GRANT SELECT ON APPIAN.' || SEQUENCE_NAME || ' TO APPIAN_ADMIN_ROLE;' FROM all_sequences WHERE SEQUENCE_OWNER = 'APPIAN';
+
+select 'grant EXECUTE ON APPIAN.' || OBJECT_NAME || ' TO APPIAN_ADMIN_ROLE;' FROM all_procedures WHERE OWNER = 'APPIAN'; 
+

@@ -1,0 +1,65 @@
+go to the location below  
+
+/backups/incremental/scripts/df_stats/
+               
+                now stats gather depending on what needs to be gathered( either tmdm1 only or tmdm2 only or both tmdm1 and tmdm2)
+               
+                if only tmdm1----> go to tmdm1only folder and run the run_stats.sh script
+               
+                or if only tmdm2--->go to tmdm2only folder and run the run_stats.sh script
+               
+                
+                if both tmdm1 and tmdm2 needs to be gathered then-----> go to the tmdm1and2 folder and run the run_stats.sh script
+               and make sure dbname and instance# are set
+
+                run_stats.sh <dbname> <instance#>
+
+                Run it on node one ok.  
+
+CTASK0052643
+
+
+SELECT *
+FROM v$session_longops
+WHERE opname LIKE '%Gather%' AND time_remaining != 0
+ORDER BY SID;
+============================
+select sid,SERIAL#,OPNAME,SOFAR,TOTALWORK,START_TIME,LAST_UPDATE_TIME,TIMESTAMP,TIME_REMAINING,ELAPSED_SECONDS,MESSAGE,USERNAME FROM v$session_longops
+WHERE opname LIKE '%Gather%' AND time_remaining != 0
+ORDER BY SID;
+
+
+select sid,TIME_REMAINING,ELAPSED_SECONDS,CONTEXT,MESSAGE,USERNAME FROM v$session_longops
+WHERE opname LIKE '%Gather%' AND time_remaining != 0
+ORDER BY SID;
+
+
+=====================================================================================
+
+Run the query  and give SCHEMA NAME IN CAPITAL LETTER
+
+
+
+-- Displays Last Analyzed Details for a given Schema. (All schema owners if 'ALL' specified).====GOOD QUERY
+--
+
+SET PAUSE ON
+SET PAUSE 'Press Return to Continue'
+SET PAGESIZE 60
+SET LINESIZE 300
+
+SELECT t.owner,
+       t.table_name AS "Table Name", 
+       t.num_rows AS "Rows", 
+       t.avg_row_len AS "Avg Row Len", 
+       Trunc((t.blocks * p.value)/1024) AS "Size KB", 
+       to_char(t.last_analyzed,'DD/MM/YYYY HH24:MM:SS') AS "Last Analyzed"
+FROM   dba_tables t,
+       v$parameter p
+WHERE t.owner = Decode(Upper('&&Table_Owner'), 'ALL', t.owner, Upper('&&Table_Owner'))
+AND   p.name = 'db_block_size'
+ORDER by t.owner,t.last_analyzed,t.table_name
+/
+=============================================================================
+
+exec dbms_stats.gather_table_stats(ownname=>'TMDM2', tabname=>'SUBJECT_STATUS_FCT', granularity=>'GLOBAL',DEGREE=>8,CASCADE=>TRUE,NO_INVALIDATE=>FALSE,FORCE=>TRUE,estimate_percent => DBMS_STATS.AUTO_SAMPLE_SIZE);

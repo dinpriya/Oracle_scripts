@@ -1,0 +1,18 @@
+set pages 50000 lines 32767
+col OPNAME for a10
+col UNITS for a5
+col TARGET_DESC for a10 
+col OWNER_NAME for a10
+col STATE for a10
+col JOB_MODE for a10
+col JOB_NAME for a20
+col MESSAGE for a30
+alter session set nls_date_format = 'DD-MM-YYYY HH24:MI:SS';
+select sid,serial#,sofar,totalwork,units,target_desc,start_time,last_update_time,
+round(time_remaining/60,2) "REMAINING MINS",round(elapsed_seconds/60,2) "ELAPSED MINS",
+round((time_remaining+elapsed_seconds)/60,2)"TOTAL MINS",
+dp.owner_name,dp.state,dp.job_name,dp.job_mode,dp.workers,
+message 
+from gv$session_longops sl,gv$datapump_job dp 
+where sl.opname=dp.job_name and sofar != totalwork
+/

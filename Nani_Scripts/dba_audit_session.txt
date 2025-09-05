@@ -1,0 +1,10 @@
+SQL> set linesize 500 
+SQL> set pagesize 500 
+SQL> col OS_USERNAME format a12 
+SQL> col USERNAME format a10 
+SQL> col USERHOST format a10 
+SQL> col TERMINAL format a10 
+SQL> col TIMESTAMP format a25 
+SQL> col ACTION_NAME format a15 
+SQL> col OWNER format a10 
+SQL> select to_char(TIMESTAMP,'DD_MM_YYYY HH24:MI:SS') "TIMESTAMP",USERHOST,TERMINAL,OS_USERNAME,USERNAME,ACTION_NAME,to_char(RETURNCODE) "RETURNCODE" from dba_audit_session where USERNAME='ESSREADER' order by TIMESTAMP; 

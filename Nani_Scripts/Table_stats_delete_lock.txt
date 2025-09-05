@@ -1,0 +1,6 @@
+exec dbms_stats.delete_table_stats('AM_MART_USER', 'RM_SU_CASE_STUDY_DRUG');
+
+exec dbms_stats.lock_table_stats('AM_MART_USER', 'RM_SU_CASE_STUDY_DRUG');
+
+this will prevent stats being generated on that table which would state 0 rows and force the optimizer to use dynamic stats.
+

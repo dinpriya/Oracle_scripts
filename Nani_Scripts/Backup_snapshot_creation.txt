@@ -1,0 +1,18 @@
+ssh usadc-vnasd03-mgt snapshot show vol19d_vd03_clone5
+
+alter database begin backup;
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.1
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.2
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.3
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.4
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.5
+
+ssh usadc-vnasd03-mgt snapshot create vol19d_vd03_clone5 addat-bkp.6
+
+alter database end backup;
+

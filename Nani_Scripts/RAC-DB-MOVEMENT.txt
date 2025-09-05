@@ -1,0 +1,90 @@
+. Export the mounts to all nodes on new RAC cluster
+scp initfile and create passwd file softlink in OH/dbs on new cluster
+
+
+--on dev1-scan
+alter system set remote_listener='dev2-scan.quintiles.net:1521' scope=spfile sid='*';
+alter system set diagnostic_dest='/u01/app/oracle' scope=spfile sid='*';
+
+select i.ksppinm, v.ksppstvl from x$ksppi i, x$ksppcv v
+where i.ksppinm like '_diag_adr_enabled%'
+and i.indx=v.indx
+and v.ksppstvl !='TRUE';
+
+alter system set "_diag_adr_enabled"=TRUE scope=both sid='*';
+
+
+alter system reset background_dump_dest scope=spfile sid='*';
+alter system reset core_dump_dest scope=spfile sid='*';
+alter system reset user_dump_dest scope=spfile sid='*';
+
+
+srvctl stop database -d owcsvt1
+
+--on dev2-scan
+
+oenv to owcsvt1
+
+srvctl add database -d owcsvt1 -o $ORACLE_HOME -p /mounts/owcsvt1_data/oradata/owcsvt1/spfile/spfileowcsvt1.ora
+srvctl add instance -d owcsvt1 -i owcsvt11 -n usadc-sdbxt37a
+srvctl add instance -d owcsvt1 -i owcsvt12 -n usadc-sdbxt37b
+
+srvctl config database -d owcsvt1 
+srvctl start database -d owcsvt1
+srvctl status database -d owcsvt1 
+
+
+. CHANGE the entry from dev1-scan to dev2-scan in LDAP and let stuart know
+. CHANGE the entry from dev1-scan to dev2-scan in connection string in app server, if needed
+
+--if all look good, remove the db with srvctl on old cluster
+
+srvctl remove database -d owcsvt1
+
+-- unmount the mounts and detach qtrees on old RAC cluster servers
+
+========Move Target==========
+
+-- relocate targets
+-- http://www.snapdba.com/2013/02/relocating-targets-with-emcli/
+ 
+
+-- do from any of usadc-vsoemxp04 - 06, set environment to oms12c first
+
+-- make sure to have the agentname:port correct for both SRC and DEST
+
+Note: If database is on RAC, do for each instance individually.  The cluster database target will move on its own after the instances are relocated.
+
+
+emcli relocate_targets -src_agent=usadc-sdb0f:3872 -dest_agent=usadc-sdbxt37a.quintiles.net:3872 \
+-target_name=owcsvt1_owcsvt11 -target_type=oracle_database -copy_from_src -changed_param=MachineName:usadc-sdbxt37a.quintiles.net
+
+emcli relocate_targets -src_agent=usadc-sdb0g:3872 -dest_agent=usadc-sdbxt37b.quintiles.net:3872 \
+-target_name=owcsvt1_owcsvt12 -target_type=oracle_database -copy_from_src -changed_param=MachineName:usadc-sdbxt37b.quintiles.net
+
+
+emcli delete_target -name="owcsvt1_owcsvt13" -type="oracle_database"
+
+if this query
+
+
+	select i.ksppinm, v.ksppstvl from x$ksppi i, x$ksppcv v
+where i.ksppinm like '_diag_adr_enabled%'
+and i.indx=v.indx
+and v.ksppstvl !='TRUE';
+	3:45 AM
+	doesnt return anything
+	3:45 AM
+	do not do these below
+	3:45 AM
+	alter system set "_diag_adr_enabled"=TRUE scope=both sid='*';
+
+
+alter system reset background_dump_dest scope=spfile sid='*';
+alter system reset core_dump_dest scope=spfile sid='*';
+alter system reset user_dump_dest scope=spfile sid='*';
+	3:45 AM
+	they had a bug and we applied hidden parameter
+	3:45 AM
+	those above to reset the hidden parameter
+	3:46 AM

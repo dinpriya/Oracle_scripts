@@ -1,0 +1,16 @@
+set pagesize 1000
+set linesize 500
+
+col Sid/Serial for a15
+col UserName for a15
+col LOGONTIME for a20
+col Machine_osproc for a40
+col RunningHrs for a15
+col module for a30
+select s.sid || '/' || s.serial#  "Sid/Serial", s.username  "UserName", s.machine || ':' || s.process "Machine_osproc",s.module "Module", to_char(logon_time,'mm/dd/yyyy hh24:mi') logontime, round((last_call_et)/3600)||' Hours' "RunningHrs", s.sql_id
+from v$process p, v$session s
+where p.addr(+)=s.paddr
+and s.status='ACTIVE'
+and  s.username not in ('oracle','SYSTEM','SYS')
+and last_call_et > 3600
+order by last_call_et desc;

@@ -1,0 +1,114 @@
+
+
+
+set linesize 500
+set pagesize 200
+column TABLESPACE_NAME format a25
+column FILE_NAME format a75
+select file_id,FILE_NAME,TABLESPACE_NAME,AUTOEXTENSIBLE,BYTES/1024/1024 "Used Size(MB)", MAXBYTES/1024/1024 "Max Size(MB)" from dba_data_files
+where TABLESPACE_NAME like 'QLIMS_AUDIT_INDEX' order by file_id;
+
+_________________________________________________________________________________________________________
+
+
+SELECT df.tablespace_name "Tablespace",
+       df.bytes / (1024 * 1024) "Size (MB)",
+       SUM(fs.bytes) / (1024 * 1024) "Free (MB)",
+       Nvl(Round(SUM(fs.bytes) * 100 / df.bytes),1) "% Free",
+       Round((df.bytes - SUM(fs.bytes)) * 100 / df.bytes) "% Used"
+  FROM dba_free_space fs,
+       (SELECT tablespace_name,SUM(bytes) bytes
+          FROM dba_data_files
+         GROUP BY tablespace_name) df
+WHERE fs.tablespace_name (+)  = df.tablespace_name
+GROUP BY df.tablespace_name,df.bytes
+UNION ALL
+SELECT df.tablespace_name tspace,
+       fs.bytes / (1024 * 1024),
+       SUM(df.bytes_free) / (1024 * 1024),
+       Nvl(Round((SUM(fs.bytes) - df.bytes_used) * 100 / fs.bytes), 1),
+       Round((SUM(fs.bytes) - df.bytes_free) * 100 / fs.bytes)
+  FROM dba_temp_files fs,
+       (SELECT tablespace_name,bytes_free,bytes_used
+          FROM v$temp_space_header
+         GROUP BY tablespace_name,bytes_free,bytes_used) df
+WHERE fs.tablespace_name (+)  = df.tablespace_name
+GROUP BY df.tablespace_name,fs.bytes,df.bytes_free,df.bytes_used
+ORDER BY 4 DESC;
+
+**********************************************************************************************************
+set pages 1000
+set lines 500
+break on report
+compute sum of CURR_SIZE_MB on report
+compute sum of Used_MB on report
+compute sum of MAXSIZE_MB on report
+compute sum of Free+extendable_MB on report
+col TABLESPACE_NAME for a30
+col file_name for a45
+select
+   a.TABLESPACE_NAME,
+   round(avail,1) curr_size_MB,
+   round(used,1) used_MB,
+   round(total,1) Maxsize_MB,
+   round(free+extentable_MB,1) "Free+extendable_MB",
+   round(100*(1-(free+extentable_MB)/total),1)"Usage %"
+from (
+      select
+        TABLESPACE_NAME,
+        sum(BYTES)/(1024*1024) avail,
+        sum(MAXBYTES)/(1024*1024) total,
+        (sum(MAXBYTES)/(1024*1024) - sum(BYTES)/(1024*1024)) extentable_MB
+      from dba_data_files
+      group by TABLESPACE_NAME) a,
+     (
+      select
+         TABLESPACE_NAME,
+         sum(BYTES)/(1024*1024) free
+      from dba_free_space group by TABLESPACE_NAME) b,
+     (
+      select
+         TABLESPACE_NAME,
+         BYTES/(1024*1024) Used
+      from sm$ts_used) c
+where a.TABLESPACE_NAME=b.TABLESPACE_NAME and
+      a.TABLESPACE_NAME=c.TABLESPACE_NAME
+order by 4 DESC;
+
+*****************************************************************************************************************
+
+ You can use the below query to find the current tablespace structure details like current size,max size,auto extendable or not, next increment by
+
+set lines 500
+set pages 100
+col TABLESPACE_NAME for a30
+col FILE_NAME for a60
+break on report
+compute sum of Size_MB on report
+compute sum of Maxsize_MB on report
+compute sum of extentable_MB on report
+select TABLESPACE_NAME,FILE_NAME,BYTES/(1024*1024) Size_MB,MAXBYTES/(1024*1024)
+Maxsize_MB,AUTOEXTENSIBLE,(MAXBYTES - BYTES)/(1024*1024) extentable_MB,INCREMENT_BY*(8192/1024) "Next (in KB)"
+from dba_data_files order by 2;
+
+**********************************************************************************************************************
+
+query to find growth history for a tablespace:
+
+SELECT TO_CHAR (sp.begin_interval_time,'YYYY-MM-DD') days
+, ts.tsname
+, max(round((tsu.tablespace_size* dt.block_size )/(1024*1024),2) ) cur_size_MB
+, max(round((tsu.tablespace_usedsize* dt.block_size )/(1024*1024),2)) usedsize_MB
+FROM DBA_HIST_TBSPC_SPACE_USAGE tsu
+, DBA_HIST_TABLESPACE_STAT ts
+, DBA_HIST_SNAPSHOT sp
+, DBA_TABLESPACES dt
+WHERE tsu.tablespace_id= ts.ts#
+AND tsu.snap_id = sp.snap_id
+AND ts.tsname = dt.tablespace_name
+AND ts.tsname IN ('XXXXXX')
+GROUP BY TO_CHAR (sp.begin_interval_time,'YYYY-MM-DD'), ts.tsname
+ORDER BY ts.tsname, days desc;
+
+**************************************************************************************************************************
+

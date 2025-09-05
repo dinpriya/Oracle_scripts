@@ -1,0 +1,115 @@
+ 
+
+Hi All,
+
+ 
+
+                Below is the command to create snapshot backup in usadc-vnasd02-san2 filer.
+
+ 
+
+Filesystem            Size  Used Avail Use% Mounted on
+
+usadc-vnasd02-san2:/vol2_vd02/ilsds04_data
+
+                       25G  9.5G   16G  38% /mounts/ilsds04_data
+
+ 
+
+ 
+
+$ ssh usadc-vnasd02-mgt snapshot show vol2_vd02
+
+                                                                   ---Blocks---
+
+Vserver  Volume  Snapshot                        State        Size Total% Used%
+
+-------- ------- ------------------------------- -------- -------- ------ -----
+
+usadc-vnasd02 vol2_vd02
+
+                 addat-bkp.6                     valid      2.01GB     0%    0%
+
+                 addat-bkp.5                     valid     11.13GB     1%    2%
+
+                 addat-bkp.4                     valid      2.26GB     0%    0%
+
+                 addat-bkp.3                     valid      2.19GB     0%    0%
+
+                 addat-bkp.2                     valid      2.14GB     0%    0%
+
+                 addat-bkp.1                     valid      2.03GB     0%    0%
+
+                 addat-bkp.0                     valid      2.06GB     0%    0%
+
+7 entries were displayed.
+
+ 
+
+bash-3.2 oracle@usadc-sdbxt21: /mounts/ilsds04_data/oradata/ilsds04/dbfiles
+
+$ ssh usadc-vnasd02-mgt snapshot create vol2_vd02 RITM0851956_ILSDS04_HOT
+
+ 
+
+bash-3.2 oracle@usadc-sdbxt21: /mounts/ilsds04_data/oradata/ilsds04/dbfiles
+
+$ ssh usadc-vnasd02-mgt snapshot show vol2_vd02
+
+                                                                   ---Blocks---
+
+Vserver  Volume  Snapshot                        State        Size Total% Used%
+
+-------- ------- ------------------------------- -------- -------- ------ -----
+
+usadc-vnasd02 vol2_vd02
+
+                 addat-bkp.6                     valid      2.01GB     0%    0%
+
+                 addat-bkp.5                     valid     11.13GB     1%    2%
+
+                 addat-bkp.4                     valid      2.26GB     0%    0%
+
+                 addat-bkp.3                     valid      2.19GB     0%    0%
+
+                 addat-bkp.2                     valid      2.14GB     0%    0%
+
+                 addat-bkp.1                     valid      2.03GB     0%    0%
+
+                 addat-bkp.0                     valid      2.06GB     0%    0%
+
+                 RITM0851956_ILSDS04_HOT         valid          0B     0%    0%
+
+8 entries were displayed.
+
+ 
+
+For deleting a snapshot
+
+ssh usadc-vnasd02-mgt snapshot delete vol2_vd02 RITM0851956_ILSDS04_HOT
+
+ 
+
+
+
+
+ARGUS REQUEST:
+
+ORACLE_HOME/network/admin directory  example as below
+$ echo $TNS_ADMIN
+/u01/app/oracle/network
+$ export TNS_ADMIN=/u01/app/oracle/product/11.2.0.3.encrypt/network/admin
+$ echo $TNS_ADMIN
+/u01/app/oracle/product/11.2.0.3.encrypt/network/admin
+Stop and Restart the Database.
+	
+
+ssh usadc-vnasd01-mgt snapshot show vol36d_vd01
+
+
+ 
+spictl off lspi1b1
+
+spictl on lsps1b1
+ 
+spictl on lspi1b1

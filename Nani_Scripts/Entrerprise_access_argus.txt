@@ -1,0 +1,69 @@
+If requested to create a readonly account on Argus Databases
+
+2. All SRs for QID read only accounts must go to PS Lifecycle Safety and will be returned to us for action, each SR must state if they want access to all enterprises or just one enterprise.
+
+3. To create a readonly account for a QID using ZSKALSI as an example
+
+ CREATE USER Q773750 IDENTIFIED BY changeme123 
+ DEFAULT TABLESPACE USERS
+ TEMPORARY TABLESPACE TEMP
+ PROFILE QUINTILES_USERS 
+ ACCOUNT UNLOCK;
+ -- 1 Role for  Q773750
+ GRANT CONNECT TO  Q773750;
+ ALTER USER  Q773750 DEFAULT ROLE ALL;
+ -- 3 System Privileges for READONAC 
+ GRANT CREATE SESSION TO  Q773750;
+ GRANT SELECT ANY TABLE TO  Q773750;
+ -- 1 Tablespace Quota for  Q773750
+ ALTER USER  Q773750 QUOTA UNLIMITED ON USERS;
+ -- 1 Object Privilege for  Q773750
+    GRANT EXECUTE ON VPD_ARGUS_OWNER.PKG_RLS TO  Q773750;
+    GRANT CREATE ANY TRIGGER TO  Q773750;
+ 
+ 
+Create trigger on ZSKALSI for Safety Databases 
+ 
+Log onto ZSKALSI schema 
+ 
+CREATE OR REPLACE TRIGGER Q773750.set_context_ctx_trig AFTER LOGON ON SCHEMA
+ 
+BEGIN
+ pkg_rls.set_context('admin',4,'ARGUS_SAFETY');
+ END;
+/
+
+
+
+
+Create trigger on ZSKALSI for   Insight Databases 
+ 
+Log onto ZSKALSI schema 
+ 
+CREATE OR REPLACE TRIGGER  Q773750.set_context_ctx_trig AFTER LOGON ON SCHEMA
+ 
+BEGIN
+ pkg_rls.set_context('admin',0,'ARGUS_INSIGHT',null);
+ END;
+/
+ 
+
+If the SR is for one enterprise replace the 0 with the enterprise_id for example if the SR is for enterprise_id 132 then the trigger for safety would look like
+
+ 
+
+CREATE OR REPLACE TRIGGER ZSKALSI.set_context_ctx_trig AFTER LOGON ON SCHEMA
+ 
+BEGIN
+ pkg_rls.set_context('admin',58,'ARGUS_SAFETY');
+ END;
+/
+****** Please REVOKE the following Privileges when finished creating the accounts """"""""""""""
+
+REVOKE CREATE ANY TRIGGER FROM Q773750;
+
+select enterprise_id from argus_app.cfg_enterprise;
+select enterprise_id from apr_mart.cfg_enterprise;
+ 
+
+Any questions please contact me - Linda

@@ -1,0 +1,15 @@
+When  stopping and restarting any Argus databases that have encryption - i.e. using an $ORACLE_HOME with encrypt as below please set the $TNS_ADMIN to point to the $ORACLE_HOME/network/admin directory  example as below
+$ echo $TNS_ADMIN
+/u01/app/oracle/network
+$ export TNS_ADMIN=/u01/app/oracle/product/11.2.0.3.encrypt/network/admin
+$ echo $TNS_ADMIN
+/u01/app/oracle/product/11.2.0.3.encrypt/network/admin
+Stop and Restart the Database.
+
+
+
+
+Enable NDE - $ export TNS_ADMIN=/u01/app/oracle/product/11.2.0.3.encrypt/network/admin
+
+Disable NDE - export TNS_ADMIN=/u01/app/oracle/product/11.2.0.3.encrypt/network/admin/no_encrypt
+

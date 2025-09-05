@@ -1,0 +1,47 @@
+If requested to create a readonly account on Argus Databases
+
+All SRs for accounts must go to Infosario Safety Customer Support group for approval and will be returned to us for action, each SR must state if they want access to all enterprises,just one enterprise or no enterprise.
+
+To create a readonly account using q801379 as an example
+
+CREATE USER q801379
+  IDENTIFIED BY goodday16#
+  DEFAULT TABLESPACE USERS
+  TEMPORARY TABLESPACE TEMP
+  PROFILE QUINTILES_USERS
+  ACCOUNT UNLOCK;
+  -- 2 Roles for q801379 
+  GRANT CONNECT TO q801379;
+  ALTER USER q801379 DEFAULT ROLE ALL;
+  -- 3 System Privileges for q801379 
+  GRANT CREATE ANY TRIGGER TO q801379;
+  GRANT CREATE SESSION TO q801379;
+  GRANT SELECT ANY TABLE TO q801379;
+  -- 1 Tablespace Quota for q801379 
+  ALTER USER q801379 QUOTA UNLIMITED ON USERS;
+  -- 2 Object Privileges for q801379 
+    GRANT EXECUTE ON AM_VPD_ADMIN.PKG_RLS TO q801379;
+ 
+ 
+Create trigger on q801379 for Databases 
+ 
+Log onto q801379 schema 
+ 
+CREATE OR REPLACE TRIGGER SET_CONTEXT_CTX_TRIG AFTER LOGON ON schema
+BEGIN
+am_vpd_admin.pkg_rls.set_context('admin',0,'ARGUS_MART',NULL);
+END;
+/
+/
+
+dissconnet from session
+
+Log onto q801379 schema 
+
+To verify correct ENT ID has been set, run the below command
+
+select enterprise_id from am_mart_user.am_cfg_enterprise;
+
+Login to sys
+
+REVOKE CREATE ANY TRIGGER FROM q801379;

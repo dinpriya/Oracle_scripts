@@ -1,0 +1,6 @@
+col OS_USERNAME format a20
+col USERNAME format a10
+col USERHOST format a20
+col TERMINAL format a20
+col USERNAME format a15
+select OS_USERNAME,USERNAME,TERMINAL,RETURNCODE,TIMESTAMP from dba_audit_trail where USERNAME like '%YWLADMIN%' and RETURNCODE > 0 and ACTION_NAME='LOGON' order by TIMESTAMP;

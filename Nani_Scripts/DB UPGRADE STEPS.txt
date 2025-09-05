@@ -1,0 +1,23 @@
+1.            Shutdown Target database.
+
+2.            Take a cold backup.
+
+3.            Update oratab oracle home location for the database to point to new oracle <XXX> home.
+
+4.            Oenv to set your environment to the new oracle home for the database.
+
+5.            Copy parameter file into <XXXX> ORACLE_HOME/dbs.
+
+6.            Sqlplus you will be connected to an idle database as it is down.
+
+7.            Type startup upgrade.
+
+8.            When database has started run the following script from the <XXXX> Oracle Home directory.
+
+9.            @catupgrd.sql – this will take a few mins to run.
+
+10.          @utlrp to check for any invalid objects.
+
+11.          Update the listener log file entries with the new oracle home and reload the listener... all entries including any for DGBroker.
+
+12.          Update CMDB CI’s with the new version.

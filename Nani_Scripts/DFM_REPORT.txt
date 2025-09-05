@@ -1,0 +1,47 @@
+showmount -e usadc-nas05a.quintiles.net|grep osbsvta_temp
+
+df -h|grep osbsvta_temp
+
+
+http://usadc-vsdfm03.quintiles.net:8080/dfm/report/view/qtrees-capacity-graph?lines=20&group=580
+
+http://usadc-vsdfm01.quintiles.net:8080/dfm/report/view/qtrees-capacity-graph?sortby=-qtreeKBytesPercent&group=721
+
+http://usadc-vsdfmc01.quintiles.net:8080/dfm/report/view/qtrees-capacity-graph?limit=50&group=1173
+
+
+
+rm -rf `ls -l | grep "Jun 21" | awk '{print $9}'`
+
+gzip qecgtstm_863665633_1_38* &
+
+   
+cdrprda_arch_R704717691_T1_S427000.arc
+
+cdrprda_arch_R704717691_T1_S429325.arc
+
+ieedc-nas03a-san:/vol/vol32/osbstpe1_arch 10G   7.8G   2.2G    79%    /mounts/osbstpe1_arch
+
+
+find . -name "*.arc*" -mtime +7 -exec rm -rf {} \;
+
+find . -name "*core*" -mtime +1 -exec rm -rf {} \;
+
+
+select 'GRANT SELECT ON GQPMPRD.'||OBJECT_NAME||' TO GQPMPRD_RPT;' from dba_objects where OWNER='GQPMPRD' and object_type in ('TABLES','VIEWS');
+
+elect 'grant select on user_name_owner.'||table_name|| 'to user_name1 ;' from dba_tables t where t.owner='user_name_owner'
+
+its a known bug as per the metalink notes Doc ID 351814.1
+
+select 'Grnt select on gqpmprd.'||object_name|| 'to gqpmprd_rpt;' from dba_objects where owner='GQ
+
+
+DB retire:
+
+$ df -h .
+Filesystem            Size  Used Avail Use% Mounted on
+usadc-nas05b-san:/vol/vol35/slmstst4_arch
+                       25G  796M   25G   4% /mounts/slmstst4_arch
+
+/mounts/icdtst_arch/temp/inf46dev/dbfiles

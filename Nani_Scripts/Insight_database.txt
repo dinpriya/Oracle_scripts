@@ -1,0 +1,46 @@
+If requested to create a readonly account on Argus Databases
+
+All SRs for accounts must go to Infosario Safety Customer Support group for approval and will be returned to us for action, each SR must state if they want access to all enterprises,just one enterprise or no enterprise.
+
+To create a readonly account for XXXXXX as an example
+
+ CREATE USER XXXXXX IDENTIFIED BY changeme123 
+ DEFAULT TABLESPACE USERS
+ TEMPORARY TABLESPACE TEMP
+ PROFILE QUINTILES_USERS 
+ ACCOUNT UNLOCK;
+ -- 1 Role for  XXXXXX
+ GRANT CONNECT TO  XXXXXX;
+ ALTER USER  XXXXXX DEFAULT ROLE ALL;
+ -- 3 System Privileges for READONAC 
+ GRANT CREATE SESSION TO  XXXXXX;
+ GRANT SELECT ANY TABLE TO  XXXXXX;
+ -- 1 Tablespace Quota for  XXXXXX
+ ALTER USER  XXXXXX QUOTA UNLIMITED ON USERS;
+ -- 1 Object Privilege for  XXXXXX
+    GRANT EXECUTE ON VPD_ARGUS_OWNER.PKG_RLS TO  XXXXXX;
+    GRANT CREATE ANY TRIGGER TO  XXXXXX;
+ 
+ 
+Create trigger on XXXXXX for Databases 
+ 
+Log onto XXXXXX schema 
+ 
+CREATE OR REPLACE TRIGGER  XXXXXX.set_context_ctx_trig AFTER LOGON ON SCHEMA
+ 
+BEGIN
+ pkg_rls.set_context('admin',requested ent id,'ARGUS_INSIGHT',null);
+ END;
+/
+
+dissconnet from session
+
+Log onto XXXXXX schema 
+
+To verify correct ENT ID has been set, run the below command
+
+select enterprise_id from apr_mart.cfg_enterprise;
+
+Login to sys
+
+REVOKE CREATE ANY TRIGGER FROM XXXXXX;

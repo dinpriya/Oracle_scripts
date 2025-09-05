@@ -1,0 +1,61 @@
+
+dw01db03
+
+#DFDIT2 =
+#  (DESCRIPTION =
+#    (ADDRESS = (PROTOCOL = TCP)(HOST = dw02-scan)(PORT = 1521))
+#    (CONNECT_DATA =
+#      (SERVER = DEDICATED)
+#      (SERVICE_NAME = dfdit2)
+#  )
+#)
+
+
+
+
+DFDIT2 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = dw01db03.quintiles.net)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dfdit2)
+        (UR = A)
+    )
+  )
+
+dw01db04
+
+#DFDIT2 =
+#  (DESCRIPTION =
+#    (ADDRESS = (PROTOCOL = TCP)(HOST = dw02-scan)(PORT = 1521))
+#    (CONNECT_DATA =
+#      (SERVER = DEDICATED)
+#      (SERVICE_NAME = dfdit2)
+#  )
+#)
+
+DFDIT2 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = dw01db03.quintiles.net)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dfdit2)
+      (UR=A)
+    )
+
+
+
+ASM HOME:
+
+/u01/app/11.2.0.3/grid/network/admin
+
+
+sid_list_listener=
+    (sid_list =
+      (SID_DESC =
+        (GLOBAL_DBNAME = dfdit2)
+        (ORACLE_HOME = /u01/app/oracle/product/11.2.0.3/dbhome_1)
+        (SID_NAME = dfdit21)
+       )
+)
+

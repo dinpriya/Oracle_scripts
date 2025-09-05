@@ -1,0 +1,30 @@
+conn CLONEADM/CLONEADM@genericp
+Connected.
+
+select REFRESHID,STEP,ACTION,VALUE from DBCLONE_ACTION where DBNAME='cdwdev1' and VALUE ='E' and ACTION = 'RECOVERDB';
+
+
+UPDATE DBCLONE_ACTION SET VALUE = 'C' WHERE DBNAME='f92sp2' and ACTION = 'RECOVERDB' and VALUE='E' and REFRESHID=5655;
+
+ select REFRESHID,STEP,ACTION,VALUE from DBCLONE_ACTION where DBNAME='f92sp2' and REFRESHID=3151;
+
+UPDATE DBCLONE_ACTION SET VALUE = 'C' WHERE DBNAME='f92sp2' and ACTION = 'FLEXCLONE' and REFRESHID=3148;
+
+
+
+
+ select * from (select * from dbclone where dbname='cdwdev1' order by start_dttm desc) where rownum=1;
+
+/u01/app/oracle/bin/flexclone
+
+
+./clone_db.ksh cdwdev1 hot
+
+./clone_db.ksh cdwtst1 hot
+
+
+
+
+./flexclone_db.ksh f92sp2 hot
+
+env|grep OR

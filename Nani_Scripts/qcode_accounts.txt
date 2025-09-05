@@ -1,0 +1,7 @@
+1)	If you get request for oracle clinical account request, sent them to Global Security team 
+UNLESS the database is QCODE.
+
+In QCODE database, 
+if the user type is qnumber,  just grant connect, resource role to it.
+If the user type is xxxx_qcode,  then you need to use the following script to create it.
+/u01/app/oracle/dba_folders/sharon/oc_users/create_qcode_user.sql

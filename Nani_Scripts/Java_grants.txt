@@ -1,0 +1,7 @@
+SQL> exec dbms_java.grant_permission( 'CMX_ORS', 'SYS:java.net.SocketPermission', 'usadc-vsimdmd02:8001', 'connect,resolve' );
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_java.grant_permission( 'CMX_ORS', 'SYS:java.net.SocketPermission', 'usadc-vsimdmd02:8003', 'connect,resolve' );
+
+PL/SQL procedure successfully completed.

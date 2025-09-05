@@ -1,0 +1,74 @@
+SYS@orcl > SELECT dbms_metadata.get_ddl('USER','SMART') FROM dual;
+
+DBMS_METADATA.GET_DDL('USER','SCOTT')
+--------------------------------------------------------------------------------
+   CREATE USER "SCOTT" IDENTIFIED BY VALUES 'F894844C34402B67'
+      DEFAULT TABLESPACE "USERS"
+      TEMPORARY TABLESPACE "TEMP"
+
+SYS@orcl > SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','SYSTEM') from dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','SCOTT')
+--------------------------------------------------------------------------------
+   GRANT "CONNECT" TO "SCOTT"
+   GRANT "RESOURCE" TO "SCOTT"
+
+SYS@orcl > SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','SMART') from dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','SCOTT')
+--------------------------------------------------------------------------------
+  GRANT SELECT ON "HR"."EMPLOYEES" TO "SCOTT"
+
+SYS@orcl > SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','SMART') from dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','SCOTT')
+--------------------------------------------------------------------------------
+  GRANT UNLIMITED TABLESPACE TO "SCOTT"
+
+SYS@orcl >  SELECT dbms_metadata.get_ddl('ROLE','RESOURCE') from dual;
+
+DBMS_METADATA.GET_DDL('ROLE','RESOURCE')
+--------------------------------------------------------------------------------
+   CREATE ROLE "RESOURCE"
+
+SYS@orcl > SELECT DBMS_METADATA.GET_GRANTED_DDL(
+  2  'SYSTEM_GRANT','RESOURCE') from dual;
+
+DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','RESOURCE')
+--------------------------------------------------------------------------------
+  GRANT CREATE INDEXTYPE TO "RESOURCE"
+  GRANT CREATE OPERATOR TO "RESOURCE"
+  GRANT CREATE TYPE TO "RESOURCE"
+  GRANT CREATE TRIGGER TO "RESOURCE"
+  GRANT CREATE PROCEDURE TO "RESOURCE"
+  GRANT CREATE SEQUENCE TO "RESOURCE"
+  GRANT CREATE CLUSTER TO "RESOURCE"
+
+
+select dbms_metadata.get_ddl('USER','CLEO') from dual;
+select dbms_metadata.get_granted_ddl('SYSTEM_GRANT','CLEO') from dual;
+select dbms_metadata.get_granted_ddl('OBJECT_GRANT','CLEO') from dual;
+select dbms_metadata.get_granted_ddl('ROLE_GRANT','CLEO') from dual;
+
+
+set head off
+set pages 0
+set long 9999999
+spool user_script.sql
+SELECT DBMS_METADATA.GET_DDL('USER', USERNAME) || '/' DDL
+FROM DBA_USERS
+UNION ALL
+SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT', USERNAME) || '/' DDL
+FROM DBA_USERS
+UNION ALL
+SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT', USERNAME) || '/' DDL
+FROM DBA_USERS
+UNION ALL
+SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT', USERNAME) || '/' DDL
+FROM DBA_USERS;
+spool off;
+
+
+
+
+

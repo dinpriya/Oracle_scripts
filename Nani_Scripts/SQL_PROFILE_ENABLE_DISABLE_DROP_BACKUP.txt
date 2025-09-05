@@ -1,0 +1,21 @@
+SQL Profiles- ENABLE, DISABLE and DROP
+
+SQL> exec dbms_sqltune.alter_sql_profile('SYS_SQLPROF_0236d8f37a490001','STATUS','DISABLED');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_sqltune.alter_sql_profile('SQL_PROF_FOR_DELETE','STATUS','ENABLED');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> EXEC DBMS_SQLTUNE.DROP_SQL_PROFILE('SYS_SQLPROF_02384d2b5e320000');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> COMMIT;
+
+Commit complete.
+
+sql profile backup 457531.1
