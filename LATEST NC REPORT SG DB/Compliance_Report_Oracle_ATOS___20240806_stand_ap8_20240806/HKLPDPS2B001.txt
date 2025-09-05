@@ -1,0 +1,463 @@
+HKLPDPS2B001
+
+
+File name Setting Value
+/u01/app/grid/product/12cR2/network/admin/
+sqlnet.ora
+SEC_USER_AUDIT_ACTION_BANNER
+=============================================================================================
+Status of the 'sec_protocol_error_further_action' parameter setting(oracle19:1:1621:
+POHK1API.hk.standardchartered.com)
+
+Unexpected
+values
+Additional values found in failed controls:
+CONTINUE
+Missing
+values
+Expected values not found in failed controls:
+^\(DROP\,3\)$
+
+=======================================================================================================
+
+Status of the 'sec_protocol_error_trace_action' parameter setting(oracle19:1:1621:
+POHK1API.hk.standardchartered.com)
+Failed MEDIUM
+
+=====================================================================================================
+Ownership and permissions set on $ORACLE_HOME/dbs and $ORACLE_HOME/
+dbs/*(oracle19:1:1621:POHK1API.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1API.hk.standardchartered.com
+Previous Status Failed
+Oracle_ATOS - 20240806 page 345
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+The '$ORACLE_HOME/dbs/' is a directory where all Common message files are stored such as init.ora, spfile.ora and password
+files, logs files. Access to ORACLE_HOME/dbs directory and files should be restricted in order to prevent it from
+unauthorized users. If unprivileged users can read or alter the dbs files the security of the oracle server can be
+compromised. This should be configured according to the needs of the business.
+This List String value X indicates the permissions of the files within the $ORACLE_HOME/dbs directory. With UNIX these files will NOT have the
+required permission level of 0750.
+Expected matches regular expression list
+^oracle\ oinstall\ (0|1|2|3|4|5|6|7)(0|1|4|5)(0|1|4|5).*|^oracle\ asmadmin\ (0|1|2|3|4|5|6|7)(0|1|4|5)(0|1|4|5).*
+OR, any of the selected values below:
+File(s) not found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+oracle oinstall 640 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/
+db_arch_DUK31BLD_dluumh6c_1_1_14611038828748_27-04-2020
+oracle oinstall 640 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/
+db_arch_DUK31BLD_dmuumh6c_1_1_14621038828748_27-04-2020
+oracle oinstall 640 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/
+db_arch_DUK31BLD_dpuumhbe_1_1_14651038828910_27-04-2020
+oracle oinstall 640 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/snapcf_DUK31BLD1.f
+oracle oinstall 640 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/spfileRESTOR19.ora
+oracle oinstall 644 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/init.ora
+oracle oinstall 644 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/initPOHK1CCD1.ora
+oracle oinstall 644 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/ps
+oracle oinstall 660 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/hc_DUK31BLD1.dat
+oracle oinstall 660 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/hc_RESTOR19.dat
+
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+oracle oinstall 660 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/hc_DUK31BLD1.dat
+oracle oinstall 660 /u01/app/oracle/product/db/19.7.0.0.Apr2020/dbs/hc_RESTOR19.dat
+Missing
+values
+Expected values not found in failed controls:
+OR, any of the selected values below:
+
+===========================================================================================================
+
+Status of ENCRYPTION_SERVER and AUTHENTICATION_SERVICES(oracle19:1:1621:
+POHK1API.hk.standardchartered.com)
+Failed MEDIUM
+
+xtended Evidence:
+File name Setting Value
+/u01/app/grid/product/12cR2/network/admin/
+sqlnet.ora
+
+Expected regular expression match
+REQUESTED
+OR, any of the
+
+File name Setting Value
+/u01/app/grid/product/12cR2/network/admin/
+sqlnet.ora
+sqlnet.authentication_services
+
+===========================================================================================================
+
+Status of the IDLE-TIME resource parameter set for Oracle profiles (IAM-450)
+(oracle19:1:1621:POHK1RCT.hk.standardchartered.com)
+Failed MEDIUM
+
+DBQUERY: select distinct profile,limit from cdb_profiles where (profile like 'SCB_SUPP%' or profile like 'SCB_INFRA_SUPP%') and resource_name=
+'IDLE_TIME'
+Expected match all equal to
+DB Column Name: LIMIT
+15
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE LIMIT
+SCB_SUPP DEFAULT
+
+PROFILE LIMIT
+SCB_SUPP DEFAULT
+SCB_SUPP 15
+
+PROFILE LIMIT
+SCB_INFRA_SUPP 15
+SCB_SUPP 15
+===============================================================================================================================
+Ensure 'SELECT ANY DICTIONARY' Is Revoked from Unauthorized 'GRANTEE'(cis-49)
+(oracle19:1:1621:POHK1API.hk.standardchartered.com)
+Failed MEDIUM
+Instance oracle19:1:1621:POHK1API.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Ensure 'SELECT ANY DICTIONARY' Is Revoked from Unauthorized 'GRANTEE'(cis-49)
+Ensure 'SELECT ANY DICTIONARY' Is Revoked from Unauthorized 'GRANTEE'(cis-49)
+Scan Parameters:
+DBQUERY: SELECT GRANTEE, PRIVILEGE FROM DBA_SYS_PRIVS
+WHERE PRIVILEGE='SELECT ANY DICTIONARY' AND GRANTEE NOT IN (SELECT USERNAME FROM DBA_USERS WHERE
+ORACLE_MAINTAINED='Y') AND GRANTEE NOT IN (SELECT ROLE FROM DBA_ROLES WHERE ORACLE_MAINTAINED='Y')
+AND GRANTEE NOT IN ('CCS_SCAN','SECADMIN','DBARO','ORARO','DBARO2','ORAMED1','GGADMIN','SCB_ADMIN', 'SCB_LINK',
+'ORACLE', 'ORAMED2', 'PATROL', 'SYSADM', 'SELECT_SYSADM_ROLE','PUPPETAM') and GRANTEE not like '%CDC%' and GRANTEE not
+like 'GGADM%' and GRANTEE not like 'PATROL%' and GRANTEE not like 'APEX%' and GRANTEE not like 'GGMON%' and GRANTEE not
+like
+'PERF_MON%' and GRANTEE not like 'SCB_PERFSTAT%' and GRANTEE not like 'SPLEX%' and GRANTEE not like 'SQLT%'
+Expected any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+GRANTEE PRIVILEGE
+CC_ITRS SELECT ANY DICTIONARY
+
+===============================================================================================================================
+
+Ensure all Users are authenticated before access to an information System(IAM-340)
+(oracle19:1:1621:POHK5CCD.hk.standardchartered.com)
+Failed MEDIUM
+Instance oracle19:1:1621:POHK5CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+select distinct AUTHENTICATION_TYPE from cdb_users where AUTHENTICATION_TYPE not in ('NONE') and username
+not in('ORARO','PUPPETAM')
+Ensure all Users are authenticated before access to an information System(IAM-340)
+Scan Parameters:
+DBQUERY: select distinct AUTHENTICATION_TYPE from cdb_users where AUTHENTICATION_TYPE not in ('NONE') and username not in('ORARO',
+'PUPPETAM')
+Expected is contained in regular expression list
+DB Column Name: AUTHENTICATION_TYPE
+^PASSWORD$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+AUTHENTICATION_TYPE
+EXTERNAL
+PASSWORD
+===============================================================================================================================
+Status of the FAILED_LOGIN_ATTEMPTS resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the FAILED_LOGIN_ATTEMPTS resource parameter set in all Oracle profiles_12210
+Status of the FAILED_LOGIN_ATTEMPTS resource parameter set in all Oracle profiles_12210
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='FAILED_LOGIN_ATTEMPTS'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+ORA_STIG_PROFILE:6$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:3$
+SCB_STATIC_APP.*:UNLIMITED$
+SCB_SUPP.*:3$
+MGMT_ADMIN_USER_PROFILE:10$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+SCB_STATIC_APP_PSS:UNLIMITED
+SCB_STATIC_APP_ATX:UNLIMITED
+SCB_STATIC_APP_PAY:UNLIMITED
+SCB_STATIC_APP_ATX_IDLE30:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+DEFAULT:UNLIMITED
+SCB_APP_CCS:UNLIMITED
+ORA_STIG_PROFILE:6
+SCB_SUPP:3
+SCB_STATIC_APP_CCS:UNLIMITED
+Extended Evidence:
+Statistics:
+Query returned 10 rows
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+Oracle_ATOS - 20240806 page 598
+SCB_APP_CCS:UNLIMITED
+=======================================================================================================================
+
+101339 Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_LOCK_TIME'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+Oracle_ATOS - 20240806 page 618
+ORA_STIG_PROFILE:UNLIMITED$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:UNLIMITED$
+SCB_STATIC_APP.*:UNLIMITED$
+SCB_SUPP.*:UNLIMITED$
+MGMT_ADMIN_USER_PROFILE:1$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+SCB_STATIC_APP_PSS:UNLIMITED
+SCB_STATIC_APP_ATX:UNLIMITED
+SCB_STATIC_APP_PAY:UNLIMITED
+SCB_STATIC_APP_ATX_IDLE30:UNLIMITED
+SCB_SUPP:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+DEFAULT:UNLIMITED
+SCB_APP_CCS:UNLIMITED
+ORA_STIG_PROFILE:UNLIMITED
+SCB_STATIC_APP_CCS:UNLIMITED
+Extended Evidence:
+Statistics:
+Query returned 10 rows
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+SCB_APP_CCS:UNLIMITED
+
+Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK4CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK4CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+Status of the PASSWORD_LOCK_TIME resource parameter set in all Oracle profiles
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_LOCK_TIME'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+ORA_STIG_PROFILE:UNLIMITED$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:UNLIMITED$
+SCB_STATIC_APP.*:UNLIMITED$
+SCB_SUPP.*:UNLIMITED$
+MGMT_ADMIN_USER_PROFILE:1$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Oracle_ATOS - 20240806 page 619
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED
+SCB_INFRA_APP:UNLIMITED
+SCB_STATIC_APP_CAD:UNLIMITED
+SCB_SUPP:UNLIMITED
+SCB_SUPP:1
+SCB_STATIC_APP_PSS:UNLIMITED
+ORA_STIG_PROFILE:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+Extended Evidence:
+Statistics:
+Query returned 8 rows
+====================================================================================================================================
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_LIFE_TIME resource parameter set in all Oracle profiles
+Status of the PASSWORD_LIFE_TIME resource parameter set in all Oracle profiles
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_LIFE_TIME'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+ORA_STIG_PROFILE:83$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:83$
+SCB_STATIC_APP.*:UNLIMITED$
+MGMT_ADMIN_USER_PROFILE:180$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+SCB_SUPP.*:83$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+SCB_STATIC_APP_PSS:UNLIMITED
+SCB_STATIC_APP_ATX:UNLIMITED
+SCB_SUPP:83
+SCB_STATIC_APP_PAY:UNLIMITED
+SCB_STATIC_APP_ATX_IDLE30:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+DEFAULT:UNLIMITED
+SCB_APP_CCS:UNLIMITED
+ORA_STIG_PROFILE:83
+SCB_STATIC_APP_CCS:UNLIMITED
+Extended Evidence:
+Oracle_ATOS - 20240806 page 624
+Statistics:
+Query returned 10 rows
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+SCB_APP_CCS:UNLIMITED
+
+101341 Status of the PASSWORD_REUSE_MAX resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_REUSE_MAX resource parameter set in all Oracle profiles_12209
+Status of the PASSWORD_REUSE_MAX resource parameter set in all Oracle profiles_12209
+Scan Parameters:
+Oracle_ATOS - 20240806 page 629
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_REUSE_MAX'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+ORA_STIG_PROFILE:20$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:20$
+SCB_STATIC_APP.*:UNLIMITED$
+SCB_SUPP.*:20$
+MGMT_ADMIN_USER_PROFILE:UNLIMITED$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+SCB_STATIC_APP_PSS:UNLIMITED
+SCB_STATIC_APP_ATX:UNLIMITED
+SCB_STATIC_APP_PAY:UNLIMITED
+SCB_STATIC_APP_ATX_IDLE30:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+DEFAULT:UNLIMITED
+SCB_APP_CCS:UNLIMITED
+ORA_STIG_PROFILE:20
+SCB_SUPP:20
+SCB_STATIC_APP_CCS:UNLIMITED
+Extended Evidence:
+Statistics:
+Query returned 10 rows
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+SCB_APP_CCS:UNLIMITED
+
+101342 Status of the PASSWORD_REUSE_TIME resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed HIGH
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_REUSE_TIME resource parameter set in all Oracle profiles
+Status of the PASSWORD_REUSE_TIME resource parameter set in all Oracle profiles
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_REUSE_TIME'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:UNLIMITED$
+ORA_STIG_PROFILE:UNLIMITED$
+SCB_STATIC_APP.*:UNLIMITED$
+SCB_INFRA_APP.*:UNLIMITED$
+SCB_INFRA_SUPP.*:UNLIMITED$
+SCB_SUPP.*:UNLIMITED$
+MGMT_ADMIN_USER_PROFILE:UNLIMITED$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+SCB_STATIC_APP_PSS:UNLIMITED
+SCB_STATIC_APP_ATX:UNLIMITED
+SCB_STATIC_APP_PAY:UNLIMITED
+SCB_STATIC_APP_ATX_IDLE30:UNLIMITED
+SCB_SUPP:UNLIMITED
+SCB_STATIC_APP:UNLIMITED
+DEFAULT:UNLIMITED
+SCB_APP_CCS:UNLIMITED
+ORA_STIG_PROFILE:UNLIMITED
+SCB_STATIC_APP_CCS:UNLIMITED
+Extended Evidence:
+Statistics:
+Query returned 10 rows
+Oracle_ATOS - 20240806 page 635
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+SCB_APP_CCS:UNLIMITED
+
+101343 Status of the PASSWORD_GRACE_TIME resource parameter set in all Oracle profiles
+(oracle19:1:1621:POHK1CCD.hk.standardchartered.com)
+Failed MEDIUM
+Instance oracle19:1:1621:POHK1CCD.hk.standardchartered.com
+Previous Status Failed
+Evaluation Date 08/04/2024 at 10:38:34 PM (GMT+0530)
+Status of the PASSWORD_GRACE_TIME resource parameter set in all Oracle profiles
+Status of the PASSWORD_GRACE_TIME resource parameter set in all Oracle profiles
+Scan Parameters:
+DBQUERY: select distinct profile||':'||limit from cdb_profiles where con_id<>2 and resource_name='PASSWORD_GRACE_TIME'
+Expected is contained in regular expression list
+DB Column Name: PROFILE||':'||LIMIT
+DEFAULT:7$
+Oracle_ATOS - 20240806 page 640
+ORA_STIG_PROFILE:7$
+SCB_INFRA_APP.*:7$
+SCB_INFRA_SUPP.*:7$
+SCB_STATIC_APP.*:7$
+SCB_SUPP.*:7$
+MGMT_ADMIN_USER_PROFILE:7$
+MGMT_INTERNAL_USER_PROFILE:UNLIMITED$
+OR, any of the selected values below:
+Set status to PASS if no data found
+Actual Last Updated:08/04/2024 at 06:01:09 PM (GMT+0530)
+PROFILE||':'||LIMIT
+ORA_STIG_PROFILE:7
+SCB_STATIC_APP_ATX_IDLE30:7
+SCB_STATIC_APP_CCS:7
+SCB_STATIC_APP_PAY:7
+SCB_STATIC_APP:7
+SCB_SUPP:7
+SCB_STATIC_APP_ATX:7
+SCB_APP_CCS:7
+DEFAULT:7
+SCB_STATIC_APP_PSS:7
+Extended Evidence:
+Statistics:
+Query returned 10 rows
+Cause of Failure:
+Unexpected
+values
+Additional values found in failed controls:
+SCB_APP_CCS:7
+
